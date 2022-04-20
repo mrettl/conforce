@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>ConF3D.Auxiliary_functions &mdash; ConF3D 0.1 documentation</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" >
+    <link rel="search" title="Search" href="../search.html" >
+    <link rel="top" title="ConF3D 0.1 documentation" href="../index.html" >
+    <link rel="next" title="ConF3D.Auxiliary_functions.Poly_coefs" href="Auxiliary_functions/ConF3D.Auxiliary_functions.Poly_coefs.html" >
+    <link rel="prev" title="Welcome to CF3D documentation!" href="../index.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">ConF3D 0.1 documentation</a></li>
+	 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="Auxiliary_functions/ConF3D.Auxiliary_functions.Poly_coefs.html" title="ConF3D.Auxiliary_functions.Poly_coefs"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="../index.html" title="Welcome to CF3D documentation!"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="module-ConF3D.Auxiliary_functions">
+<span id="conf3d-auxiliary-functions"></span><h1>ConF3D.Auxiliary_functions<a class="headerlink" href="#module-ConF3D.Auxiliary_functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="auxilliar-functions">
+<h2>Auxilliar functions<a class="headerlink" href="#auxilliar-functions" title="Permalink to this headline">¶</a></h2>
+<p>In this module all auxilliar functions are defined. The basic functionalities are:</p>
+<ul class="simple">
+<li><p>Generating symbolic shape functions (Poly_coefs, generate_shape_func_coeff, get_shapeFunc)</p></li>
+<li><p>Generating numeric matrices and Tensors (create_sym_Mat,gen_2D_Ten_from_Vec)</p></li>
+<li><p>Analytical helper functions (get_jac, get_val_at_int_Pkt, get_det_and_inv, calc_dN_rst)</p></li>
+<li><p>Code generation of analytical expressions (lambdify_numba, lambdify_C)</p></li>
+<li><p>Generating wrappers and headers (gen_C_header, gen_Integration_C_static, gen_Python_Wrapper_static)</p></li>
+<li><p>C-code generation including integation(gen_Configurational_Forces_Static)</p></li>
+</ul>
+</div>
+<div class="section" id="exmaple-for-generation-of-a-implementation-of-configurational-forces">
+<h2>Exmaple for generation of a implementation of Configurational forces<a class="headerlink" href="#exmaple-for-generation-of-a-implementation-of-configurational-forces" title="Permalink to this headline">¶</a></h2>
+<p><strong>Calculation of the shape function coefficients</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shapeFuncCoef_bild</span><span class="p">,</span><span class="n">shapeFuncCoef_int</span><span class="p">,</span><span class="n">shapeFuncCoef_bild_diff</span><span class="p">,</span><span class="n">shapeFuncCoef_int_diff</span><span class="o">=</span>\
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generate_shape_func_coeff</span><span class="p">(</span><span class="n">bild_points</span><span class="p">,</span><span class="n">int_points</span><span class="p">,</span><span class="n">poly_power</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Definitions of neccesary symbols</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">num_nodes</span>      <span class="o">=</span> <span class="n">shapeFuncCoef_bild</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">num_int_points</span> <span class="o">=</span> <span class="n">int_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span>        <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;r s t&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rst</span>            <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">Matrix</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coord</span>          <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">MatrixSymbol</span><span class="p">(</span><span class="s1">&#39;coord&#39;</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element_U</span>      <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">MatrixSymbol</span><span class="p">(</span><span class="s1">&#39;U&#39;</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SENER</span><span class="p">,</span><span class="n">PENER</span>    <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;SENER PENER&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">S_Ten</span>          <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;S11 S22 S33 S12 S13 S23&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><span class="math notranslate nohighlight">\(\newcommand{\mytensor}[1] {\boldsymbol{\mathrm{#1}}}\)</span></p>
+<p><strong>Generation of shape functions</strong></p>
+<p>Definition of symbolic shape functions for the defined element.</p>
+<p><span class="math notranslate nohighlight">\(\mytensor{N}=\left[\begin{array}{ccc}N_1 \\ \vdots \\ N_i \end{array}\right]\)</span></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shapeFunc</span><span class="o">=</span><span class="n">get_shapeFunc</span><span class="p">(</span><span class="n">shapeFuncCoef_bild</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Calculation of the Jacobian matrix</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shapeFunc</span><span class="o">=</span><span class="n">get_shapeFunc</span><span class="p">(</span><span class="n">shapeFuncCoef_bild</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><span class="math notranslate nohighlight">\(\boldsymbol{\mathrm{P}} = \mathrm{det}(\boldsymbol{\mathrm{F}}) \,\boldsymbol{\mathrm{F}}^{-1}\,\boldsymbol{\mathrm{S}}\label{eq:meineerste}\)</span></p>
+</div>
+<p class="rubric">Functions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.Poly_coefs.html#ConF3D.Auxiliary_functions.Poly_coefs" title="ConF3D.Auxiliary_functions.Poly_coefs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Poly_coefs</span></code></a>(points, poly_power)</p></td>
+<td><p>Calculates the coefficients of the shape functions</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.calc_dN_rst.html#ConF3D.Auxiliary_functions.calc_dN_rst" title="ConF3D.Auxiliary_functions.calc_dN_rst"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_dN_rst</span></code></a>(shapeFunc, r, s, t)</p></td>
+<td><p>Calculates the derivivative of the shape functions with respect to the natural coordinates r,s,t</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.create_sym_Mat.html#ConF3D.Auxiliary_functions.create_sym_Mat" title="ConF3D.Auxiliary_functions.create_sym_Mat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_sym_Mat</span></code></a>(name, shape_0, shape_1)</p></td>
+<td><p>Creation of a symbolic matrix</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.evaluate_rst.html#ConF3D.Auxiliary_functions.evaluate_rst" title="ConF3D.Auxiliary_functions.evaluate_rst"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate_rst</span></code></a>(sym_Mat, Points)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_2D_Ten_from_vec.html#ConF3D.Auxiliary_functions.gen_2D_Ten_from_vec" title="ConF3D.Auxiliary_functions.gen_2D_Ten_from_vec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_2D_Ten_from_vec</span></code></a>(Vec)</p></td>
+<td><p>Create a Second order Tensor from vector notation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_C_header.html#ConF3D.Auxiliary_functions.gen_C_header" title="ConF3D.Auxiliary_functions.gen_C_header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_C_header</span></code></a>()</p></td>
+<td><p>Generates the header for the implemnetation in C.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Configurational_Forces_Dynamic.html#ConF3D.Auxiliary_functions.gen_Configurational_Forces_Dynamic" title="ConF3D.Auxiliary_functions.gen_Configurational_Forces_Dynamic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_Configurational_Forces_Dynamic</span></code></a>(…)</p></td>
+<td><p>Generates the dynamic configurational force implementation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Configurational_Forces_Static.html#ConF3D.Auxiliary_functions.gen_Configurational_Forces_Static" title="ConF3D.Auxiliary_functions.gen_Configurational_Forces_Static"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_Configurational_Forces_Static</span></code></a>(…[, method])</p></td>
+<td><p>Generates the static configurational force implementation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Integration_C_dyn.html#ConF3D.Auxiliary_functions.gen_Integration_C_dyn" title="ConF3D.Auxiliary_functions.gen_Integration_C_dyn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_Integration_C_dyn</span></code></a>(rst, coord, rho, …)</p></td>
+<td><p>Generates C99 code for the dynamic implementation of configurational forces at element nodal position.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Integration_C_static.html#ConF3D.Auxiliary_functions.gen_Integration_C_static" title="ConF3D.Auxiliary_functions.gen_Integration_C_static"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_Integration_C_static</span></code></a>(rst, coord, …)</p></td>
+<td><p>Generates C99 code for the static implementation of configurational forces at element nodal position.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Integration_Numba.html#ConF3D.Auxiliary_functions.gen_Integration_Numba" title="ConF3D.Auxiliary_functions.gen_Integration_Numba"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_Integration_Numba</span></code></a>(rst, coord, Element_U, …)</p></td>
+<td><p>Generates Numba code for the static implementation of configurational forces at element nodal position.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Python_Wrapper_Header.html#ConF3D.Auxiliary_functions.gen_Python_Wrapper_Header" title="ConF3D.Auxiliary_functions.gen_Python_Wrapper_Header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_Python_Wrapper_Header</span></code></a>(lib_name)</p></td>
+<td><p>Generates the header of the Python wrapper used to call the C-implementations from Python.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Python_Wrapper_dynamic.html#ConF3D.Auxiliary_functions.gen_Python_Wrapper_dynamic" title="ConF3D.Auxiliary_functions.gen_Python_Wrapper_dynamic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_Python_Wrapper_dynamic</span></code></a>(expr_name, …)</p></td>
+<td><p>Generates the Python wrapper used to call the dynamic configurational force implementation from Python.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Python_Wrapper_static.html#ConF3D.Auxiliary_functions.gen_Python_Wrapper_static" title="ConF3D.Auxiliary_functions.gen_Python_Wrapper_static"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_Python_Wrapper_static</span></code></a>(expr_name, …)</p></td>
+<td><p>Generates the Python wrapper used to call the static configurational force implementation from Python.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.generate_shape_func_coeff.html#ConF3D.Auxiliary_functions.generate_shape_func_coeff" title="ConF3D.Auxiliary_functions.generate_shape_func_coeff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_shape_func_coeff</span></code></a>(bild_points, …)</p></td>
+<td><p>Calculates the coefficients of the shape functions</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.get_det_and_inv.html#ConF3D.Auxiliary_functions.get_det_and_inv" title="ConF3D.Auxiliary_functions.get_det_and_inv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_det_and_inv</span></code></a>(jac)</p></td>
+<td><p>Inverts a symbolic matrix and calculates the determinant.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.get_jac.html#ConF3D.Auxiliary_functions.get_jac" title="ConF3D.Auxiliary_functions.get_jac"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_jac</span></code></a>(shapeFunc, points_xyz, r, s, t)</p></td>
+<td><p>Calculate the jacobi matrix symbollically for a element</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.get_shapeFunc.html#ConF3D.Auxiliary_functions.get_shapeFunc" title="ConF3D.Auxiliary_functions.get_shapeFunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_shapeFunc</span></code></a>(Ansatz_fkt_coeff, r, s, t)</p></td>
+<td><p>Generate the symbolic representation of the shape functions</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.get_val_at_int_Pkt.html#ConF3D.Auxiliary_functions.get_val_at_int_Pkt" title="ConF3D.Auxiliary_functions.get_val_at_int_Pkt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_val_at_int_Pkt</span></code></a>(shapeFunc, value)</p></td>
+<td><p>Calculates a value at the integration point of an element</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.inversion_and_det_2x2.html#ConF3D.Auxiliary_functions.inversion_and_det_2x2" title="ConF3D.Auxiliary_functions.inversion_and_det_2x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inversion_and_det_2x2</span></code></a>(m)</p></td>
+<td><p>Inverts a symbolic 2x2 matrix and calculates the determinant.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.inversion_and_det_3x3.html#ConF3D.Auxiliary_functions.inversion_and_det_3x3" title="ConF3D.Auxiliary_functions.inversion_and_det_3x3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inversion_and_det_3x3</span></code></a>(m_in)</p></td>
+<td><p>Inverts a symbolic 3x3 matrix and calculates the determinant.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.lambdify_C.html#ConF3D.Auxiliary_functions.lambdify_C" title="ConF3D.Auxiliary_functions.lambdify_C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lambdify_C</span></code></a>(args, arg_names, expr[, expr_name])</p></td>
+<td><p>Generates C99 code for a given symbolic expression.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Auxiliary_functions/ConF3D.Auxiliary_functions.lambdify_numba.html#ConF3D.Auxiliary_functions.lambdify_numba" title="ConF3D.Auxiliary_functions.lambdify_numba"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lambdify_numba</span></code></a>(args, arg_names, expr[, …])</p></td>
+<td><p>Generates Numba code for a given symbolic expression.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ConF3D.Auxiliary_functions</a><ul>
+<li><a class="reference internal" href="#auxilliar-functions">Auxilliar functions</a></li>
+<li><a class="reference internal" href="#exmaple-for-generation-of-a-implementation-of-configurational-forces">Exmaple for generation of a implementation of Configurational forces</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to CF3D documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Auxiliary_functions/ConF3D.Auxiliary_functions.Poly_coefs.html"
+                        title="next chapter">ConF3D.Auxiliary_functions.Poly_coefs</a></p>
+  <h3>This Page</h3>
+  <div>
+    <a href="../_sources/generated/ConF3D.Auxiliary_functions.rst.txt"
+       rel="nofollow">Show Source</a>
+  </div>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2022, Markus Tauscher.
+      </li>
+      <li>
+      Created using <a href="https://www.sphinx-doc.org">Sphinx</a> 3.0.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>
