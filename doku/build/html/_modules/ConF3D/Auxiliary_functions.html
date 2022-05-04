@@ -88,46 +88,7 @@
 <span class="sd">- Analytical helper functions (get_jac, get_val_at_int_Pkt, get_det_and_inv, calc_dN_rst)</span>
 <span class="sd">- Code generation of analytical expressions (lambdify_numba, lambdify_C)</span>
 <span class="sd">- Generating wrappers and headers (gen_C_header, gen_Integration_C_static, gen_Python_Wrapper_static)</span>
-<span class="sd">- C-code generation including integation(gen_Configurational_Forces_Static)</span>
-
-
-<span class="sd">Exmaple for generation of a implementation of Configurational forces</span>
-<span class="sd">======================</span>
-
-<span class="sd">**Calculation of the shape function coefficients**</span>
-
-<span class="sd">    &gt;&gt;&gt; shapeFuncCoef_bild,shapeFuncCoef_int,shapeFuncCoef_bild_diff,shapeFuncCoef_int_diff=\</span>
-<span class="sd">    &gt;&gt;&gt; generate_shape_func_coeff(bild_points,int_points,poly_power)</span>
-
-<span class="sd">**Definitions of neccesary symbols**</span>
-
-<span class="sd">    &gt;&gt;&gt; num_nodes      = shapeFuncCoef_bild.shape[0]</span>
-<span class="sd">    &gt;&gt;&gt; num_int_points = int_points.shape[0]</span>
-<span class="sd">    &gt;&gt;&gt; r, s, t        = sy.symbols(&quot;r s t&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; rst            = sy.Matrix((r, s, t))</span>
-<span class="sd">    &gt;&gt;&gt; coord          = sy.MatrixSymbol(&#39;coord&#39;, num_nodes, 3)</span>
-<span class="sd">    &gt;&gt;&gt; Element_U      = sy.MatrixSymbol(&#39;U&#39;, num_nodes, 3)</span>
-<span class="sd">    &gt;&gt;&gt; SENER,PENER    = sy.symbols(&quot;SENER PENER&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; S_Ten          = sy.symbols(&quot;S11 S22 S33 S12 S13 S23&quot;)</span>
-
-<span class="sd">:math:`\newcommand{\mytensor}[1] {\boldsymbol{\mathrm{#1}}}`</span>
-
-
-<span class="sd">**Generation of shape functions**</span>
-
-<span class="sd">Definition of symbolic shape functions for the defined element.</span>
-
-<span class="sd">:math:`\mytensor{N}=\left[\begin{array}{ccc}N_1 \\ \vdots \\ N_i \end{array}\right]`</span>
-<span class="sd"> </span>
-<span class="sd"> &gt;&gt;&gt; shapeFunc=get_shapeFunc(shapeFuncCoef_bild,r,s,t)</span>
-
-
-<span class="sd">**Calculation of the Jacobian matrix**</span>
-
-<span class="sd">    &gt;&gt;&gt; shapeFunc=get_shapeFunc(shapeFuncCoef_bild,r,s,t)</span>
-
-
-<span class="sd">:math:`\boldsymbol{\mathrm{P}} = \mathrm{det}(\boldsymbol{\mathrm{F}}) \,\boldsymbol{\mathrm{F}}^{-1}\,\boldsymbol{\mathrm{S}}\label{eq:meineerste}`</span>
+<span class="sd">- C-code generation including integration(gen_Configurational_Forces_Static)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 
@@ -1232,7 +1193,7 @@
     <span class="c1">#Calculate inverse Jacobi matrix</span>
     <span class="n">jac_inv</span><span class="p">,</span><span class="n">jacobi_det</span><span class="o">=</span><span class="n">get_det_and_inv</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span>
 
-    <span class="c1">#calculate du/DX</span>
+    <span class="c1">#calculate du/dX</span>
     <span class="n">Jacobi_Element_U</span><span class="o">=</span><span class="n">get_jac</span><span class="p">(</span><span class="n">shapeFunc</span><span class="p">,</span><span class="n">Element_U</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
     <span class="n">dU_dx</span><span class="o">=</span><span class="p">(</span><span class="n">jac_inv</span><span class="o">*</span><span class="n">Jacobi_Element_U</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 

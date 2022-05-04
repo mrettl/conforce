@@ -9,46 +9,7 @@ In this module all auxilliar functions are defined. The basic functionalities ar
 - Analytical helper functions (get_jac, get_val_at_int_Pkt, get_det_and_inv, calc_dN_rst)
 - Code generation of analytical expressions (lambdify_numba, lambdify_C)
 - Generating wrappers and headers (gen_C_header, gen_Integration_C_static, gen_Python_Wrapper_static)
-- C-code generation including integation(gen_Configurational_Forces_Static)
-
-
-Exmaple for generation of a implementation of Configurational forces
-======================
-
-**Calculation of the shape function coefficients**
-
-    >>> shapeFuncCoef_bild,shapeFuncCoef_int,shapeFuncCoef_bild_diff,shapeFuncCoef_int_diff=\
-    >>> generate_shape_func_coeff(bild_points,int_points,poly_power)
-
-**Definitions of neccesary symbols**
-
-    >>> num_nodes      = shapeFuncCoef_bild.shape[0]
-    >>> num_int_points = int_points.shape[0]
-    >>> r, s, t        = sy.symbols("r s t")
-    >>> rst            = sy.Matrix((r, s, t))
-    >>> coord          = sy.MatrixSymbol('coord', num_nodes, 3)
-    >>> Element_U      = sy.MatrixSymbol('U', num_nodes, 3)
-    >>> SENER,PENER    = sy.symbols("SENER PENER")
-    >>> S_Ten          = sy.symbols("S11 S22 S33 S12 S13 S23")
-
-:math:`\newcommand{\mytensor}[1] {\boldsymbol{\mathrm{#1}}}`
-
-
-**Generation of shape functions**
-
-Definition of symbolic shape functions for the defined element.
-
-:math:`\mytensor{N}=\left[\begin{array}{ccc}N_1 \\ \vdots \\ N_i \end{array}\right]`
- 
- >>> shapeFunc=get_shapeFunc(shapeFuncCoef_bild,r,s,t)
-
-
-**Calculation of the Jacobian matrix**
-
-    >>> shapeFunc=get_shapeFunc(shapeFuncCoef_bild,r,s,t)
-
-
-:math:`\boldsymbol{\mathrm{P}} = \mathrm{det}(\boldsymbol{\mathrm{F}}) \,\boldsymbol{\mathrm{F}}^{-1}\,\boldsymbol{\mathrm{S}}\label{eq:meineerste}`
+- C-code generation including integration(gen_Configurational_Forces_Static)
 """
 
 
@@ -1153,7 +1114,7 @@ def gen_Configurational_Forces_Static(poly_power,bild_points,int_points,int_weig
     #Calculate inverse Jacobi matrix
     jac_inv,jacobi_det=get_det_and_inv(jac)
 
-    #calculate du/DX
+    #calculate du/dX
     Jacobi_Element_U=get_jac(shapeFunc,Element_U,r,s,t)
     dU_dx=(jac_inv*Jacobi_Element_U).T
 

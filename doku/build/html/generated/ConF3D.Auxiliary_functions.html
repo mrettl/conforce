@@ -30,7 +30,7 @@
     <link rel="search" title="Search" href="../search.html" >
     <link rel="top" title="ConF3D 0.1 documentation" href="../index.html" >
     <link rel="next" title="ConF3D.Auxiliary_functions.Poly_coefs" href="Auxiliary_functions/ConF3D.Auxiliary_functions.Poly_coefs.html" >
-    <link rel="prev" title="Welcome to CF3D documentation!" href="../index.html" > 
+    <link rel="prev" title="CF3D: Implementing Configurational Forces in FEM using automatic code generation" href="../index.html" > 
   </head>
   <body>
 
@@ -68,7 +68,7 @@
            accesskey="N">next</a>
       </li>
       <li class="active">
-        <a href="../index.html" title="Welcome to CF3D documentation!"
+        <a href="../index.html" title="CF3D: Implementing Configurational Forces in FEM using automatic code generation"
            accesskey="P">previous</a>
       </li>
     </ul>
@@ -95,39 +95,8 @@
 <li><p>Analytical helper functions (get_jac, get_val_at_int_Pkt, get_det_and_inv, calc_dN_rst)</p></li>
 <li><p>Code generation of analytical expressions (lambdify_numba, lambdify_C)</p></li>
 <li><p>Generating wrappers and headers (gen_C_header, gen_Integration_C_static, gen_Python_Wrapper_static)</p></li>
-<li><p>C-code generation including integation(gen_Configurational_Forces_Static)</p></li>
+<li><p>C-code generation including integration(gen_Configurational_Forces_Static)</p></li>
 </ul>
-</div>
-<div class="section" id="exmaple-for-generation-of-a-implementation-of-configurational-forces">
-<h2>Exmaple for generation of a implementation of Configurational forces<a class="headerlink" href="#exmaple-for-generation-of-a-implementation-of-configurational-forces" title="Permalink to this headline">¶</a></h2>
-<p><strong>Calculation of the shape function coefficients</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shapeFuncCoef_bild</span><span class="p">,</span><span class="n">shapeFuncCoef_int</span><span class="p">,</span><span class="n">shapeFuncCoef_bild_diff</span><span class="p">,</span><span class="n">shapeFuncCoef_int_diff</span><span class="o">=</span>\
-<span class="gp">&gt;&gt;&gt; </span><span class="n">generate_shape_func_coeff</span><span class="p">(</span><span class="n">bild_points</span><span class="p">,</span><span class="n">int_points</span><span class="p">,</span><span class="n">poly_power</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>Definitions of neccesary symbols</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">num_nodes</span>      <span class="o">=</span> <span class="n">shapeFuncCoef_bild</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">num_int_points</span> <span class="o">=</span> <span class="n">int_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span>        <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;r s t&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rst</span>            <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">Matrix</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">coord</span>          <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">MatrixSymbol</span><span class="p">(</span><span class="s1">&#39;coord&#39;</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Element_U</span>      <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">MatrixSymbol</span><span class="p">(</span><span class="s1">&#39;U&#39;</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">SENER</span><span class="p">,</span><span class="n">PENER</span>    <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;SENER PENER&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">S_Ten</span>          <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;S11 S22 S33 S12 S13 S23&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><span class="math notranslate nohighlight">\(\newcommand{\mytensor}[1] {\boldsymbol{\mathrm{#1}}}\)</span></p>
-<p><strong>Generation of shape functions</strong></p>
-<p>Definition of symbolic shape functions for the defined element.</p>
-<p><span class="math notranslate nohighlight">\(\mytensor{N}=\left[\begin{array}{ccc}N_1 \\ \vdots \\ N_i \end{array}\right]\)</span></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shapeFunc</span><span class="o">=</span><span class="n">get_shapeFunc</span><span class="p">(</span><span class="n">shapeFuncCoef_bild</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>Calculation of the Jacobian matrix</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shapeFunc</span><span class="o">=</span><span class="n">get_shapeFunc</span><span class="p">(</span><span class="n">shapeFuncCoef_bild</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><span class="math notranslate nohighlight">\(\boldsymbol{\mathrm{P}} = \mathrm{det}(\boldsymbol{\mathrm{F}}) \,\boldsymbol{\mathrm{F}}^{-1}\,\boldsymbol{\mathrm{S}}\label{eq:meineerste}\)</span></p>
 </div>
 <p class="rubric">Functions</p>
 <table class="longtable docutils align-default">
@@ -219,14 +188,13 @@
   <ul>
 <li><a class="reference internal" href="#">ConF3D.Auxiliary_functions</a><ul>
 <li><a class="reference internal" href="#auxilliar-functions">Auxilliar functions</a></li>
-<li><a class="reference internal" href="#exmaple-for-generation-of-a-implementation-of-configurational-forces">Exmaple for generation of a implementation of Configurational forces</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="../index.html"
-                        title="previous chapter">Welcome to CF3D documentation!</a></p>
+                        title="previous chapter">CF3D: Implementing Configurational Forces in FEM using automatic code generation</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Auxiliary_functions/ConF3D.Auxiliary_functions.Poly_coefs.html"
                         title="next chapter">ConF3D.Auxiliary_functions.Poly_coefs</a></p>
