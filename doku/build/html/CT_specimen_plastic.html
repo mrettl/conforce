@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Elastoplastic CT-specimen &mdash; ConF3D 0.1 documentation</title>
+    
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-extend.css">
+    <link rel="stylesheet" href="_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="genindex.html" >
+    <link rel="search" title="Search" href="search.html" >
+    <link rel="top" title="ConF3D 0.1 documentation" href="index.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="index.html">ConF3D 0.1 documentation</a></li>
+	 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="elastoplastic-ct-specimen">
+<span id="ct-specimen-plastic"></span><h1>Elastoplastic CT-specimen<a class="headerlink" href="#elastoplastic-ct-specimen" title="Permalink to this headline">¶</a></h1>
+<p>This example uses Configurational Forces to determine the crack driving force. The sum of the CFs over a volume in crack direction represents the well-known J integral <a class="footnote-reference brackets" href="#id4" id="id1">1</a>.
+The dimensions of the CT-specimen are shown in the subsequent figure.
+The model is provided as an Abaqus Input file and an Abaqus cae file and consists of fully-integrated bilinear quadrilateral plane strain elements (CPE4).</p>
+<div class="figure align-default">
+<img alt="_images/101_ct_probe_002.svg" src="_images/101_ct_probe_002.svg" /></div>
+<p>For the partitions F and G, a mapped mesh is used. In area F, the mesh size is 0.15 mm. In area G the mesh size is 0.165 mm on the crack line.
+All other areas are meshed using a free meshing algorithm with a mesh size of 1 mm.</p>
+<p>The specimen is made from an annealed mild steel (S235) with Young’s modulus of <span class="math notranslate nohighlight">\(E_{1}=200\,\mathrm{GPa}\)</span>, a Poisson’s ratio of 0.3, yield stress of <span class="math notranslate nohighlight">\(\sigma_{y}=270\,\mathrm{MPa}\)</span>
+and an ultimate tensile strength of <span class="math notranslate nohighlight">\(\sigma_{u}=426\,\mathrm{MPa}\)</span>. True stress versus strain curve can be found the PhD-thesis of Schöngrundner <a class="footnote-reference brackets" href="#id5" id="id2">2</a>.
+Additionally the data for this curve can be found in the Abaqus input file below the <code class="code docutils literal notranslate"><span class="pre">*Plastic</span></code> keyword.
+The material is modelled using the incremental plasticity model provided by Abaqus.
+Therefore, the plastic behaviour is modelled using 10 measured points of the true stress-strain curve.
+Beyond the ultimate tensile strength, the material response is linearly extrapolated up to a strain of 300 % and stress of <span class="math notranslate nohighlight">\(\sigma_{u}=1460\,\mathrm{MPa}\)</span>.
+To avoid large deformations at the load application points, the area around them is modelled with linear elastic material (same Young’s modulus and Poisson’s ratio as the elastoplastic material)</p>
+<p>On the <span class="math notranslate nohighlight">\(25\,\mathrm{mm}\)</span> thick specimen a displacement of <span class="math notranslate nohighlight">\(u_{y}=0.5\,\mathrm{mm}\)</span> is applied in 10 time steps.
+To validate the algorithm, the incremental far field J-Integral <span class="math notranslate nohighlight">\(J_{ep far}=29.58\,\mathrm{mJ/mm^2}\)</span> is calculated and compared to <span class="math notranslate nohighlight">\(J_{ep far}^{ref}=30.4\,\mathrm{mJ/mm^2}\)</span> from Kolednik et al. <a class="footnote-reference brackets" href="#id6" id="id3">3</a>.
+In contrast to the conventional J-Integral, only the elastic energy density is considered.
+The results shown in Fig. 4 are consistent with this work, but it should be noted that there is some influence regarding the mesh size and the element type.</p>
+<div class="section" id="working-example">
+<h2>Working example<a class="headerlink" href="#working-example" title="Permalink to this headline">¶</a></h2>
+<p>This example demonstrates the evaluation of Configurational Forces from an Abaqus output database. Alternatively, the results of the last increment of the FE-calculation are provided within this documentation.
+Therefore, the extraction of the FE results is optional.</p>
+<p><strong>Extraction of necessary input data</strong></p>
+<p>The Abaqus Python script <code class="code docutils literal notranslate"><span class="pre">get_Data_from_abq.py</span></code> extracts all necessary data from the Abaqus output database.
+Additionally to the <a class="reference internal" href="Two_phase_bar.html#two-phase-bar"><span class="std std-ref">Two-phase bar</span></a> example, a node set which defines the area where the J-integral is evaluated is exported.
+The compiled functions for Configurational Force evaluation are element-dependent, therefore the results have to be extracted on a per-element basis.
+In this example, only linear quadrilateral plane-strain elements are used.</p>
+<p>The provided script outputs the data in a numpy <code class="code docutils literal notranslate"><span class="pre">.npz</span></code> file format. If some results are not available, e.g. plastic strain for a linear elastic calculation,
+an array filled with zeros with the shape described below have to be generated. The same applies for other inputs too, e.g. the stress vector must always be of shape 6, regardless of the calculation.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Coords</dt><dd><p>Numpy nd-array of shape (number of elements, number of nodes per element,3)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Element Connectivity</dt><dd><p>Numpy nd-array of shape (number of elements, number of nodes per element)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Displacements</dt><dd><p>Numpy nd-array of shape (number of time-steps, number of elements, number of nodes per element,3)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Stress</dt><dd><p>Numpy nd-array of shape (number of time-steps, number of elements, number of integration points per element,6)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Plastic energy</dt><dd><p>Numpy nd-array of shape (number of time-steps, number of elements, number of integration points per element)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Strain energy</dt><dd><p>Numpy nd-array of shape (number of time-steps, number of elements, number of integration points per element)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Node set</dt><dd><p>Numpy nd-array of shape (number of nodes)</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p><strong>Calculation of Configurational Forces</strong></p>
+<p>In the following step, the script <code class="code docutils literal notranslate"><span class="pre">J_Integral.py</span></code> evaluates the configurational forces for all available time steps. The function call <code class="code docutils literal notranslate"><span class="pre">calc_Conf_Force_[Element</span> <span class="pre">type]</span></code> is element-dependent.
+If there are multiple element types in the model, the corresponding function for each element type has to be called seperately.
+First, CFs are calculated at element nodal position. In a subsequent step, nodal unique values can be calculated by calling the function <code class="code docutils literal notranslate"><span class="pre">calc_Nodal</span></code>. This function accepts both Numpy nd-arrays
+if only one element type is present in the model or a list of Numpy nd-arrays for multiple element types. Note that node labels within the model must be unique. A part/assembly structure is therefore only
+possible if a node label only occurs once in a model. In Abaqus CAE, the option “Do not use parts and assemblies in input files” is recommended to avoid this issue entirely.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Node_Labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Element_Connectivity</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Calculate configurational forces</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CF_Nodal</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Element_U</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Node_Labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Element_U</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># Calculate on element nodal position</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">CF_Element_Nodal</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">calc_Conf_Force_CPE4_static</span><span class="p">(</span><span class="n">Coords</span><span class="p">,</span><span class="n">Element_U</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">S_vec</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">PENER</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mf">0.</span><span class="p">,</span><span class="n">SENER</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;dbf&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># Get nodal unique value</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Node_labels</span><span class="p">,</span><span class="n">CF_Nodal</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">calc_Nodal</span><span class="p">(</span><span class="n">Element_Connectivity</span><span class="p">,</span><span class="n">CF_Element_Nodal</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Evaluation of the J-integral</strong></p>
+<p>In this step the configurational forces in crack direction are summed up to calculate the J-integral.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#Select the node labels which are in a given node set</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">Node_labels</span><span class="p">,</span><span class="n">eval_Node_Labels</span><span class="p">,</span><span class="n">assume_unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#Sum configurational forces of all selected nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J_dbf_far</span> <span class="o">=</span> <span class="n">CF_Nodal</span><span class="p">[:,</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#Output the result in x-direction</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;J_far_ep: &quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">J_dbf_far</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span> <span class="s2">&quot; mJ/mm^2&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p><a class="reference external" href="https://doi.org/10.1115/1.3601206">Rice JR. A Path Independent Integral and the Approximate Analysis of Strain Concentration by Notches and Cracks. Journal of Applied Mechanics 1968;35(2):379–86.</a></p>
+</dd>
+<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p><a href="#id7"><span class="problematic" id="id8">`Ronald Schöngrundner. Numerische Studien zur Ermittlung der risstreibenden Kraft in elastisch-plastischen Materialien bei unterschiedlichen Belastungsbedingungen [Dissertation]. Leoben: Montanuniverstät Leoben; 2010.`_</span></a></p>
+</dd>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p><a class="reference external" href="https://doi.org/10.1007/s10704-013-9920-6">Kolednik O, Schöngrundner R, Fischer FD. A new view on J-integrals in elastic–plastic materials. Int J Fract 2014;187(1):77–107.</a></p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Elastoplastic CT-specimen</a><ul>
+<li><a class="reference internal" href="#working-example">Working example</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <div>
+    <a href="_sources/CT_specimen_plastic.rst.txt"
+       rel="nofollow">Show Source</a>
+  </div>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2022, Markus Tauscher.
+      </li>
+      <li>
+      Created using <a href="https://www.sphinx-doc.org">Sphinx</a> 3.0.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     
-    <title>Symbolic implementation of Configurational Forces for the elasto-platic case &mdash; ConF3D 0.1 documentation</title>
+    <title>Symbolic implementation of Configurational Forces &mdash; ConF3D 0.1 documentation</title>
     
     <link rel="stylesheet" type="text/css" href="_static/css/spc-bootstrap.css">
     <link rel="stylesheet" type="text/css" href="_static/css/spc-extend.css">
@@ -79,14 +79,23 @@
         <div class="bodywrapper">
           <div class="body" id="spc-section-body">
             
-  <div class="section" id="symbolic-implementation-of-configurational-forces-for-the-elasto-platic-case">
-<span id="example"></span><h1>Symbolic implementation of Configurational Forces for the elasto-platic case<a class="headerlink" href="#symbolic-implementation-of-configurational-forces-for-the-elasto-platic-case" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="symbolic-implementation-of-configurational-forces">
+<span id="example"></span><h1>Symbolic implementation of Configurational Forces<a class="headerlink" href="#symbolic-implementation-of-configurational-forces" title="Permalink to this headline">¶</a></h1>
+<p>In the following, the main part of the derivation of configurational forces implementation for the elastic and elastic-plastic is shown. (Formel). Formel beschreiben auf numerische Implementierung hinweisen
+(noch alles analytisch, danach numerische Auswertung. Auch am Ende einarbeiten.</p>
+<p>For clarification each section
+contains the corresponding code snippets and formulas.</p>
 <p><strong>Calculation of the shape function coefficients</strong></p>
+<p>The elements are defined by their nodal coordinates and integration points in the natural coordinate system.
+Shape functions are defined by the occuring polynomial exponents. Therefore, the coefficients of the shape functions have
+to be derived. Note that the node ordering of an element is Abaqus-specific needs to be adapted for different FEM-solvers.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shapeFuncCoef_bild</span><span class="p">,</span><span class="n">shapeFuncCoef_int</span><span class="p">,</span><span class="n">shapeFuncCoef_bild_diff</span><span class="p">,</span><span class="n">shapeFuncCoef_int_diff</span><span class="o">=</span>\
 <span class="gp">&gt;&gt;&gt; </span><span class="n">generate_shape_func_coeff</span><span class="p">(</span><span class="n">bild_points</span><span class="p">,</span><span class="n">int_points</span><span class="p">,</span><span class="n">poly_power</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Definitions of neccesary symbols</strong></p>
+<p>In this section, all necessary symbols are defined. Note that this definition also specifies the way in which the FE-results have to be passed to
+the generated functions. For example, the order of the stress vector can be stated in this code segment.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">num_nodes</span>      <span class="o">=</span> <span class="n">shapeFuncCoef_bild</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">num_int_points</span> <span class="o">=</span> <span class="n">int_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span>        <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;r s t&quot;</span><span class="p">)</span>
@@ -101,32 +110,39 @@
 <span class="math notranslate nohighlight">\(\newcommand{\myjaci}[2]   {\displaystyle \sum^i\frac{\partial \mathrm{N}^{\,i}}{\partial #2} #1^{\,i}}\)</span>
 <span class="math notranslate nohighlight">\(\newcommand{\mynderiv}[2] {\displaystyle \frac{\partial\mathrm{N}^{#1}}{\partial\mathrm{r}_{#2}}}\)</span></p>
 <p><strong>Generation of shape functions</strong></p>
-<p>Definition of symbolic shape functions for the defined element.</p>
+<p>The shape functions <span class="math notranslate nohighlight">\(\mytensor{N}\)</span> in symbolic represenation depending on the natural coordinates vector <span class="math notranslate nohighlight">\(\mytensor{r}\)</span> with its components <span class="math notranslate nohighlight">\(r \, s \, t\)</span>,
+are generated from their coefficients. Of course, the shape functions can be also directly
+provided at this point, but this would be more error-prone and less user user-friendly.</p>
 <p><span class="math notranslate nohighlight">\(\mytensor{N}=\left[\begin{array}{ccc}\mathrm{N}^1 \\ \vdots \\ \mathrm{N}^i \end{array}\right]\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shapeFunc</span><span class="o">=</span><span class="n">get_shapeFunc</span><span class="p">(</span><span class="n">shapeFuncCoef_bild</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>Calculation of the Jacobian matrix</strong></p>
-<p>Additionally the inverse jacobian matrix and the jacobi determinant is calculated.</p>
+<p><strong>Calculation of the Jacobi matrix</strong></p>
+<p>The Jacobi matrix <span class="math notranslate nohighlight">\(\mytensor{J}\)</span> is calculated as shown in the following formula. The <span class="math notranslate nohighlight">\(\mytensor{r}\)</span> vector represents the natural coordinates of a node,
+the <span class="math notranslate nohighlight">\(\mytensor{x}\)</span> vector represents the global coordinates.
+Additionally, the inverse jacobian matrix and the jacobi determinant is calculated.</p>
 <p><span class="math notranslate nohighlight">\(\mytensor{J}= \left[\begin{array}{cccc} \myjaci{x_1}{r_1} &amp;  \myjaci{x_2}{r_1} &amp;  \myjaci{x_3}{r_1} \\ \myjaci{x_1}{r_2} &amp;  \myjaci{x_2}{r_2} &amp;  \myjaci{x_3}{r_2} \\ \myjaci{x_1}{r_3} &amp;  \myjaci{x_2}{r_3} &amp;  \myjaci{x_3}{r_3} \\ \end{array} \right]\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jac</span> <span class="o">=</span> <span class="n">get_jac</span><span class="p">(</span><span class="n">shapeFunc</span><span class="p">,</span><span class="n">coord</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jac_inv</span><span class="p">,</span><span class="n">jacobi_det</span> <span class="o">=</span> <span class="n">get_det_and_inv</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>Determining the derivivative of the displacements with respect to x and deformation gradient</strong></p>
+<p><strong>Determining the derivivative of the displacements with respect to</strong> <span class="math notranslate nohighlight">\(\mytensor{x}\)</span> <strong>and deformation gradient</strong></p>
+<p>At first, the derivivative of the nodal displacements <span class="math notranslate nohighlight">\(\mytensor{u}\)</span> with respect to the natural coordinates <span class="math notranslate nohighlight">\(\mytensor{r}\)</span> is calculated simmilar to the Jacobi matrix above.</p>
 <p><span class="math notranslate nohighlight">\(\displaystyle \frac{\partial\mytensor{u}}{\partial\mytensor{r}}= \left[\begin{array}{cccc} \myjaci{u_1}{r_1} &amp;  \myjaci{u_2}{r_1} &amp;  \myjaci{u_3}{r_1} \\ \myjaci{u_1}{r_2} &amp;  \myjaci{u_2}{r_2} &amp;  \myjaci{u_3}{r_2} \\ \myjaci{u_1}{r_3} &amp;  \myjaci{u_2}{r_3} &amp;  \myjaci{u_3}{r_3} \\ \end{array} \right]\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Jacobi_Element_U</span><span class="o">=</span><span class="n">get_jac</span><span class="p">(</span><span class="n">shapeFunc</span><span class="p">,</span><span class="n">Element_U</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Next, the derivivative of the displacement <span class="math notranslate nohighlight">\(\mytensor{u}\)</span> with respect to <span class="math notranslate nohighlight">\(\mytensor{x}\)</span> can be calculated.</p>
 <p><span class="math notranslate nohighlight">\(\displaystyle \frac{\partial\mytensor{u}}{\partial\mytensor{x}}= \left ( \mytensor{J^{-1}} \displaystyle \frac{\partial\mytensor{u}}{\partial\mytensor{r}} \right )^\mathrm{T}\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dU_dx</span><span class="o">=</span><span class="p">(</span><span class="n">jac_inv</span><span class="o">*</span><span class="n">Jacobi_Element_U</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 </div>
+<p>The deformation gradient <span class="math notranslate nohighlight">\(\mytensor{F}\)</span> is defined by the following equation, with <span class="math notranslate nohighlight">\(\mytensor{I}\)</span> as the idenedity matrix.</p>
 <p><span class="math notranslate nohighlight">\(\mytensor{F} = \mytensor{I}+\displaystyle \frac{\partial\mytensor{u}}{\partial\mytensor{x}}\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Def_grad</span><span class="o">=</span><span class="n">sy</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">+</span><span class="n">dU_dx</span>
 </pre></div>
 </div>
-<p><strong>Determining the derivivative of the shape functions with respect to x</strong></p>
+<p><strong>Determining the derivivative of the shape functions</strong> <span class="math notranslate nohighlight">\(\mytensor{N}\)</span> <strong>with respect to</strong> <span class="math notranslate nohighlight">\(\mytensor{x} **from** :math:\)</span>displaystyle frac{partialmytensor{N}}{partialmytensor{r}}` <strong>and the Jabobian</strong></p>
 <p><span class="math notranslate nohighlight">\(\displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{r}} = \left[\begin{array}{cccc} \mynderiv{1}{1} &amp; \mynderiv{1}{2} &amp; \mynderiv{1}{3} \\ \vdots &amp; \vdots &amp; \vdots \\ \mynderiv{i}{1} &amp; \mynderiv{i}{2} &amp;  \mynderiv{i}{3} \end{array} \right]\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dN_rst</span><span class="o">=</span><span class="n">calc_dN_rst</span><span class="p">(</span><span class="n">shapeFunc</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
 </pre></div>
@@ -136,30 +152,45 @@
 </pre></div>
 </div>
 <p><strong>Calculation of the first Piola Kirchhoff stress</strong></p>
+<p>The first Piola Kirchhoff stress <span class="math notranslate nohighlight">\(\mytensor{P}\)</span> is calculated from the the chauchy stress <span class="math notranslate nohighlight">\(\mytensor{S}\)</span> and the deformation gradient <span class="math notranslate nohighlight">\(\mytensor{F}\)</span> by the following equation.</p>
 <p><span class="math notranslate nohighlight">\(\mytensor{P} = \mathrm{det}(\mytensor{F}) \, \mytensor{S} \,\mytensor{F}^{-T}\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">S</span><span class="o">=</span><span class="n">gen_2D_Ten_from_vec</span><span class="p">(</span><span class="n">S_Ten</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Def_grad_inv</span><span class="p">,</span><span class="n">Def_grad_det</span><span class="o">=</span><span class="n">get_det_and_inv</span><span class="p">(</span><span class="n">Def_grad</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Piola_1</span><span class="o">=</span> <span class="n">Def_grad_det</span><span class="o">*</span><span class="n">S</span><span class="o">*</span><span class="n">Def_grad_inv</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 </div>
-<p><strong>Calculation of the Configurational stress</strong></p>
+<p><strong>Calculation of the configurational stress</strong></p>
+<p>The configurational stress <span class="math notranslate nohighlight">\(\mytensor{C}\)</span> can be writen in a motion-based and a deformation-based formulation. Both are supported by this package.
+The energy density <span class="math notranslate nohighlight">\(\phi\)</span> represents the sum of the plastic energy density <span class="math notranslate nohighlight">\(\phi_\mathrm{pl}\)</span> and the strain energy density <span class="math notranslate nohighlight">\(\phi_\mathrm{el}\)</span>.
+In the script which generates the numerical implementations for all supported element types, both the motion based and the deformation based formulation are generated.
+In the interface they can be selected by the parameter <code class="xref py py-func docutils literal notranslate"><span class="pre">method()</span></code>.</p>
 <p><span class="math notranslate nohighlight">\(\phi = \phi_\mathrm{pl} + \phi_\mathrm{el}\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ENER</span> <span class="o">=</span> <span class="n">SENER</span><span class="o">+</span><span class="n">PENER</span>
 </pre></div>
 </div>
-<p>Motion based formulation:</p>
+<p>The motion-based formulation defines the configurational stress <span class="math notranslate nohighlight">\(\mytensor{C}\)</span> depending on the energy density <span class="math notranslate nohighlight">\(\phi\)</span>, the idendity matrix <span class="math notranslate nohighlight">\(\mytensor{I}\)</span>,
+the deformation gradient <span class="math notranslate nohighlight">\(\mytensor{F}\)</span> and the first Piola Kirchhoff stress <span class="math notranslate nohighlight">\(\mytensor{P}\)</span>.</p>
 <p><span class="math notranslate nohighlight">\(\mytensor{C} = \mathrm{\phi} \, \mytensor{I} - \mytensor{F}^\mathrm{T} \, \boldsymbol{\mathrm{P}}\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">ENER</span><span class="o">*</span><span class="n">sy</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">-</span><span class="n">Def_grad</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">Piola_1</span>
 </pre></div>
 </div>
-<p>Displacement based formulation:</p>
+<p>The displacement-based formulation defines the configurational stress <span class="math notranslate nohighlight">\(\mytensor{C}\)</span> depending on the energy density <span class="math notranslate nohighlight">\(\phi\)</span>, the idendity matrix <span class="math notranslate nohighlight">\(\mytensor{I}\)</span>,
+<span class="math notranslate nohighlight">\(\displaystyle \frac{\partial\mytensor{u}}{\partial\mytensor{x}}\)</span> and the first Piola Kirchhoff stress <span class="math notranslate nohighlight">\(\mytensor{P}\)</span>.</p>
 <p><span class="math notranslate nohighlight">\(\mytensor{C} = \mathrm{\phi} \, \mytensor{I} - \displaystyle \left (\frac{\partial\mytensor{u}}{\partial\mytensor{x}} \right)^\mathrm{T} \, \boldsymbol{\mathrm{P}}\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">ENER</span><span class="o">*</span><span class="n">sy</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">-</span><span class="n">dU_dx</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">Piola_1</span>
 </pre></div>
 </div>
 <p><strong>Determining inner part of the integral</strong></p>
-<p><span class="math notranslate nohighlight">\(\mytensor{f} = \displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{x}} \, \mytensor{C}^\mathrm{T} \, det(\mytensor{J})\)</span></p>
+<p>The inner part of the volume integral in a symbolic definition represents the final result of the derivation.
+By calling the function <code class="code docutils literal notranslate"><span class="pre">lambdify_C</span></code>, a numerical implementation can be generated.</p>
+<p><span class="math notranslate nohighlight">\(\mytensor{f} = \displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{x}} \, \mytensor{C}^\mathrm{T} \, \mathrm{det}(\mytensor{J})\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C_Force</span><span class="o">=</span><span class="n">dN_dxyz</span><span class="o">*</span><span class="n">C</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">jacobi_det</span>
+</pre></div>
+</div>
+<p><strong>Generate the Implementation</strong></p>
+<p>The function <a class="reference internal" href="generated/Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Integration_C_static.html#ConF3D.Auxiliary_functions.gen_Integration_C_static" title="ConF3D.Auxiliary_functions.gen_Integration_C_static"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_Integration_C_static()</span></code></a> generates two C-functions. In the first step <a class="reference internal" href="generated/Auxiliary_functions/ConF3D.Auxiliary_functions.lambdify_C.html#ConF3D.Auxiliary_functions.lambdify_C" title="ConF3D.Auxiliary_functions.lambdify_C"><code class="xref py py-func docutils literal notranslate"><span class="pre">lambdify_C()</span></code></a> is called to generate a numerical implementation of the provided expression.
+In the second step a function to numerically integrate the expression is generated.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">impl</span><span class="o">=</span><span class="n">gen_Integration_C_static</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span><span class="n">coord</span><span class="p">,</span><span class="n">Element_U</span><span class="p">,</span><span class="n">S_Ten</span><span class="p">,</span><span class="n">PENER</span><span class="p">,</span><span class="n">SENER</span><span class="p">,</span><span class="n">int_points</span><span class="p">,</span><span class="n">int_weights</span><span class="p">,</span><span class="n">C_Force</span><span class="p">,</span><span class="n">expr_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

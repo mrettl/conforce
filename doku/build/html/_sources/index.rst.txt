@@ -1,5 +1,5 @@
 CF3D: Implementing Configurational Forces in FEM using automatic code generation
-==========================================
+================================================================================
 
 This package provides a toolset to derive the numerical implementation of Configurational Forces on Finite Elements
 from a symbolic set of equations. The symbolic expressions are element independent, the implementations for 
@@ -21,6 +21,12 @@ for infos about creating and managing Conda environments.
 The generated code and the ctypes wrapper can also be used from other Python environments, which also includes deprecated
 Python versions like 2.7 or environments with limited expandability like Abaqus Python.
 
+Application examples:
+---------------------
+| :ref:`Two_phase_bar`
+| :ref:`CT_specimen_linear_elastic`
+| :ref:`CT_specimen_plastic`
+
 Prerequisites
 -------------
 
@@ -29,6 +35,7 @@ This package is written and tested in Python 3.7 and relies on here listed packa
 
 | `numpy <https://numpy.org/>`_ 1.18.1
 | `sympy <https://www.sympy.org/en/index.html>`_ 1.5.1
+| `clang <https://clang.llvm.org/>`_ 11.0.0
 
 Contributing
 ------------

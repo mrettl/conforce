@@ -84,7 +84,7 @@ from a symbolic set of equations. The symbolic expressions are element independe
 various element types are generated as C-code by the package in a fully automated way. This also includes the generation of a
 Python wrapper, which simplifies the usage from Python.
 For the linear elastic and elastic cases, an implementation is already provided within this package.</p>
-<p>For a detailed explanation of the symbolic expression have a look at <a class="reference internal" href="Example.html#example"><span class="std std-ref">Symbolic implementation of Configurational Forces for the elasto-platic case</span></a>.</p>
+<p>For a detailed explanation of the symbolic expression have a look at <a class="reference internal" href="Example.html#example"><span class="std std-ref">Symbolic implementation of Configurational Forces</span></a>.</p>
 <div class="section" id="quick-start">
 <h2>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
 <p>To install CF3D, check at first the <span class="xref std std-ref">Prerequisites</span> of your python installation.
@@ -95,6 +95,14 @@ for infos about creating and managing Conda environments.</p>
 <p>The generated code and the ctypes wrapper can also be used from other Python environments, which also includes deprecated
 Python versions like 2.7 or environments with limited expandability like Abaqus Python.</p>
 </div>
+<div class="section" id="application-examples">
+<h2>Application examples:<a class="headerlink" href="#application-examples" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><a class="reference internal" href="Two_phase_bar.html#two-phase-bar"><span class="std std-ref">Two-phase bar</span></a></div>
+<div class="line"><a class="reference internal" href="CT_specimen_linear_elastic.html#ct-specimen-linear-elastic"><span class="std std-ref">Linear elastic CT-specimen</span></a></div>
+<div class="line"><a class="reference internal" href="CT_specimen_plastic.html#ct-specimen-plastic"><span class="std std-ref">Elastoplastic CT-specimen</span></a></div>
+</div>
+</div>
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <p>It is recommended to use virtual environments (<a class="reference external" href="https://www.anaconda.com/">anaconda</a>).
@@ -102,6 +110,7 @@ This package is written and tested in Python 3.7 and relies on here listed packa
 <div class="line-block">
 <div class="line"><a class="reference external" href="https://numpy.org/">numpy</a> 1.18.1</div>
 <div class="line"><a class="reference external" href="https://www.sympy.org/en/index.html">sympy</a> 1.5.1</div>
+<div class="line"><a class="reference external" href="https://clang.llvm.org/">clang</a> 11.0.0</div>
 </div>
 </div>
 <div class="section" id="contributing">
@@ -157,6 +166,7 @@ This package is written and tested in Python 3.7 and relies on here listed packa
   <ul>
 <li><a class="reference internal" href="#">CF3D: Implementing Configurational Forces in FEM using automatic code generation</a><ul>
 <li><a class="reference internal" href="#quick-start">Quick start</a></li>
+<li><a class="reference internal" href="#application-examples">Application examples:</a></li>
 <li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
 <li><a class="reference internal" href="#modules">Modules</a><ul>
