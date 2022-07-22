@@ -14,21 +14,20 @@ The model is provided as an Abaqus Input file and an Abaqus cae file and consist
 For the partitions F and G, a mapped mesh is used. In area F, the mesh size is 0.15 mm. In area G the mesh size is 0.165 mm on the crack line. 
 All other areas are meshed using a free meshing algorithm with a mesh size of 1 mm. 
 
-The specimen is made from an annealed mild steel (S235) with Young’s modulus of :math:`E_{1}=200\,\mathrm{GPa}`, a Poisson’s ratio of 0.3, yield stress of :math:`\sigma_{y}=270\,\mathrm{MPa}`
-and an ultimate tensile strength of :math:`\sigma_{u}=426\,\mathrm{MPa}`. True stress versus strain curve can be found the PhD-thesis of Schöngrundner [2]_.
+The specimen is made from an annealed mild steel (S235) with a Young’s modulus of :math:`E_{1}=200\,\mathrm{GPa}`, a Poisson’s ratio of 0.3, yield stress of :math:`\sigma_{y}=270\,\mathrm{MPa}`. 
+True stress versus strain curve can be found in the thesis of Schöngrundner [2]_.
 Additionally the data for this curve can be found in the Abaqus input file below the :code:`*Plastic` keyword.
 The material is modelled using the incremental plasticity model provided by Abaqus. 
 Therefore, the plastic behaviour is modelled using 10 measured points of the true stress-strain curve. 
-Beyond the ultimate tensile strength, the material response is linearly extrapolated up to a strain of 300 % and stress of :math:`\sigma_{u}=1460\,\mathrm{MPa}`. 
+Beyond the ultimate tensile strength of :math:`\sigma_{u}=426\,\mathrm{MPa}`, the material response is linearly extrapolated up to a strain of 300 % and stress of :math:`\sigma_{u}=1460\,\mathrm{MPa}`. 
 To avoid large deformations at the load application points, the area around them is modelled with linear elastic material (same Young’s modulus and Poisson’s ratio as the elastoplastic material)
 
 
 On the :math:`25\,\mathrm{mm}` thick specimen a displacement of :math:`u_{y}=0.5\,\mathrm{mm}` is applied in 10 time steps. 
-To validate the algorithm, the incremental far field J-Integral :math:`J_{ep far}=29.58\,\mathrm{mJ/mm^2}` is calculated and compared to :math:`J_{ep far}^{ref}=30.4\,\mathrm{mJ/mm^2}` from Kolednik et al. [3]_.
+The presented algorithm, calculates the incremental far-field J-Integral :math:`J_{ep far}=29.58\,\mathrm{mJ/mm^2}` which is in good agreement to :math:`J_{ep far}^{ref}=30.4\,\mathrm{mJ/mm^2}` from Kolednik et al. [3]_.
 In contrast to the conventional J-Integral, only the elastic energy density is considered.
 The results shown in Fig. 4 are consistent with this work, but it should be noted that there is some influence regarding the mesh size and the element type. 
 
-Working example
 --------------
 
 This example demonstrates the evaluation of Configurational Forces from an Abaqus output database. Alternatively, the results of the last increment of the FE-calculation are provided within this documentation.
@@ -101,5 +100,5 @@ References
 
 
 .. [1] `Rice JR. A Path Independent Integral and the Approximate Analysis of Strain Concentration by Notches and Cracks. Journal of Applied Mechanics 1968;35(2):379–86. <https://doi.org/10.1115/1.3601206>`_
-.. [2] `Ronald Schöngrundner. Numerische Studien zur Ermittlung der risstreibenden Kraft in elastisch-plastischen Materialien bei unterschiedlichen Belastungsbedingungen [Dissertation]. Leoben: Montanuniverstät Leoben; 2010.`_
+.. [2] `Ronald Schöngrundner. Numerische Studien zur Ermittlung der risstreibenden Kraft in elastisch-plastischen Materialien bei unterschiedlichen Belastungsbedingungen [Dissertation]. Leoben: Montanuniverstät Leoben; 2010. <https://pure.unileoben.ac.at/portal/de/publications/numerische-studien-zur-ermittlung-der-risstreibenden-kraft-in-elastischplastischen-materialien-bei-unterschiedlichen-belastungsbedingungen(0c6ab65a-3702-4001-87a5-e53456916731).html?customType=theses>`_
 .. [3] `Kolednik O, Schöngrundner R, Fischer FD. A new view on J-integrals in elastic–plastic materials. Int J Fract 2014;187(1):77–107. <https://doi.org/10.1007/s10704-013-9920-6>`_

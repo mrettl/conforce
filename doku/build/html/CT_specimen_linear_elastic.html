@@ -84,23 +84,23 @@ The model is provided as an Abaqus Input file and an Abaqus cae file and consist
 <p>For the partitions F and G, a mapped mesh is used. In area F, the mesh size is 0.15 mm. In area G the mesh size is 0.165 mm on the crack line.
 All other areas are meshed using a free meshing algorithm with a mesh size of 1 mm.</p>
 <p>A linear elastic material with a Young’s modulus of <span class="math notranslate nohighlight">\(E_{1}=200\,\mathrm{GPa}\)</span> and a Poisson’s ratio <span class="math notranslate nohighlight">\(\nu\)</span> of 0.3. is used for the whole specimen.
-For this example a displacement of <span class="math notranslate nohighlight">\(u_{y}=0.5\,\mathrm{mm}\)</span> was used, which leads to a reaction force of <span class="math notranslate nohighlight">\(P=52.24\,\mathrm{kN}\)</span>.
+For this example a displacement of <span class="math notranslate nohighlight">\(u_{y}=0.5\,\mathrm{mm}\)</span> was used, which leads to a reaction force of <span class="math notranslate nohighlight">\(P=56.32\,\mathrm{kN}\)</span>.
 According to ASTM <a class="footnote-reference brackets" href="#id4" id="id2">2</a>, the J integral for a CT-specimen can be calculated in the following way:</p>
 <p><span class="math notranslate nohighlight">\(J=\cfrac{K^2 (1 - \nu^2)}{E}\)</span></p>
 <p>Where <span class="math notranslate nohighlight">\(K\)</span> represents the fracture thoughness depending on the thickness <span class="math notranslate nohighlight">\(B=B_N=25\,\mathrm{mm}\)</span> and the geometry factor <span class="math notranslate nohighlight">\(f(a/W)\)</span>.</p>
 <p><span class="math notranslate nohighlight">\(K=\cfrac{P}{(B B_N W)^{1/2}} f(a/W)\)</span></p>
 <p>The geometry factor <span class="math notranslate nohighlight">\(f(a/W)\)</span> is a function of the crack length <span class="math notranslate nohighlight">\(a\)</span> and the width <span class="math notranslate nohighlight">\(W\)</span> of the specimen.</p>
 <p><span class="math notranslate nohighlight">\(f(a/W)=\cfrac{(2+a/W)(0.886+4.64 a/W -13.32 (a/W)^2+14.72 (a/W)^3 -5.6 (a/W)^4)}{1-(a/W)^{3/2}}\)</span></p>
-<p>Summing up the configurational forces in crack direction over three countours around the crack tip yields the J integral <span class="math notranslate nohighlight">\(J_{3}=46.57\,\mathrm{kJ/m^2}\)</span>.
+<p>Summing up the configurational forces in crack direction over three countours around the crack tip yields the J integral <span class="math notranslate nohighlight">\(J_{3}=53.99\,\mathrm{kJ/m^2}\)</span>.
 This can be considered as converged since 30 contours only leads to a minimal additional change of 0.5% in the J integral. Evaluating the analytic formula for the choosen geometry gives
-<span class="math notranslate nohighlight">\(J=47.95\,\mathrm{kJ/m^2}\)</span> which shows good agreement to the numerical result.</p>
+<span class="math notranslate nohighlight">\(J=55.72\,\mathrm{kJ/m^2}\)</span> which shows good agreement to the numerical result.</p>
 <div class="section" id="working-example">
 <h2>Working example<a class="headerlink" href="#working-example" title="Permalink to this headline">¶</a></h2>
 <p>This example demonstrates the evaluation of Configurational Forces from an Abaqus output database. Alternatively, the results of the last increment of the FE-calculation are provided within this documentation.
 Therefore, the extraction of the FE results is optional.</p>
 <p><strong>Extraction of necessary input data</strong></p>
 <p>The Abaqus Python script <code class="code docutils literal notranslate"><span class="pre">get_Data_from_abq.py</span></code> extracts all necessary data from the Abaqus output database.
-Additionally to the <a class="reference internal" href="Two_phase_bar.html#two-phase-bar"><span class="std std-ref">Two-phase bar</span></a> example, a node set which defines the area where the J-integral is evaluated is exported.
+Additionally to the <a class="reference internal" href="Two_phase_bar.html#two-phase-bar"><span class="std std-ref">Example 1: Two-phase bar</span></a> example, a node set which defines the area where the J-integral is evaluated is exported.
 The compiled functions for Configurational Force evaluation are element-dependent, therefore the results have to be extracted on a per-element basis.
 In this example, only linear quadrilateral plane-strain elements with reduced integration are used.</p>
 <p>The provided script outputs the data in a numpy <code class="code docutils literal notranslate"><span class="pre">.npz</span></code> file format. If some results are not available, e.g. plastic strain for a linear elastic calculation,

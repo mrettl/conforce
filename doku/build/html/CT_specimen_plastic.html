@@ -83,24 +83,23 @@ The model is provided as an Abaqus Input file and an Abaqus cae file and consist
 <img alt="_images/101_ct_probe_002.svg" src="_images/101_ct_probe_002.svg" /></div>
 <p>For the partitions F and G, a mapped mesh is used. In area F, the mesh size is 0.15 mm. In area G the mesh size is 0.165 mm on the crack line.
 All other areas are meshed using a free meshing algorithm with a mesh size of 1 mm.</p>
-<p>The specimen is made from an annealed mild steel (S235) with Young’s modulus of <span class="math notranslate nohighlight">\(E_{1}=200\,\mathrm{GPa}\)</span>, a Poisson’s ratio of 0.3, yield stress of <span class="math notranslate nohighlight">\(\sigma_{y}=270\,\mathrm{MPa}\)</span>
-and an ultimate tensile strength of <span class="math notranslate nohighlight">\(\sigma_{u}=426\,\mathrm{MPa}\)</span>. True stress versus strain curve can be found the PhD-thesis of Schöngrundner <a class="footnote-reference brackets" href="#id5" id="id2">2</a>.
+<p>The specimen is made from an annealed mild steel (S235) with a Young’s modulus of <span class="math notranslate nohighlight">\(E_{1}=200\,\mathrm{GPa}\)</span>, a Poisson’s ratio of 0.3, yield stress of <span class="math notranslate nohighlight">\(\sigma_{y}=270\,\mathrm{MPa}\)</span>.
+True stress versus strain curve can be found in the thesis of Schöngrundner <a class="footnote-reference brackets" href="#id5" id="id2">2</a>.
 Additionally the data for this curve can be found in the Abaqus input file below the <code class="code docutils literal notranslate"><span class="pre">*Plastic</span></code> keyword.
 The material is modelled using the incremental plasticity model provided by Abaqus.
 Therefore, the plastic behaviour is modelled using 10 measured points of the true stress-strain curve.
-Beyond the ultimate tensile strength, the material response is linearly extrapolated up to a strain of 300 % and stress of <span class="math notranslate nohighlight">\(\sigma_{u}=1460\,\mathrm{MPa}\)</span>.
+Beyond the ultimate tensile strength of <span class="math notranslate nohighlight">\(\sigma_{u}=426\,\mathrm{MPa}\)</span>, the material response is linearly extrapolated up to a strain of 300 % and stress of <span class="math notranslate nohighlight">\(\sigma_{u}=1460\,\mathrm{MPa}\)</span>.
 To avoid large deformations at the load application points, the area around them is modelled with linear elastic material (same Young’s modulus and Poisson’s ratio as the elastoplastic material)</p>
 <p>On the <span class="math notranslate nohighlight">\(25\,\mathrm{mm}\)</span> thick specimen a displacement of <span class="math notranslate nohighlight">\(u_{y}=0.5\,\mathrm{mm}\)</span> is applied in 10 time steps.
-To validate the algorithm, the incremental far field J-Integral <span class="math notranslate nohighlight">\(J_{ep far}=29.58\,\mathrm{mJ/mm^2}\)</span> is calculated and compared to <span class="math notranslate nohighlight">\(J_{ep far}^{ref}=30.4\,\mathrm{mJ/mm^2}\)</span> from Kolednik et al. <a class="footnote-reference brackets" href="#id6" id="id3">3</a>.
+The presented algorithm, calculates the incremental far-field J-Integral <span class="math notranslate nohighlight">\(J_{ep far}=29.58\,\mathrm{mJ/mm^2}\)</span> which is in good agreement to <span class="math notranslate nohighlight">\(J_{ep far}^{ref}=30.4\,\mathrm{mJ/mm^2}\)</span> from Kolednik et al. <a class="footnote-reference brackets" href="#id6" id="id3">3</a>.
 In contrast to the conventional J-Integral, only the elastic energy density is considered.
 The results shown in Fig. 4 are consistent with this work, but it should be noted that there is some influence regarding the mesh size and the element type.</p>
-<div class="section" id="working-example">
-<h2>Working example<a class="headerlink" href="#working-example" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
 <p>This example demonstrates the evaluation of Configurational Forces from an Abaqus output database. Alternatively, the results of the last increment of the FE-calculation are provided within this documentation.
 Therefore, the extraction of the FE results is optional.</p>
 <p><strong>Extraction of necessary input data</strong></p>
 <p>The Abaqus Python script <code class="code docutils literal notranslate"><span class="pre">get_Data_from_abq.py</span></code> extracts all necessary data from the Abaqus output database.
-Additionally to the <a class="reference internal" href="Two_phase_bar.html#two-phase-bar"><span class="std std-ref">Two-phase bar</span></a> example, a node set which defines the area where the J-integral is evaluated is exported.
+Additionally to the <a class="reference internal" href="Two_phase_bar.html#two-phase-bar"><span class="std std-ref">Example 1: Two-phase bar</span></a> example, a node set which defines the area where the J-integral is evaluated is exported.
 The compiled functions for Configurational Force evaluation are element-dependent, therefore the results have to be extracted on a per-element basis.
 In this example, only linear quadrilateral plane-strain elements are used.</p>
 <p>The provided script outputs the data in a numpy <code class="code docutils literal notranslate"><span class="pre">.npz</span></code> file format. If some results are not available, e.g. plastic strain for a linear elastic calculation,
@@ -170,7 +169,6 @@ possible if a node label only occurs once in a model. In Abaqus CAE, the option 
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;J_far_ep: &quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">J_dbf_far</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span> <span class="s2">&quot; mJ/mm^2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
 <dl class="footnote brackets">
@@ -178,7 +176,7 @@ possible if a node label only occurs once in a model. In Abaqus CAE, the option 
 <dd><p><a class="reference external" href="https://doi.org/10.1115/1.3601206">Rice JR. A Path Independent Integral and the Approximate Analysis of Strain Concentration by Notches and Cracks. Journal of Applied Mechanics 1968;35(2):379–86.</a></p>
 </dd>
 <dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
-<dd><p><a href="#id7"><span class="problematic" id="id8">`Ronald Schöngrundner. Numerische Studien zur Ermittlung der risstreibenden Kraft in elastisch-plastischen Materialien bei unterschiedlichen Belastungsbedingungen [Dissertation]. Leoben: Montanuniverstät Leoben; 2010.`_</span></a></p>
+<dd><p><a class="reference external" href="https://pure.unileoben.ac.at/portal/de/publications/numerische-studien-zur-ermittlung-der-risstreibenden-kraft-in-elastischplastischen-materialien-bei-unterschiedlichen-belastungsbedingungen(0c6ab65a-3702-4001-87a5-e53456916731).html?customType=theses">Ronald Schöngrundner. Numerische Studien zur Ermittlung der risstreibenden Kraft in elastisch-plastischen Materialien bei unterschiedlichen Belastungsbedingungen [Dissertation]. Leoben: Montanuniverstät Leoben; 2010.</a></p>
 </dd>
 <dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
 <dd><p><a class="reference external" href="https://doi.org/10.1007/s10704-013-9920-6">Kolednik O, Schöngrundner R, Fischer FD. A new view on J-integrals in elastic–plastic materials. Int J Fract 2014;187(1):77–107.</a></p>
@@ -196,7 +194,6 @@ possible if a node label only occurs once in a model. In Abaqus CAE, the option 
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Elastoplastic CT-specimen</a><ul>
-<li><a class="reference internal" href="#working-example">Working example</a></li>
 <li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>

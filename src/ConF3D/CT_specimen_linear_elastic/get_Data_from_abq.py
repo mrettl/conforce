@@ -226,8 +226,8 @@ def read_static_data(odb,instance,Element_Connectivity,NodeLables,NodeCoordinate
 ##########################################
 ##########################################
 ##########################################
-elem_type   = "CPE4R"
-name        = "CT_specimen_CPE4R"
+elem_type   = "CPE4"
+name        = "CT_specimen_CPE4"
 odbPath     = name +".odb"
 ##########################################
 ##########################################

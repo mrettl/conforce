@@ -1,7 +1,7 @@
 import numpy as np
 import Conf_Forces_py as cf
 
-#Load Data
+#Load data
 data                  = np.load("Data.npz")
 Coords                = data["Coords"]
 Element_U             = data["Element_U"]
@@ -10,10 +10,8 @@ PENER                 = data["PENER"]
 SENER                 = data["SENER"]
 Element_Connectivity  = data["Element_Connectivity"]
 eval_Node_Labels      = data["eval_Node_Labels"]
-t                     = data['t']
 
 #Calculate the dispalement
-v_ll=np.round(0.5*t,3)
 Node_Labels=np.unique(Element_Connectivity)
 
 ########################################################
@@ -26,10 +24,10 @@ for i in range(Element_U.shape[0]):
     # Get nodal unique value
     Node_labels,CF_Nodal[i]=cf.calc_Nodal(Element_Connectivity,CF_Element_Nodal)
 
-#Select the node labels which are in a given node set
+# Select the node labels which are in a given node set
 idx=np.isin(Node_labels,eval_Node_Labels,assume_unique=True)
-#Sum configurational forces of all selected nodes
+# Sum configurational forces of all selected nodes
 J_dbf_far = CF_Nodal[:,idx].sum(axis=1)
 
-#Output the result in x-direction
-print("J_far_ep: "+ str(J_dbf_far[-1,0])+ " mJ/mm^2")
+# Output the result in x-direction (coincides with crack direction)
+print("J-integral in evaluation region: "+ str(J_dbf_far[-1,0](*-1))+ " mJ/mm^2")

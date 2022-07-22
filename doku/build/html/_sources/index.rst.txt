@@ -9,6 +9,8 @@ For the linear elastic and elastic cases, an implementation is already provided 
 
 For a detailed explanation of the symbolic expression have a look at :ref:`Example`.
 
+To use the already generated and compiled package have a look at the :ref:`Interface_description` and the working examples.
+
 Quick start
 -----------
 
@@ -24,8 +26,7 @@ Python versions like 2.7 or environments with limited expandability like Abaqus 
 Application examples:
 ---------------------
 | :ref:`Two_phase_bar`
-| :ref:`CT_specimen_linear_elastic`
-| :ref:`CT_specimen_plastic`
+| :ref:`CT_specimen`
 
 Prerequisites
 -------------
@@ -57,6 +58,7 @@ Modules
     :hidden:
     
     Example
+    Interface_description
 
 
 Authors

@@ -2,7 +2,7 @@
 
 .. py:currentmodule:: ConF3D.Auxiliary_functions
 
-Symbolic implementation of Configurational Forces
+Symbolic implementation of configurational forces
 =================================================
 
 In the following, the main part of the derivation of configurational forces implementation for the elastic and elastic-plastic is shown. (Formel). Formel beschreiben auf numerische Implementierung hinweisen

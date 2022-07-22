@@ -1,8 +1,8 @@
 .. _Two_phase_bar:
 
 
-Two-phase bar
-=============
+Example 1: Two-phase bar
+========================
 
 In this example, configurational forces (CF) are calulated at an material interface. CF are pointing towards the material with the lower stiffness. 
 The model sketch is shown in Figure 1.
@@ -18,7 +18,7 @@ The bar is fixed on the left side, on the right side a displacement of :math:`u=
 :math:`G=\frac{u^2 E_1 E_2 A [E_2 - E_1]}{l^2[E_1+E_2]^{2}} = 11.67\,\mathrm{N}`
 
 Working example
--------------
+---------------
 
 This example demonstrates the evaluation of configurational forces from an Abaqus output database. Alternatively, the results of the FE-calculation
 (nodal coordinates, element connectivity, displacement, stress, plastic energy, elastic energy)
@@ -53,7 +53,8 @@ an array filled with zeros with the shape described below have to be generated. 
     Numpy nd-array of shape (number of time-steps, number of elements, number of integration points per element)
 
 
-**Calculation of configurational forces**
+Calculation of configurational forces
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the following step, the script :code:`Calculate_CF.py` evaluates the configurational forces for all available time steps. The function call :code:`calc_Conf_Force_[Element type]` is element-dependent. 
 If there are multiple element types in the model, the corresponding function for each element type has to be called seperately.

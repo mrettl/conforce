@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     
-    <title>Two-phase bar &mdash; ConF3D 0.1 documentation</title>
+    <title>Example 1: Two-phase bar &mdash; ConF3D 0.1 documentation</title>
     
     <link rel="stylesheet" type="text/css" href="_static/css/spc-bootstrap.css">
     <link rel="stylesheet" type="text/css" href="_static/css/spc-extend.css">
@@ -74,15 +74,15 @@
         <div class="bodywrapper">
           <div class="body" id="spc-section-body">
             
-  <div class="section" id="two-phase-bar">
-<span id="id1"></span><h1>Two-phase bar<a class="headerlink" href="#two-phase-bar" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="example-1-two-phase-bar">
+<span id="two-phase-bar"></span><h1>Example 1: Two-phase bar<a class="headerlink" href="#example-1-two-phase-bar" title="Permalink to this headline">¶</a></h1>
 <p>In this example, configurational forces (CF) are calulated at an material interface. CF are pointing towards the material with the lower stiffness.
 The model sketch is shown in Figure 1.</p>
 <div class="figure align-default">
 <img alt="_images/102_Two_phase_bar.svg" src="_images/102_Two_phase_bar.svg" /></div>
 <p>The model consists of two quadrilateral plane strain elements with a thickness of 1 mm. The left and right side have a Young’s modulus of <span class="math notranslate nohighlight">\(E_{1}=210\,\mathrm{GPa}\)</span>
 and <span class="math notranslate nohighlight">\(E_{2}=E_{1}/2 = 105\,\mathrm{GPa}\)</span> respectively.
-The Poisson’s ratio is set to zero to match the 1D-case where an analytical solution is available <a class="footnote-reference brackets" href="#id3" id="id2">1</a>.
+The Poisson’s ratio is set to zero to match the 1D-case where an analytical solution is available <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.
 The bar is fixed on the left side, on the right side a displacement of <span class="math notranslate nohighlight">\(u=0.1\,\mathrm{mm}\)</span> is applied.</p>
 <p><span class="math notranslate nohighlight">\(G=\frac{u^2 E_1 E_2 A [E_2 - E_1]}{l^2[E_1+E_2]^{2}} = 11.67\,\mathrm{N}\)</span></p>
 <div class="section" id="working-example">
@@ -129,7 +129,8 @@ an array filled with zeros with the shape described below have to be generated. 
 </dl>
 </li>
 </ul>
-<p><strong>Calculation of configurational forces</strong></p>
+<div class="section" id="calculation-of-configurational-forces">
+<h3>Calculation of configurational forces<a class="headerlink" href="#calculation-of-configurational-forces" title="Permalink to this headline">¶</a></h3>
 <p>In the following step, the script <code class="code docutils literal notranslate"><span class="pre">Calculate_CF.py</span></code> evaluates the configurational forces for all available time steps. The function call <code class="code docutils literal notranslate"><span class="pre">calc_Conf_Force_[Element</span> <span class="pre">type]</span></code> is element-dependent.
 If there are multiple element types in the model, the corresponding function for each element type has to be called seperately.
 First, CFs are calculated at element nodal position. In a subsequent step, nodal unique values can be calculated by calling the function <code class="code docutils literal notranslate"><span class="pre">calc_Nodal</span></code>. This function accepts both Numpy nd-arrays
@@ -146,10 +147,11 @@ possible if a node label only occurs once in a model. In Abaqus CAE, the option 
 </pre></div>
 </div>
 <dl class="footnote brackets">
-<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
 <dd><p><a class="reference external" href="https://doi.org/10.1007/s00466-004-0627-4">Kolling S, Mueller R. On configurational forces in short-time dynamics and their computation with an explicit solver. Comput Mech 2005;35(5):392–9.</a></p>
 </dd>
 </dl>
+</div>
 </div>
 </div>
 
@@ -161,8 +163,11 @@ possible if a node label only occurs once in a model. In Abaqus CAE, the option 
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Two-phase bar</a><ul>
-<li><a class="reference internal" href="#working-example">Working example</a></li>
+<li><a class="reference internal" href="#">Example 1: Two-phase bar</a><ul>
+<li><a class="reference internal" href="#working-example">Working example</a><ul>
+<li><a class="reference internal" href="#calculation-of-configurational-forces">Calculation of configurational forces</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

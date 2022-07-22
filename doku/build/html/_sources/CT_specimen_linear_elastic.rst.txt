@@ -15,7 +15,7 @@ For the partitions F and G, a mapped mesh is used. In area F, the mesh size is 0
 All other areas are meshed using a free meshing algorithm with a mesh size of 1 mm. 
 
 A linear elastic material with a Young's modulus of :math:`E_{1}=200\,\mathrm{GPa}` and a Poisson's ratio :math:`\nu` of 0.3. is used for the whole specimen.
-For this example a displacement of :math:`u_{y}=0.5\,\mathrm{mm}` was used, which leads to a reaction force of :math:`P=52.24\,\mathrm{kN}`.
+For this example a displacement of :math:`u_{y}=0.5\,\mathrm{mm}` was used, which leads to a reaction force of :math:`P=56.32\,\mathrm{kN}`.
 According to ASTM [2]_, the J integral for a CT-specimen can be calculated in the following way:
 
 :math:`J=\cfrac{K^2 (1 - \nu^2)}{E}`
@@ -28,9 +28,9 @@ The geometry factor :math:`f(a/W)` is a function of the crack length :math:`a` a
 
 :math:`f(a/W)=\cfrac{(2+a/W)(0.886+4.64 a/W -13.32 (a/W)^2+14.72 (a/W)^3 -5.6 (a/W)^4)}{1-(a/W)^{3/2}}`
 
-Summing up the configurational forces in crack direction over three countours around the crack tip yields the J integral :math:`J_{3}=46.57\,\mathrm{kJ/m^2}`.
+Summing up the configurational forces in crack direction over three countours around the crack tip yields the J integral :math:`J_{3}=53.99\,\mathrm{kJ/m^2}`.
 This can be considered as converged since 30 contours only leads to a minimal additional change of 0.5% in the J integral. Evaluating the analytic formula for the choosen geometry gives 
-:math:`J=47.95\,\mathrm{kJ/m^2}` which shows good agreement to the numerical result.
+:math:`J=55.72\,\mathrm{kJ/m^2}` which shows good agreement to the numerical result.
 
 
 Working example
