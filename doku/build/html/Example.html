@@ -81,10 +81,16 @@
             
   <div class="section" id="symbolic-implementation-of-configurational-forces">
 <span id="example"></span><h1>Symbolic implementation of configurational forces<a class="headerlink" href="#symbolic-implementation-of-configurational-forces" title="Permalink to this headline">¶</a></h1>
-<p>In the following, the main part of the derivation of configurational forces implementation for the elastic and elastic-plastic is shown. (Formel). Formel beschreiben auf numerische Implementierung hinweisen
-(noch alles analytisch, danach numerische Auswertung. Auch am Ende einarbeiten.</p>
-<p>For clarification each section
-contains the corresponding code snippets and formulas.</p>
+<p><span class="math notranslate nohighlight">\(\newcommand{\mytensor}[1] {\boldsymbol{\mathrm{#1}}}\)</span>
+<span class="math notranslate nohighlight">\(\newcommand{\myjaci}[2]   {\displaystyle \sum^i\frac{\partial \mathrm{N}^{\,i}}{\partial #2} #1^{\,i}}\)</span>
+<span class="math notranslate nohighlight">\(\newcommand{\mynderiv}[2] {\displaystyle \frac{\partial\mathrm{N}^{#1}}{\partial\mathrm{r}_{#2}}}\)</span></p>
+<p>In the following, the main part of the derivation of configurational forces implementation for the elastic and elastic-plastic is shown.
+Configurational forces <span class="math notranslate nohighlight">\(\mytensor{g}\)</span> are defined depending on the shape functions <span class="math notranslate nohighlight">\(\mytensor{N}\)</span>, the cartesian coordinates <span class="math notranslate nohighlight">\(\mytensor{x}\)</span>,
+the configurational stress <span class="math notranslate nohighlight">\(\mytensor{C}\)</span> and the Jacobi determinant <span class="math notranslate nohighlight">\(\det\left(\mytensor{J}\right)\)</span> in the following way:</p>
+<p><span class="math notranslate nohighlight">\(\mytensor{g}=\int_{V}{\frac{\partial\mytensor{N}}{\partial\mytensor{x}}{\mytensor{C}}^\mathrm{T}}\det\left(\mytensor{J}\right)dV\)</span></p>
+<p>In this formula the inner part of the integral must be derived symbolically, the integration is than performed using a automatically generated
+Gauss integration routine. This derivation is shown in detail in the following sections. At the end numeric code is generated for all supported elements.</p>
+<p>For clarification each section contains the corresponding code snippets and formulas.</p>
 <p><strong>Calculation of the shape function coefficients</strong></p>
 <p>The elements are defined by their nodal coordinates and integration points in the natural coordinate system.
 Shape functions are defined by the occuring polynomial exponents. Therefore, the coefficients of the shape functions have
@@ -106,9 +112,6 @@ the generated functions. For example, the order of the stress vector can be stat
 <span class="gp">&gt;&gt;&gt; </span><span class="n">S_Ten</span>          <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;S11 S22 S33 S12 S13 S23&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><span class="math notranslate nohighlight">\(\newcommand{\mytensor}[1] {\boldsymbol{\mathrm{#1}}}\)</span>
-<span class="math notranslate nohighlight">\(\newcommand{\myjaci}[2]   {\displaystyle \sum^i\frac{\partial \mathrm{N}^{\,i}}{\partial #2} #1^{\,i}}\)</span>
-<span class="math notranslate nohighlight">\(\newcommand{\mynderiv}[2] {\displaystyle \frac{\partial\mathrm{N}^{#1}}{\partial\mathrm{r}_{#2}}}\)</span></p>
 <p><strong>Generation of shape functions</strong></p>
 <p>The shape functions <span class="math notranslate nohighlight">\(\mytensor{N}\)</span> in symbolic represenation depending on the natural coordinates vector <span class="math notranslate nohighlight">\(\mytensor{r}\)</span> with its components <span class="math notranslate nohighlight">\(r \, s \, t\)</span>,
 are generated from their coefficients. Of course, the shape functions can be also directly
@@ -142,7 +145,7 @@ Additionally, the inverse jacobian matrix and the jacobi determinant is calculat
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Def_grad</span><span class="o">=</span><span class="n">sy</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">+</span><span class="n">dU_dx</span>
 </pre></div>
 </div>
-<p><strong>Determining the derivivative of the shape functions</strong> <span class="math notranslate nohighlight">\(\mytensor{N}\)</span> <strong>with respect to</strong> <span class="math notranslate nohighlight">\(\mytensor{x} **from** :math:\)</span>displaystyle frac{partialmytensor{N}}{partialmytensor{r}}` <strong>and the Jabobian</strong></p>
+<p><strong>Determining the derivivative of the shape functions</strong> <span class="math notranslate nohighlight">\(\mytensor{N}\)</span> <strong>with respect to</strong> <span class="math notranslate nohighlight">\(\mytensor{x}\)</span> <strong>from</strong> <span class="math notranslate nohighlight">\(\displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{r}}\)</span> <strong>and the Jabobian</strong></p>
 <p><span class="math notranslate nohighlight">\(\displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{r}} = \left[\begin{array}{cccc} \mynderiv{1}{1} &amp; \mynderiv{1}{2} &amp; \mynderiv{1}{3} \\ \vdots &amp; \vdots &amp; \vdots \\ \mynderiv{i}{1} &amp; \mynderiv{i}{2} &amp;  \mynderiv{i}{3} \end{array} \right]\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dN_rst</span><span class="o">=</span><span class="n">calc_dN_rst</span><span class="p">(</span><span class="n">shapeFunc</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
 </pre></div>
@@ -162,7 +165,7 @@ Additionally, the inverse jacobian matrix and the jacobi determinant is calculat
 <p><strong>Calculation of the configurational stress</strong></p>
 <p>The configurational stress <span class="math notranslate nohighlight">\(\mytensor{C}\)</span> can be writen in a motion-based and a deformation-based formulation. Both are supported by this package.
 The energy density <span class="math notranslate nohighlight">\(\phi\)</span> represents the sum of the plastic energy density <span class="math notranslate nohighlight">\(\phi_\mathrm{pl}\)</span> and the strain energy density <span class="math notranslate nohighlight">\(\phi_\mathrm{el}\)</span>.
-In the script which generates the numerical implementations for all supported element types, both the motion based and the deformation based formulation are generated.
+In the script which generates the numerical implementations for all supported element types, both the motion based and the deformation based formulations are generated.
 In the interface they can be selected by the parameter <code class="xref py py-func docutils literal notranslate"><span class="pre">method()</span></code>.</p>
 <p><span class="math notranslate nohighlight">\(\phi = \phi_\mathrm{pl} + \phi_\mathrm{el}\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ENER</span> <span class="o">=</span> <span class="n">SENER</span><span class="o">+</span><span class="n">PENER</span>
@@ -180,8 +183,8 @@ the deformation gradient <span class="math notranslate nohighlight">\(\mytensor{
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">ENER</span><span class="o">*</span><span class="n">sy</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">-</span><span class="n">dU_dx</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">Piola_1</span>
 </pre></div>
 </div>
-<p><strong>Determining inner part of the integral</strong></p>
-<p>The inner part of the volume integral in a symbolic definition represents the final result of the derivation.
+<p><strong>Determining inner part of the configurational force integral</strong></p>
+<p>The inner part of the volume integral in a symbolic definition, shown in the beginning, represents the final result of the derivation.
 By calling the function <code class="code docutils literal notranslate"><span class="pre">lambdify_C</span></code>, a numerical implementation can be generated.</p>
 <p><span class="math notranslate nohighlight">\(\mytensor{f} = \displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{x}} \, \mytensor{C}^\mathrm{T} \, \mathrm{det}(\mytensor{J})\)</span></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C_Force</span><span class="o">=</span><span class="n">dN_dxyz</span><span class="o">*</span><span class="n">C</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">jacobi_det</span>

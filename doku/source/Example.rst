@@ -1,15 +1,25 @@
 .. _Example:
 
+
 .. py:currentmodule:: ConF3D.Auxiliary_functions
 
 Symbolic implementation of configurational forces
 =================================================
 
-In the following, the main part of the derivation of configurational forces implementation for the elastic and elastic-plastic is shown. (Formel). Formel beschreiben auf numerische Implementierung hinweisen
-(noch alles analytisch, danach numerische Auswertung. Auch am Ende einarbeiten.
+:math:`\newcommand{\mytensor}[1] {\boldsymbol{\mathrm{#1}}}`
+:math:`\newcommand{\myjaci}[2]   {\displaystyle \sum^i\frac{\partial \mathrm{N}^{\,i}}{\partial #2} #1^{\,i}}`
+:math:`\newcommand{\mynderiv}[2] {\displaystyle \frac{\partial\mathrm{N}^{#1}}{\partial\mathrm{r}_{#2}}}`
 
-For clarification each section 
-contains the corresponding code snippets and formulas.
+In the following, the main part of the derivation of configurational forces implementation for the elastic and elastic-plastic is shown.
+Configurational forces :math:`\mytensor{g}` are defined depending on the shape functions :math:`\mytensor{N}`, the cartesian coordinates :math:`\mytensor{x}`, 
+the configurational stress :math:`\mytensor{C}` and the Jacobi determinant :math:`\det\left(\mytensor{J}\right)` in the following way:
+
+:math:`\mytensor{g}=\int_{V}{\frac{\partial\mytensor{N}}{\partial\mytensor{x}}{\mytensor{C}}^\mathrm{T}}\det\left(\mytensor{J}\right)dV`
+
+In this formula the inner part of the integral must be derived symbolically, the integration is than performed using a automatically generated 
+Gauss integration routine. This derivation is shown in detail in the following sections. At the end numeric code is generated for all supported elements.
+
+For clarification each section contains the corresponding code snippets and formulas.
 
 
 **Calculation of the shape function coefficients**
@@ -35,10 +45,6 @@ the generated functions. For example, the order of the stress vector can be stat
     >>> Element_U      = sy.MatrixSymbol('U', num_nodes, 3)
     >>> SENER,PENER    = sy.symbols("SENER PENER")
     >>> S_Ten          = sy.symbols("S11 S22 S33 S12 S13 S23")
-
-:math:`\newcommand{\mytensor}[1] {\boldsymbol{\mathrm{#1}}}`
-:math:`\newcommand{\myjaci}[2]   {\displaystyle \sum^i\frac{\partial \mathrm{N}^{\,i}}{\partial #2} #1^{\,i}}`
-:math:`\newcommand{\mynderiv}[2] {\displaystyle \frac{\partial\mathrm{N}^{#1}}{\partial\mathrm{r}_{#2}}}`
 
 
 **Generation of shape functions**
@@ -86,7 +92,7 @@ The deformation gradient :math:`\mytensor{F}` is defined by the following equati
     >>> Def_grad=sy.Matrix(np.eye(3))+dU_dx
 
 
-**Determining the derivivative of the shape functions** :math:`\mytensor{N}` **with respect to** :math:`\mytensor{x} **from** :math:`\displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{r}}` **and the Jabobian**
+**Determining the derivivative of the shape functions** :math:`\mytensor{N}` **with respect to** :math:`\mytensor{x}` **from** :math:`\displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{r}}` **and the Jabobian**
 
 :math:`\displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{r}} = \left[\begin{array}{cccc} \mynderiv{1}{1} & \mynderiv{1}{2} & \mynderiv{1}{3} \\ \vdots & \vdots & \vdots \\ \mynderiv{i}{1} & \mynderiv{i}{2} &  \mynderiv{i}{3} \end{array} \right]`
 
@@ -112,7 +118,7 @@ The first Piola Kirchhoff stress :math:`\mytensor{P}` is calculated from the the
 
 The configurational stress :math:`\mytensor{C}` can be writen in a motion-based and a deformation-based formulation. Both are supported by this package.
 The energy density :math:`\phi` represents the sum of the plastic energy density :math:`\phi_\mathrm{pl}` and the strain energy density :math:`\phi_\mathrm{el}`.
-In the script which generates the numerical implementations for all supported element types, both the motion based and the deformation based formulation are generated.
+In the script which generates the numerical implementations for all supported element types, both the motion based and the deformation based formulations are generated.
 In the interface they can be selected by the parameter :func:`method`.
 
 :math:`\phi = \phi_\mathrm{pl} + \phi_\mathrm{el}`
@@ -134,9 +140,9 @@ The displacement-based formulation defines the configurational stress :math:`\my
     >>> C = ENER*sy.Matrix(np.eye(3))-dU_dx.T*Piola_1
 
 
-**Determining inner part of the integral**
+**Determining inner part of the configurational force integral**
 
-The inner part of the volume integral in a symbolic definition represents the final result of the derivation. 
+The inner part of the volume integral in a symbolic definition, shown in the beginning, represents the final result of the derivation. 
 By calling the function :code:`lambdify_C`, a numerical implementation can be generated.
 
 :math:`\mytensor{f} = \displaystyle \frac{\partial\mytensor{N}}{\partial\mytensor{x}} \, \mytensor{C}^\mathrm{T} \, \mathrm{det}(\mytensor{J})`
