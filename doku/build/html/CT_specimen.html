@@ -76,22 +76,55 @@
             
   <div class="section" id="example-2-ct-specimen">
 <span id="ct-specimen"></span><h1>Example 2: CT-specimen<a class="headerlink" href="#example-2-ct-specimen" title="Permalink to this headline">¶</a></h1>
-<p>This example uses Configurational Forces to determine the crack driving force. The sum of the CFs over a volume in crack direction represents the well-known J-integral <a class="footnote-reference brackets" href="#id5" id="id1">1</a>.
+<p>This example uses Configurational Forces to determine the crack driving force. The sum of the CFs over a volume in crack direction represents the well-known J-integral <a class="footnote-reference brackets" href="#id7" id="id1">1</a>.
 The dimensions of the CT-specimen are shown in Fig.1. In the following two cases with differnet material behaviour are presented and compared with literature.
 In the linear elastic case (a) the classical J-integral is calculated from the configurational forces.
 In the elastoplastic case (b) a incremental J-integral is evaluated. In contrast to the conventional J-integral, only the elastic energy density is considered.
 The geometry and the mesh are in both cases the same.
 The models are provided as Abaqus Input files and an Abaqus cae files and use fully-integrated bilinear quadrilateral plane strain elements (CPE4).</p>
-<div class="figure align-default" id="id9">
-<img alt="Geometry of the specimen" src="_images/101_ct_probe_002.svg" /><p class="caption"><span class="caption-text">Fig.1: Geometry of the specimen</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
+<div class="figure align-default" id="id11">
+<img alt="Geometry of the specimen" src="_images/101_ct_probe_002.svg" /><p class="caption"><span class="caption-text">Fig.1: Geometry of the specimen</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
 </div>
 <p>For the partitions F and G in Fig.1, a mapped mesh is used. In area F, the mesh size is 0.15 mm. In area G, the mesh size is 0.165 mm on the crack line.
-All other areas are meshed using a free meshing algorithm with a mesh size of 1 mm.</p>
+All other areas are meshed using a free meshing algorithm with a mesh size of 1 mm.
+In both examples, the following files are provided: <a href="#id2"><span class="problematic" id="id3">**</span></a>Table formatting ansehen (Formatvorlage?)</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>CT_specimen_CPE4.cae</strong></p></td>
+<td><p>Abaqus model database file (Abaqus 2020)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>CT_specimen_CPE4.inp</strong></p></td>
+<td><p>Abaqus input file</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>CT_specimen_CPE4.odb</strong></p></td>
+<td><p>Abaqus output database</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_Data_from_abq.py</strong></p></td>
+<td><p>Code for extraction of the input data from odb files; generates Data.npz</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Data.npz</strong></p></td>
+<td><p>NumPy npz-File, containing all necessary input data for CF calculation</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Conf_Forces.dll</strong></p></td>
+<td><p>Compiled numerical CF implementation</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Conf_Forces_py.py</strong></p></td>
+<td><p>Python wrapper</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>J_Integral.py</strong></p></td>
+<td><p>CF and J-integral evaluation</p></td>
+</tr>
+</tbody>
+</table>
 <div class="section" id="a-linear-elastic-case">
 <h2>a) Linear elastic case<a class="headerlink" href="#a-linear-elastic-case" title="Permalink to this headline">¶</a></h2>
 <p>A linear elastic material with a Young’s modulus of <span class="math notranslate nohighlight">\(E_{1}=200\,\mathrm{GPa}\)</span> and a Poisson’s ratio <span class="math notranslate nohighlight">\(\nu\)</span> of 0.3 is used for the whole specimen.
-For this example a displacement of <span class="math notranslate nohighlight">\(u_{y}=0.5\,\mathrm{mm}\)</span> is used, which leads to a reaction force of <span class="math notranslate nohighlight">\(P=56.32\,\mathrm{kN}\)</span>.
-According to an ASTM standard <a class="footnote-reference brackets" href="#id6" id="id2">2</a>, the J-integral for a CT-specimen can be calculated in the following way:</p>
+For this example a displacement of <span class="math notranslate nohighlight">\(u_{y}=0.5\,\mathrm{mm}\)</span> is used, which leads to a reaction force of <span class="math notranslate nohighlight">\(P=56.32\,\mathrm{kN}\)</span>.</p>
+<p>According to an ASTM standard <a class="footnote-reference brackets" href="#id8" id="id4">2</a>, the J-integral for a CT-specimen can be calculated in the following way:</p>
 <p><span class="math notranslate nohighlight">\(J=\cfrac{K^2 (1 - \nu^2)}{E}\)</span></p>
 <p>Where <span class="math notranslate nohighlight">\(K\)</span> represents the fracture thoughness depending on the thickness <span class="math notranslate nohighlight">\(B=B_N=25\,\mathrm{mm}\)</span> and the geometry factor <span class="math notranslate nohighlight">\(f(a/W)\)</span>.</p>
 <p><span class="math notranslate nohighlight">\(K=\cfrac{P}{(B B_N W)^{1/2}} f(a/W)\)</span></p>
@@ -103,9 +136,9 @@ This can be considered as converged since 30 contours only leads to a minimal ad
 </div>
 <div class="section" id="b-elastoplastic-case">
 <h2>b) Elastoplastic case<a class="headerlink" href="#b-elastoplastic-case" title="Permalink to this headline">¶</a></h2>
-<p>The presented algorithm is validated based on a similar example from Kolednik et al. <a class="footnote-reference brackets" href="#id8" id="id3">4</a>.
+<p>The presented algorithm is validated based on a similar example from Kolednik et al. <a class="footnote-reference brackets" href="#id10" id="id5">4</a>.
 The specimen is made from an annealed mild steel (S235) with a Young’s modulus of <span class="math notranslate nohighlight">\(E_{1}=200\,\mathrm{GPa}\)</span>, Poisson’s ratio of 0.3 and a yield stress of <span class="math notranslate nohighlight">\(\sigma_{y}=270\,\mathrm{MPa}\)</span>.
-The true stress versus strain curve can be found in the thesis of Schöngrundner <a class="footnote-reference brackets" href="#id7" id="id4">3</a>.
+The true stress versus strain curve can be found in the thesis of Schöngrundner <a class="footnote-reference brackets" href="#id9" id="id6">3</a>.
 Additionally, the data for this curve can be found in the Abaqus input file below the <code class="code docutils literal notranslate"><span class="pre">*Plastic</span></code> keyword.
 The material is modelled using the incremental plasticity model provided by Abaqus.
 Therefore, the plastic behaviour is modelled using 10 measured points of the true stress-strain curve.
@@ -219,16 +252,16 @@ The area, where this summation is performed is given by the node set <cite>eval_
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
 <dl class="footnote brackets">
-<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
 <dd><p><a class="reference external" href="https://doi.org/10.1115/1.3601206">Rice JR. A Path Independent Integral and the Approximate Analysis of Strain Concentration by Notches and Cracks. Journal of Applied Mechanics 1968;35(2):379–86.</a></p>
 </dd>
-<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
 <dd><p><a class="reference external" href="https://www.astm.org/e1820-18.html">ASTM E1820–05 (2005) Standard test method for measurement of fracture toughness. In: Annual Book of ASTM Standards, vol 03.01. ASTM</a></p>
 </dd>
-<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
+<dt class="label" id="id9"><span class="brackets"><a class="fn-backref" href="#id6">3</a></span></dt>
 <dd><p><a class="reference external" href="https://pure.unileoben.ac.at/portal/de/publications/numerische-studien-zur-ermittlung-der-risstreibenden-kraft-in-elastischplastischen-materialien-bei-unterschiedlichen-belastungsbedingungen(0c6ab65a-3702-4001-87a5-e53456916731).html?customType=theses">Ronald Schöngrundner. Numerische Studien zur Ermittlung der risstreibenden Kraft in elastisch-plastischen Materialien bei unterschiedlichen Belastungsbedingungen [Dissertation]. Leoben: Montanuniverstät Leoben; 2010.</a></p>
 </dd>
-<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id3">4</a></span></dt>
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id5">4</a></span></dt>
 <dd><p><a class="reference external" href="https://doi.org/10.1007/s10704-013-9920-6">Kolednik O, Schöngrundner R, Fischer FD. A new view on J-integrals in elastic–plastic materials. Int J Fract 2014;187(1):77–107.</a></p>
 </dd>
 </dl>

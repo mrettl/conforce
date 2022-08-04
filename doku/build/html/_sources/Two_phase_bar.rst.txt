@@ -17,15 +17,39 @@ The bar is fixed on the left side, on the right side a displacement of :math:`u=
 
 :math:`G=\frac{u^2 E_1 E_2 A [E_2 - E_1]}{l^2[E_1+E_2]^{2}} = 11.67\,\mathrm{N}`
 
-Working example
----------------
+The example consists of the following files:
+
+.. list-table::
+   :widths: 40 80
+   :header-rows: 0
+
+   * - **Two_phase_bar.cae**
+     - Abaqus model database file (Abaqus 2020)
+   * - **Two_phase_bar.inp**
+     - Abaqus input file
+   * - **Two_phase_bar.odb**
+     - Abaqus output database
+   * - **get_Data_from_abq.py**
+     - Code for extraction of the input data from odb files; generates Data.npz
+   * - **Data.npz**
+     - NumPy npz-File, containing all necessary input data for CF calculation
+   * - **Conf_Forces.dll**
+     - Compiled numerical CF implementation
+   * - **Conf_Forces_py.py**
+     - Python wrapper
+   * - **Calculate_CF.py**
+     - Calculation of configurational forces
+
+Using the code
+--------------
 
 This example demonstrates the evaluation of configurational forces from an Abaqus output database. Alternatively, the results of the FE-calculation
 (nodal coordinates, element connectivity, displacement, stress, plastic energy, elastic energy)
 are provided within this documentation. Additionally a Abaqus cae file and a Abaqus input file is provided with this example.
 Therefore, the extraction of the FE-results is optional. 
 
-**Extraction of necessary input data**
+Extraction of necessary input data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Abaqus Python script :code:`get_Data_from_abq.py` extracts all necessary data from the Abaqus output database (odb file).
 The compiled functions for configurational force evaluation are element-dependent, therefore the results have to be extracted on a per-element basis.

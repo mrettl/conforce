@@ -1,6 +1,36 @@
 """
 Element Definitions
-======================
+===================
+
+This file contains all the necessary information about the supported Finite Elements in a dictionary.
+
+For the definiton of an element the following arrays are necessary:
+
+**Coordinates of the integration points**
+    (number of integration points,3) nd-array
+    
+    >>> int_points['CPE4'] = np.array(((-EdW3, -EdW3, 0),
+                                   (EdW3, -EdW3, 0),
+                                   (-EdW3, EdW3, 0),
+                                   (EdW3, EdW3, 0)))
+
+**Coordinates of the nodes in natural coordinates**
+    (number of nodes,3) nd-array
+    
+    >>> bild_points['CPE4'] = np.array(((-1., -1., 0),
+                                    (1., -1., 0),
+                                    (1., 1., 0),
+                                    (-1., 1., 0)))
+
+**Polynomial coefficents of shape functions**
+    (at least number of nodes,3) nd-array
+    
+    >>> poly_power['CPE4'] = np.array(((0, 0, 0), (1, 0, 0), (0, 1, 0), (1, 1, 0)))
+
+**Integration weights**
+    (number of integration points) nd-array
+    
+    >>> int_weights['CPE4'] = np.array((1., 1., 1., 1.))
 """
 import numpy as np
 

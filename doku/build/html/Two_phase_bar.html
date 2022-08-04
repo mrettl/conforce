@@ -85,13 +85,47 @@ and <span class="math notranslate nohighlight">\(E_{2}=E_{1}/2 = 105\,\mathrm{GP
 The Poisson’s ratio is set to zero to match the 1D-case where an analytical solution is available <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.
 The bar is fixed on the left side, on the right side a displacement of <span class="math notranslate nohighlight">\(u=0.1\,\mathrm{mm}\)</span> is applied.</p>
 <p><span class="math notranslate nohighlight">\(G=\frac{u^2 E_1 E_2 A [E_2 - E_1]}{l^2[E_1+E_2]^{2}} = 11.67\,\mathrm{N}\)</span></p>
-<div class="section" id="working-example">
-<h2>Working example<a class="headerlink" href="#working-example" title="Permalink to this headline">¶</a></h2>
+<p>The example consists of the following files:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Two_phase_bar.cae</strong></p></td>
+<td><p>Abaqus model database file (Abaqus 2020)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Two_phase_bar.inp</strong></p></td>
+<td><p>Abaqus input file</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Two_phase_bar.odb</strong></p></td>
+<td><p>Abaqus output database</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_Data_from_abq.py</strong></p></td>
+<td><p>Code for extraction of the input data from odb files; generates Data.npz</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Data.npz</strong></p></td>
+<td><p>NumPy npz-File, containing all necessary input data for CF calculation</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Conf_Forces.dll</strong></p></td>
+<td><p>Compiled numerical CF implementation</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Conf_Forces_py.py</strong></p></td>
+<td><p>Python wrapper</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Calculate_CF.py</strong></p></td>
+<td><p>Calculation of configurational forces</p></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="using-the-code">
+<h2>Using the code<a class="headerlink" href="#using-the-code" title="Permalink to this headline">¶</a></h2>
 <p>This example demonstrates the evaluation of configurational forces from an Abaqus output database. Alternatively, the results of the FE-calculation
 (nodal coordinates, element connectivity, displacement, stress, plastic energy, elastic energy)
 are provided within this documentation. Additionally a Abaqus cae file and a Abaqus input file is provided with this example.
 Therefore, the extraction of the FE-results is optional.</p>
-<p><strong>Extraction of necessary input data</strong></p>
+<div class="section" id="extraction-of-necessary-input-data">
+<h3>Extraction of necessary input data<a class="headerlink" href="#extraction-of-necessary-input-data" title="Permalink to this headline">¶</a></h3>
 <p>The Abaqus Python script <code class="code docutils literal notranslate"><span class="pre">get_Data_from_abq.py</span></code> extracts all necessary data from the Abaqus output database (odb file).
 The compiled functions for configurational force evaluation are element-dependent, therefore the results have to be extracted on a per-element basis.
 In this example, only linear quadrilateral plane-strain elements with reduced integration (CPE4R) are used.</p>
@@ -129,6 +163,7 @@ an array filled with zeros with the shape described below have to be generated. 
 </dl>
 </li>
 </ul>
+</div>
 <div class="section" id="calculation-of-configurational-forces">
 <h3>Calculation of configurational forces<a class="headerlink" href="#calculation-of-configurational-forces" title="Permalink to this headline">¶</a></h3>
 <p>In the following step, the script <code class="code docutils literal notranslate"><span class="pre">Calculate_CF.py</span></code> evaluates the configurational forces for all available time steps. The function call <code class="code docutils literal notranslate"><span class="pre">calc_Conf_Force_[Element</span> <span class="pre">type]</span></code> is element-dependent.
@@ -164,7 +199,8 @@ possible if a node label only occurs once in a model. In Abaqus CAE, the option 
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Example 1: Two-phase bar</a><ul>
-<li><a class="reference internal" href="#working-example">Working example</a><ul>
+<li><a class="reference internal" href="#using-the-code">Using the code</a><ul>
+<li><a class="reference internal" href="#extraction-of-necessary-input-data">Extraction of necessary input data</a></li>
 <li><a class="reference internal" href="#calculation-of-configurational-forces">Calculation of configurational forces</a></li>
 </ul>
 </li>

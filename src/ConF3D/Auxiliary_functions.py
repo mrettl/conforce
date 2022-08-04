@@ -1,6 +1,6 @@
 r"""
-Auxilliar functions
-======================
+Auxilliary functions
+====================
 
 In this module all auxilliar functions are defined. The basic functionalities are:
 
@@ -361,14 +361,13 @@ def get_det_and_inv(jac):
     det : SymPy expression
         Determinant of the matrix
     """
-    det = jac.det()
-
-    inv_jac = np.zeros((3, 3), dtype=np.object)
+    inv_jac,det = inversion_and_det_3x3(jac)
+    
+    #If determinant is zero assume 2x2 submatrix (eg. CPE4 Jacobian)
     if det == 0:
-        inv_jac[:2, :2], det = inversion_and_det_2x2(jac[:2, :2])
-    else:
-        inv_jac, det = inversion_and_det_3x3(jac)
-    return sy.Matrix(inv_jac), det
+        inv_jac = np.zeros((3,3),dtype=np.object)
+        inv_jac[:2,:2],det = inversion_and_det_2x2(jac[:2,:2])
+    return sy.Matrix(inv_jac),det
 
 
 def evaluate_rst(sym_Mat, Points):
@@ -639,7 +638,11 @@ def lambdify_C(args, arg_names, expr, expr_name="_lambdified"):
     """
 
     import sympy
-    from sympy.printing.ccode import C99CodePrinter as Printer
+    #Code Printer is sympy version dependend
+    try:
+        from sympy.printing.c import C99CodePrinter as Printer
+    except:
+        from sympy.printing.ccode import C99CodePrinter as Printer
     from sympy.codegen.rewriting import create_expand_pow_optimization
     printer = Printer()
     expand_opt = create_expand_pow_optimization(3)

@@ -78,6 +78,36 @@
 <span id="conf3d-ele-def"></span><h1>ConF3D.ele_def<a class="headerlink" href="#module-ConF3D.ele_def" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="element-definitions">
 <h2>Element Definitions<a class="headerlink" href="#element-definitions" title="Permalink to this headline">¶</a></h2>
+<p>This file contains all the necessary information about the supported Finite Elements in a dictionary.</p>
+<p>For the definiton of an element the following arrays are necessary:</p>
+<dl>
+<dt><strong>Coordinates of the integration points</strong></dt><dd><p>(number of integration points,3) nd-array</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">int_points</span><span class="p">[</span><span class="s1">&#39;CPE4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(((</span><span class="o">-</span><span class="n">EdW3</span><span class="p">,</span> <span class="o">-</span><span class="n">EdW3</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="go">                               (EdW3, -EdW3, 0),</span>
+<span class="go">                               (-EdW3, EdW3, 0),</span>
+<span class="go">                               (EdW3, EdW3, 0)))</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Coordinates of the nodes in natural coordinates</strong></dt><dd><p>(number of nodes,3) nd-array</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bild_points</span><span class="p">[</span><span class="s1">&#39;CPE4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(((</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="go">                                (1., -1., 0),</span>
+<span class="go">                                (1., 1., 0),</span>
+<span class="go">                                (-1., 1., 0)))</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Polynomial coefficents of shape functions</strong></dt><dd><p>(at least number of nodes,3) nd-array</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">poly_power</span><span class="p">[</span><span class="s1">&#39;CPE4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Integration weights</strong></dt><dd><p>(number of integration points) nd-array</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">int_weights</span><span class="p">[</span><span class="s1">&#39;CPE4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 

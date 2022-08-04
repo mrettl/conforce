@@ -31,4 +31,4 @@ idx = np.isin(Node_labels, eval_Node_Labels, assume_unique=True)
 J_dbf_far = CF_Nodal[:, idx].sum(axis=1)
 
 # Output the result in x-direction (coincides with crack direction)
-print("J-integral in evaluation region: " + str(J_dbf_far[-1, 0](*-1)) + " mJ/mm^2")
+print("J-integral in evaluation region: " + str(J_dbf_far[-1, 0]*(-1)) + " mJ/mm^2")

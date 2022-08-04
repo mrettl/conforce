@@ -19,12 +19,38 @@ The models are provided as Abaqus Input files and an Abaqus cae files and use fu
 
 For the partitions F and G in Fig.1, a mapped mesh is used. In area F, the mesh size is 0.15 mm. In area G, the mesh size is 0.165 mm on the crack line. 
 All other areas are meshed using a free meshing algorithm with a mesh size of 1 mm. 
+In both examples, the following files are provided: **Table formatting ansehen (Formatvorlage?)
+
+.. list-table::
+   :widths: 40 80
+   :header-rows: 0
+
+   * - **CT_specimen_CPE4.cae**
+     - Abaqus model database file (Abaqus 2020)
+   * - **CT_specimen_CPE4.inp**
+     - Abaqus input file
+   * - **CT_specimen_CPE4.odb**
+     - Abaqus output database
+   * - **get_Data_from_abq.py**
+     - Code for extraction of the input data from odb files; generates Data.npz
+   * - **Data.npz**
+     - NumPy npz-File, containing all necessary input data for CF calculation
+   * - **Conf_Forces.dll**
+     - Compiled numerical CF implementation
+   * - **Conf_Forces_py.py**
+     - Python wrapper
+   * - **J_Integral.py**
+     - CF and J-integral evaluation
+
 
 a) Linear elastic case
 ----------------------
 
 A linear elastic material with a Young's modulus of :math:`E_{1}=200\,\mathrm{GPa}` and a Poisson's ratio :math:`\nu` of 0.3 is used for the whole specimen.
 For this example a displacement of :math:`u_{y}=0.5\,\mathrm{mm}` is used, which leads to a reaction force of :math:`P=56.32\,\mathrm{kN}`.
+
+
+
 According to an ASTM standard [2]_, the J-integral for a CT-specimen can be calculated in the following way:
 
 :math:`J=\cfrac{K^2 (1 - \nu^2)}{E}`
