@@ -59,8 +59,8 @@ Modules
     :toctree: generated/
     :template: module_template.rst
 
-    ConF3D.Auxiliary_functions
-    ConF3D.ele_def
+    Auxiliary_functions
+    ele_def
 
 
 .. toctree::

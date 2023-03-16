@@ -29,7 +29,7 @@
     <link rel="index" title="Index" href="genindex.html" >
     <link rel="search" title="Search" href="search.html" >
     <link rel="top" title="ConF3D 0.1 documentation" href="index.html" >
-    <link rel="prev" title="ConF3D.ele_def" href="generated/ConF3D.ele_def.html" > 
+    <link rel="prev" title="Element Definitions" href="generated/ele_def.html" > 
   </head>
   <body>
 
@@ -63,7 +63,7 @@
            >modules</a>
       </li>
       <li class="active">
-        <a href="generated/ConF3D.ele_def.html" title="ConF3D.ele_def"
+        <a href="generated/ele_def.html" title="Element Definitions"
            accesskey="P">previous</a>
       </li>
     </ul>
@@ -191,7 +191,7 @@ By calling the function <code class="code docutils literal notranslate"><span cl
 </pre></div>
 </div>
 <p><strong>Generate the Implementation</strong></p>
-<p>The function <a class="reference internal" href="generated/Auxiliary_functions/ConF3D.Auxiliary_functions.gen_Integration_C_static.html#ConF3D.Auxiliary_functions.gen_Integration_C_static" title="ConF3D.Auxiliary_functions.gen_Integration_C_static"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_Integration_C_static()</span></code></a> generates two C-functions. In the first step <a class="reference internal" href="generated/Auxiliary_functions/ConF3D.Auxiliary_functions.lambdify_C.html#ConF3D.Auxiliary_functions.lambdify_C" title="ConF3D.Auxiliary_functions.lambdify_C"><code class="xref py py-func docutils literal notranslate"><span class="pre">lambdify_C()</span></code></a> is called to generate a numerical implementation of the provided expression.
+<p>The function <code class="xref py py-func docutils literal notranslate"><span class="pre">gen_Integration_C_static()</span></code> generates two C-functions. In the first step <code class="xref py py-func docutils literal notranslate"><span class="pre">lambdify_C()</span></code> is called to generate a numerical implementation of the provided expression.
 In the second step a function to numerically integrate the expression is generated.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">impl</span><span class="o">=</span><span class="n">gen_Integration_C_static</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span><span class="n">coord</span><span class="p">,</span><span class="n">Element_U</span><span class="p">,</span><span class="n">S_Ten</span><span class="p">,</span><span class="n">PENER</span><span class="p">,</span><span class="n">SENER</span><span class="p">,</span><span class="n">int_points</span><span class="p">,</span><span class="n">int_weights</span><span class="p">,</span><span class="n">C_Force</span><span class="p">,</span><span class="n">expr_name</span><span class="p">)</span>
 </pre></div>
@@ -205,8 +205,8 @@ In the second step a function to numerically integrate the expression is generat
       <div class="spc-rightsidebar span3">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="generated/ConF3D.ele_def.html"
-                        title="previous chapter">ConF3D.ele_def</a></p>
+  <p class="topless"><a href="generated/ele_def.html"
+                        title="previous chapter">Element Definitions</a></p>
   <h3>This Page</h3>
   <div>
     <a href="_sources/Example.rst.txt"

@@ -76,34 +76,6 @@
             
   <div class="section" id="conf3d-auxiliary-functions-lambdify-c">
 <h1>ConF3D.Auxiliary_functions.lambdify_C<a class="headerlink" href="#conf3d-auxiliary-functions-lambdify-c" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="ConF3D.Auxiliary_functions.lambdify_C">
-<code class="sig-prename descclassname">ConF3D.Auxiliary_functions.</code><code class="sig-name descname">lambdify_C</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="n">arg_names</span></em>, <em class="sig-param"><span class="n">expr</span></em>, <em class="sig-param"><span class="n">expr_name</span><span class="o">=</span><span class="default_value">'_lambdified'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ConF3D/Auxiliary_functions.html#lambdify_C"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ConF3D.Auxiliary_functions.lambdify_C" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates C99 code for a given symbolic expression.</p>
-<p>This function is called by gen_Integration_C_static or gen_Integration_C_dynamic. In this package this function is used to
-generate the numeric representation of configurational forces at the integration point, or more specifically the inner part of the integral.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>args</strong><span class="classifier">Tuple(symbolic objects)</span></dt><dd><p>Tuple of symbolically defined arguments</p>
-</dd>
-<dt><strong>arg_names</strong><span class="classifier">Tuple(str,)</span></dt><dd><p>Tuple of the symbol names</p>
-</dd>
-<dt><strong>expr</strong><span class="classifier">SymPy expression</span></dt><dd><p>Symbolic expression for which the numerical implementation should be generated</p>
-</dd>
-<dt><strong>expr_name</strong><span class="classifier">string</span></dt><dd><p>Name of the generated function.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>s</strong><span class="classifier">string</span></dt><dd><p>C-function as string</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 
 

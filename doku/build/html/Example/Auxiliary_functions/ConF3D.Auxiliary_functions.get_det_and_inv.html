@@ -76,31 +76,6 @@
             
   <div class="section" id="conf3d-auxiliary-functions-get-det-and-inv">
 <h1>ConF3D.Auxiliary_functions.get_det_and_inv<a class="headerlink" href="#conf3d-auxiliary-functions-get-det-and-inv" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="ConF3D.Auxiliary_functions.get_det_and_inv">
-<code class="sig-prename descclassname">ConF3D.Auxiliary_functions.</code><code class="sig-name descname">get_det_and_inv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jac</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ConF3D/Auxiliary_functions.html#get_det_and_inv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ConF3D.Auxiliary_functions.get_det_and_inv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inverts a symbolic matrix and calculates the determinant.</p>
-<p>This functions works for 3d-elemnts and plane strain 2d-elements.
-If the determinant of the 3x3 matrix is zero, the 2d- plane strain case
-is assumed.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>jac</strong><span class="classifier">(2 or 3,2 or 3) SymPy matrix</span></dt><dd><p>Symbolic 3x3 matrix to be inverted</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>inv_jac</strong><span class="classifier">(2 or 3,2 or 3) SymPy matrix</span></dt><dd><p>Inverted symbolic matrix</p>
-</dd>
-<dt><strong>det</strong><span class="classifier">SymPy expression</span></dt><dd><p>Determinant of the matrix</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 
 

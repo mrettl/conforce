@@ -76,39 +76,6 @@
             
   <div class="section" id="conf3d-auxiliary-functions-gen-configurational-forces-static">
 <h1>ConF3D.Auxiliary_functions.gen_Configurational_Forces_Static<a class="headerlink" href="#conf3d-auxiliary-functions-gen-configurational-forces-static" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="ConF3D.Auxiliary_functions.gen_Configurational_Forces_Static">
-<code class="sig-prename descclassname">ConF3D.Auxiliary_functions.</code><code class="sig-name descname">gen_Configurational_Forces_Static</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">poly_power</span></em>, <em class="sig-param"><span class="n">bild_points</span></em>, <em class="sig-param"><span class="n">int_points</span></em>, <em class="sig-param"><span class="n">int_weights</span></em>, <em class="sig-param"><span class="n">typ</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'mbf'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ConF3D/Auxiliary_functions.html#gen_Configurational_Forces_Static"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ConF3D.Auxiliary_functions.gen_Configurational_Forces_Static" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates the static configurational force implementation.
-This is a entry function and uses functions defined above to generate the numerical implementation
-of configurational forces for the static and elasto-plastic case.
-All Inputs are defined in ele_def.py</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>poly_power</strong><span class="classifier">(at least number of nodes,3) nd-array</span></dt><dd><p>Polynomial coefficents of shape functions in 3 dimensional space</p>
-</dd>
-<dt><strong>bild_points</strong><span class="classifier">(number of nodes,3) nd-array</span></dt><dd><p>Natural coordinates of nodes</p>
-</dd>
-<dt><strong>int_points</strong><span class="classifier">(number of points, 3) nd-array</span></dt><dd><p>Polynomial coefficents of shape functions in 3 dimensional space</p>
-</dd>
-<dt><strong>int_weights</strong><span class="classifier">(number of points) nd-array</span></dt><dd><p>Integration weights</p>
-</dd>
-<dt><strong>typ</strong><span class="classifier">str</span></dt><dd><p>Elementtype</p>
-</dd>
-<dt><strong>method</strong><span class="classifier">str (mbf/dbf)</span></dt><dd><p>Motion based or displacement based formulation</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>s</strong><span class="classifier">string</span></dt><dd><p>Python code as string</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 
 

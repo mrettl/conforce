@@ -28,10 +28,7 @@
     <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" >
     <link rel="search" title="Search" href="../../search.html" >
-    <link rel="top" title="ConF3D 0.1 documentation" href="../../index.html" >
-    <link rel="up" title="ConF3D.Auxiliary_functions" href="../ConF3D.Auxiliary_functions.html" >
-    <link rel="next" title="ConF3D.ele_def" href="../ConF3D.ele_def.html" >
-    <link rel="prev" title="ConF3D.Auxiliary_functions.lambdify_C" href="ConF3D.Auxiliary_functions.lambdify_C.html" > 
+    <link rel="top" title="ConF3D 0.1 documentation" href="../../index.html" > 
   </head>
   <body>
 
@@ -51,8 +48,7 @@
     <ul class="nav nav-pills pull-left">
 	
         <li class="active"><a href="../../index.html">ConF3D 0.1 documentation</a></li>
-	
-          <li class="active"><a href="../ConF3D.Auxiliary_functions.html" accesskey="U">ConF3D.Auxiliary_functions</a></li> 
+	 
     </ul>
               
               
@@ -64,14 +60,6 @@
       <li class="active">
         <a href="../../py-modindex.html" title="Python Module Index"
            >modules</a>
-      </li>
-      <li class="active">
-        <a href="../ConF3D.ele_def.html" title="ConF3D.ele_def"
-           accesskey="N">next</a>
-      </li>
-      <li class="active">
-        <a href="ConF3D.Auxiliary_functions.lambdify_C.html" title="ConF3D.Auxiliary_functions.lambdify_C"
-           accesskey="P">previous</a>
       </li>
     </ul>
               
@@ -88,34 +76,6 @@
             
   <div class="section" id="conf3d-auxiliary-functions-lambdify-numba">
 <h1>ConF3D.Auxiliary_functions.lambdify_numba<a class="headerlink" href="#conf3d-auxiliary-functions-lambdify-numba" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="ConF3D.Auxiliary_functions.lambdify_numba">
-<code class="sig-prename descclassname">ConF3D.Auxiliary_functions.</code><code class="sig-name descname">lambdify_numba</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="n">arg_names</span></em>, <em class="sig-param"><span class="n">expr</span></em>, <em class="sig-param"><span class="n">expr_name</span><span class="o">=</span><span class="default_value">'_lambdified'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ConF3D/Auxiliary_functions.html#lambdify_numba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ConF3D.Auxiliary_functions.lambdify_numba" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates Numba code for a given symbolic expression.</p>
-<p>This function is called by gen_Integration_Numba
-This function isn’t tested and is an alternative to the function which generates C-code.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>args</strong><span class="classifier">Tuple(symbolic objects)</span></dt><dd><p>Tuple of symbolically defined arguments</p>
-</dd>
-<dt><strong>arg_names</strong><span class="classifier">Tuple(str,)</span></dt><dd><p>Tuple of the symbol names</p>
-</dd>
-<dt><strong>expr</strong><span class="classifier">SymPy expression</span></dt><dd><p>Symbolic expression for which the numerical implementation should be generated</p>
-</dd>
-<dt><strong>expr_name</strong><span class="classifier">string</span></dt><dd><p>Name of the generated function.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>s</strong><span class="classifier">string</span></dt><dd><p>Numba function as string</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 
 
@@ -124,12 +84,6 @@ This function isn’t tested and is an alternative to the function which generat
           </div>
       <div class="spc-rightsidebar span3">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="ConF3D.Auxiliary_functions.lambdify_C.html"
-                        title="previous chapter">ConF3D.Auxiliary_functions.lambdify_C</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../ConF3D.ele_def.html"
-                        title="next chapter">ConF3D.ele_def</a></p>
   <h3>This Page</h3>
   <div>
     <a href="../../_sources/generated/Auxiliary_functions/ConF3D.Auxiliary_functions.lambdify_numba.rst.txt"

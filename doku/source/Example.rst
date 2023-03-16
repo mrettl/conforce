@@ -61,7 +61,7 @@ provided at this point, but this would be more error-prone and less user user-fr
 **Calculation of the Jacobi matrix**
 
 The Jacobi matrix :math:`\mytensor{J}` is calculated as shown in the following formula. The :math:`\mytensor{r}` vector represents the natural coordinates of a node, 
-the :math:`\mytensor{x}` vector represents the global coordinates.
+the :math:`\mytensor{x}` vector represents the global coordinates. 
 Additionally, the inverse jacobian matrix and the jacobi determinant is calculated.
 
 

@@ -1,5 +1,4 @@
-{{ fullname }}
-{{ underline }}
+
 
 .. automodule:: {{ fullname }}
 

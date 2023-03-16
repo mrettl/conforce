@@ -1131,7 +1131,9 @@ def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_w
     Element_U = sy.MatrixSymbol('U', num_nodes, 3)
     SENER, PENER = sy.symbols("SENER PENER")
     S_Ten = sy.symbols("S11 S22 S33 S12 S13 S23")
-
+    
+    S = gen_2D_Ten_from_vec(S_Ten)
+    
     # Generate Shape functions
     shapeFunc = get_shapeFunc(shapeFuncCoef_bild, r, s, t)
 
@@ -1153,7 +1155,6 @@ def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_w
     dN_dxyz = dN_rst * jac_inv.T
 
     # calculate 1st Piola Kirchhoff stress
-    S = gen_2D_Ten_from_vec(S_Ten)
     Def_grad_inv, Def_grad_det = get_det_and_inv(Def_grad)
     Piola_1 = Def_grad_det * S * Def_grad_inv.T
 
