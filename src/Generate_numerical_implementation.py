@@ -3,7 +3,7 @@
 import subprocess
 import os
 
-import Auxiliary_functions as sy_hfkt
+import util as sy_hfkt
 import ele_def as ele_def
 
 #########################
@@ -67,7 +67,7 @@ f_python_functions.close()
 
 if os.name == 'nt':
     # Windows
-    subprocess.call("clang -shared -O3 -o Conf_Forces.dll Conf_Forces.c", shell=True)
+    subprocess.call("mingw32-gcc -shared -O3 -o Conf_Forces.dll Conf_Forces.c", shell=True)
 else:
     # Unix based operating systems
-    subprocess.call("clang -shared -O3 -fPIC -o  Conf_Forces.so Conf_Forces.c", shell=True)
+    subprocess.call("mingw32-gcc -shared -O3 -fPIC -o  Conf_Forces.so Conf_Forces.c", shell=True)

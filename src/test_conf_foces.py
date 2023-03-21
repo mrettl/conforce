@@ -35,8 +35,6 @@ class MyTestCase(unittest.TestCase):
 
         self.assertDictEqual(expected_result, actual_result)
 
-        self.assertEqual(True, False)  # add assertion here
-
 
 if __name__ == '__main__':
     unittest.main()

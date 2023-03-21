@@ -1,8 +1,5 @@
 r"""
-Auxilliary functions
-====================
-
-In this module all auxilliar functions are defined. The basic functionalities are:
+In this module all auxiliary functions are defined. The basic functionalities are:
 
 - Generating symbolic shape functions (Poly_coefs, generate_shape_func_coeff, get_shapeFunc)
 - Generating numeric matrices and Tensors (create_sym_Mat,gen_2D_Ten_from_Vec)
@@ -17,114 +14,165 @@ import sympy as sy
 import numpy.polynomial.polynomial as pol
 
 
-def Poly_coefs(points, poly_power):
+class Shapes(object):
     """
-    Calculates the coefficients of the shape functions
+    Assembly of shape functions.
+
+    The j-th shape function has the form
+
+    >>>  shapes(j, point) == sum([
+    ...    coef[j, shape_powers[i, 0], shape_powers[i, 1], shape_powers[i, 2]]
+    ...    * points[0]**shape_powers[i, 0]
+    ...    * point[1]**shape_powers[i, 1]
+    ...    * point[2]**shape_powers[i, 2]
+    ...])
+
+    The coefficient matrix `coeff` must guarantee, that
+
+    >>> shapes(j, points[j]) == 1
+
+    and
+
+    >>> shapes(j, points[i]) == 0
+
+    for all `j != i`.
+    """
+
+    def __init__(self, coef, shape_powers):
+        self.coef = np.array(coef)
+        self.shape_powers = np.array(shape_powers)
+
+    @classmethod
+    def from_points(cls, points, shape_powers):
+        """
+        creates shape functions, such that each shape function is one at one point and zero at the other points
+
+        Parameters
+        ----------
+        points : (number of points,3) nd-array
+            Coordinates of points
+        shape_powers : (number of points,3) nd-array
+            Powers of shape functions in 3 dimensional space
+
+        Returns
+        -------
+        coef : (number of points, r coeff, s coeff, t coeff) nd-array
+            Coefficients of shape functions;
+        """
+        points = np.asarray(points, dtype=float)
+        shape_powers = np.asarray(shape_powers, dtype=int)
+
+        num_points = points.shape[0]
+        num_powers = shape_powers.shape[0]
+        assert num_points == num_powers
+
+        # a[i, j] = i-th shape power evaluated at j-th point
+        a = np.prod(
+                points.reshape((num_points, 1, 3))
+                ** shape_powers.reshape((1, num_powers, 3)),
+                axis=-1
+            ).T
+
+        # solve coeff_matrix * a = I,
+        # such that every shape function is one at exactly one point and zero at the other points
+        coeff_matrix = np.linalg.inv(a)
+
+        # shape_i(x,y,z) = sum([coef[i, j, k, l] * x**j * y**k * z**l for i, j, k in ...])
+        coef = np.zeros([num_points] + [np.max(power) + 1 for power in shape_powers.T], dtype=float)
+        for i, shape_power in enumerate(shape_powers):
+            coef[:, shape_power[0], shape_power[1], shape_power[2]] = coeff_matrix[:, i]
+
+        return cls(coef, shape_powers)
+
+    @property
+    def num_shapes(self):
+        return len(self.coef)
+
+    def __call__(self, j, point):
+        """
+        Evaluates the j-th shape function at the given point
+
+        Parameters
+        ----------
+        j: int
+            index of shape function
+        point: array like of shape (3,)
+            point on which to evaluate the j-shape function
+
+        Returns
+        -------
+        value: float
+        """
+        coef = self.coef
+        shape_powers = self.shape_powers
+        return sum([
+            coef[j, shape_powers[i, 0], shape_powers[i, 1], shape_powers[i, 2]]
+            * point[0] ** shape_powers[i, 0]
+            * point[1] ** shape_powers[i, 1]
+            * point[2] ** shape_powers[i, 2]
+            for i in range(self.num_shapes)
+        ])
+
+
+def compute_shape_functions(points, shape_powers):
+    """
+    The j-th shape function has the form
+
+    >>>  shape_j(point) == sum([
+    ...    coef[j, shape_powers[i, 0], shape_powers[i, 1], shape_powers[i, 2]]
+    ...    * points[0]**shape_powers[i, 0]
+    ...    * point[1]**shape_powers[i, 1]
+    ...    * point[2]**shape_powers[i, 2]
+    ...])
+
+    The coefficient matrix `coeff` is computed, such that
+
+    >>> shape_j(points[j]) == 1
+
+    and
+
+    >>> shape_j(points[i]) == 0
+
+    for all `j != i`.
 
     Parameters
     ----------
-    points : (number of nodes,3) nd-array
-        Coordinates of nodes
-    poly_power : (at least number of nodes,3) nd-array
-        Polynomial coefficents of shape functions in 3 dimensional space
+    points : (number of points,3) nd-array
+        Coordinates of points
+    shape_powers : (number of points,3) nd-array
+        Powers of shape functions in 3 dimensional space
 
     Returns
     -------
     coef : (number of points, r coeff, s coeff, t coeff) nd-array
-        Coefficents of shape functions;
+        Coefficients of shape functions;
     """
     num_points = points.shape[0]
-    num_Power = poly_power.shape[0]
+    num_Power = shape_powers.shape[0]
 
-    # ignore higher polynomial roders if there are not sufficent nodes
+    # ignore higher polynomial orders if there are not sufficient nodes
     Dim = min(num_points, num_Power)
     A = np.zeros((num_points, Dim))
     for i in range(num_points):
         for j in range(Dim):
-            A[i, j] = points[i, 0] ** poly_power[j, 0] * points[i, 1] ** poly_power[j, 1] * points[i, 2] ** poly_power[
+            A[i, j] = points[i, 0] ** shape_powers[j, 0] * points[i, 1] ** shape_powers[j, 1] * points[i, 2] ** shape_powers[
                 j, 2]
 
     coef = []
 
     # Get solution for every Node
     for i in range(num_points):
-        coef_i = np.zeros(np.max(poly_power, axis=0) + 1)
+        coef_i = np.zeros(np.max(shape_powers, axis=0) + 1)
         Erg = np.zeros(len(points))
         Erg[i] = 1.
         Loes = np.linalg.lstsq(A, Erg, rcond=None)[0]
         for j in range(Dim):
-            coef_i[poly_power[j][0], poly_power[j][1], poly_power[j][2]] = Loes[j]
+            coef_i[shape_powers[j][0], shape_powers[j][1], shape_powers[j][2]] = Loes[j]
         coef.append(coef_i)
 
     # eg:(4, 2, 2, 1)
     # (pkt_num,x,y,z)
     return np.array(coef)
-
-
-def generate_shape_func_coeff(bild_points, int_points, poly_power):
-    """
-    Calculates the coefficients of the shape functions
-
-    Parameters
-    ----------
-    bild_points : (number of nodes,3) nd-array
-        Coordinates of nodes
-    int_points_points : (number of points, 3) nd-array
-        Polynomial coefficents of shape functions in 3 dimensional space
-    poly_power: (numpy-polynomial)
-        Shape functions
-
-    Returns
-    -------
-    shapeFuncCoef_bild :        (number of nodes,num_Coef_r,num_Coef_s,num_Coef_t) nd-array
-        Coefficents of shape functions at nodes
-    shapeFuncCoef_int :         (number of points,num_Coef_r,num_Coef_s,num_Coef_t) nd-array
-        Coefficents of shape functions at integration points
-    shapeFuncCoef_bild_diff :   (number of nodes,3,num_Coef_r,num_Coef_s,num_Coef_t) nd-array
-        Coefficents of derived shape functions at nodes
-    shapeFuncCoef_int_diff :    (number of points,3,num_Coef_r,num_Coef_s,num_Coef_t) nd-array
-        Coefficents of derived shape functions at integration points
-    """
-
-    ## Calculate shape functions
-    shapeFuncCoef_bild = Poly_coefs(bild_points, poly_power)
-    shapeFuncCoef_int = Poly_coefs(int_points, poly_power)
-
-    num_bild_pts = bild_points.shape[0]
-    num_int_pts = int_points.shape[0]
-
-    shape_coef_bild = shapeFuncCoef_bild.shape
-    shape_coef_int = shapeFuncCoef_int.shape
-
-    ## Calculate derivivative of shape functions
-    # nodes
-    shapeFuncCoef_bild_diff = np.zeros((num_bild_pts, 3,
-                                        shape_coef_bild[1], shape_coef_bild[2], shape_coef_bild[3]))
-
-    for i in range(num_bild_pts):
-        coef = shapeFuncCoef_bild[i]
-        dcoef_dx = pol.polyder(coef, axis=0)
-        dcoef_dy = pol.polyder(coef, axis=1)
-        dcoef_dz = pol.polyder(coef, axis=2)
-        shapeFuncCoef_bild_diff[i, 0, :dcoef_dx.shape[0], :dcoef_dx.shape[1], :dcoef_dx.shape[2]] = dcoef_dx
-        shapeFuncCoef_bild_diff[i, 1, :dcoef_dy.shape[0], :dcoef_dy.shape[1], :dcoef_dy.shape[2]] = dcoef_dy
-        shapeFuncCoef_bild_diff[i, 2, :dcoef_dz.shape[0], :dcoef_dz.shape[1], :dcoef_dz.shape[2]] = dcoef_dz
-
-    # integration points
-    shapeFuncCoef_int_diff = np.zeros((num_int_pts, 3,
-                                       shape_coef_int[1], shape_coef_int[2], shape_coef_int[3]))
-
-    for i in range(num_int_pts):
-        coef = shapeFuncCoef_int[i]
-        dcoef_dx = pol.polyder(coef, axis=0)
-        dcoef_dy = pol.polyder(coef, axis=1)
-        dcoef_dz = pol.polyder(coef, axis=2)
-        shapeFuncCoef_int_diff[i, 0, :dcoef_dx.shape[0], :dcoef_dx.shape[1], :dcoef_dx.shape[2]] = dcoef_dx
-        shapeFuncCoef_int_diff[i, 1, :dcoef_dy.shape[0], :dcoef_dy.shape[1], :dcoef_dy.shape[2]] = dcoef_dy
-        shapeFuncCoef_int_diff[i, 2, :dcoef_dz.shape[0], :dcoef_dz.shape[1], :dcoef_dz.shape[2]] = dcoef_dz
-
-    shapeFuncCoef_bild[np.isclose(np.abs(shapeFuncCoef_bild), 0)] = 0
-    return shapeFuncCoef_bild, shapeFuncCoef_int, shapeFuncCoef_bild_diff, shapeFuncCoef_int_diff
 
 
 def create_sym_Mat(name, shape_0, shape_1):
@@ -218,7 +266,7 @@ def get_shapeFunc(Ansatz_fkt_coeff, r, s, t):
 
 def get_jac(shapeFunc, points_xyz, r, s, t):
     """
-    Calculate the jacobi matrix symbollically for a element
+    Calculate the jacobi matrix symbolically for a element
 
     Parameters
     ----------
@@ -345,7 +393,7 @@ def get_det_and_inv(jac):
     """
     Inverts a symbolic matrix and calculates the determinant.
 
-    This functions works for 3d-elemnts and plane strain 2d-elements.
+    This functions works for 3d-elements and plane strain 2d-elements.
     If the determinant of the 3x3 matrix is zero, the 2d- plane strain case 
     is assumed.
 
@@ -363,7 +411,7 @@ def get_det_and_inv(jac):
     """
     inv_jac,det = inversion_and_det_3x3(jac)
     
-    #If determinant is zero assume 2x2 submatrix (eg. CPE4 Jacobian)
+    #If determinant is zero assume 2x2 sub-matrix (eg. CPE4 Jacobian)
     if det == 0:
         inv_jac = np.zeros((3,3),dtype=np.object)
         inv_jac[:2,:2],det = inversion_and_det_2x2(jac[:2,:2])
@@ -380,7 +428,7 @@ def evaluate_rst(sym_Mat, Points):
 
 def calc_dN_rst(shapeFunc, r, s, t):
     """
-    Calculates the derivivative of the shape functions with respect to
+    Calculates the derivative of the shape functions with respect to
     the natural coordinates r,s,t
 
     Parameters
@@ -585,7 +633,7 @@ def gen_Integration_Numba(rst, coord, Element_U, S, SENER, PENER, int_points, we
 
 def gen_C_header():
     """
-    Generates the header for the implemnetation in C.
+    Generates the header for the implementation in C.
 
     Additionally a function to calculate nodal unique values from 
     element nodal values is generated.
@@ -638,7 +686,7 @@ def lambdify_C(args, arg_names, expr, expr_name="_lambdified"):
     """
 
     import sympy
-    #Code Printer is sympy version dependend
+    #Code Printer is sympy version dependent
     try:
         from sympy.printing.c import C99CodePrinter as Printer
     except:
@@ -1090,7 +1138,7 @@ def gen_Python_Wrapper_dynamic(expr_name, numNodes, num_int_points):
     return s
 
 
-####### Static Impementation #################################
+####### Static Implementation #################################
 def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_weights, typ, method='mbf'):
     """
     Generates the static configurational force implementation.
@@ -1101,15 +1149,15 @@ def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_w
     Parameters
     ----------
     poly_power : (at least number of nodes,3) nd-array
-        Polynomial coefficents of shape functions in 3 dimensional space
+        Polynomial coefficients of shape functions in 3 dimensional space
     bild_points : (number of nodes,3) nd-array
         Natural coordinates of nodes
     int_points : (number of points, 3) nd-array
-        Polynomial coefficents of shape functions in 3 dimensional space
+        Polynomial coefficients of shape functions in 3 dimensional space
     int_weights : (number of points) nd-array
         Integration weights
     typ : str
-        Elementtype
+        Element type
     method : str (mbf/dbf)
         Motion based or displacement based formulation
 
@@ -1119,8 +1167,7 @@ def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_w
         Python code as string
     """
     # generate shape functions
-    shapeFuncCoef_bild, shapeFuncCoef_int, shapeFuncCoef_bild_diff, shapeFuncCoef_int_diff = \
-        generate_shape_func_coeff(bild_points, int_points, poly_power)
+    shapeFuncCoef_bild = Shapes.from_points(bild_points, poly_power).coef
 
     # Generate some symbols
     num_nodes = shapeFuncCoef_bild.shape[0]
@@ -1165,7 +1212,7 @@ def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_w
     else:
         C = ENER * sy.Matrix(np.eye(3)) - dU_dx.T * Piola_1
 
-    # Caculate the inner part of the integral
+    # Calculate the inner part of the integral
     C_Force = dN_dxyz * C.T * jacobi_det
 
     # generate_Code
@@ -1180,7 +1227,7 @@ def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_w
     return impl
 
 
-####### Dynamic Impementation ################################
+####### Dynamic Implementation ################################
 def gen_Configurational_Forces_Dynamic(poly_power, bild_points, int_points, int_weights, typ):
     """
     Generates the dynamic configurational force implementation.
@@ -1191,17 +1238,15 @@ def gen_Configurational_Forces_Dynamic(poly_power, bild_points, int_points, int_
     Parameters
     ----------
     poly_power : (at least number of nodes,3) nd-array
-        Polynomial coefficents of shape functions in 3 dimensional space
+        Polynomial coefficients of shape functions in 3 dimensional space
     bild_points : (number of nodes,3) nd-array
         Natural coordinates of nodes
     int_points : (number of points, 3) nd-array
-        Polynomial coefficents of shape functions in 3 dimensional space
+        Polynomial coefficients of shape functions in 3 dimensional space
     int_weights : (number of points) nd-array
         Integration weights
     typ : str
-        Elementtype
-    method : str (mbf/dbf)
-        Motion based or displacement based formulation
+        Element-type
 
     Returns
     -------
@@ -1209,8 +1254,7 @@ def gen_Configurational_Forces_Dynamic(poly_power, bild_points, int_points, int_
         Python code as string
     """
     # generate shape functions
-    shapeFuncCoef_bild, shapeFuncCoef_int, shapeFuncCoef_bild_diff, shapeFuncCoef_int_diff = \
-        generate_shape_func_coeff(bild_points, int_points, poly_power)
+    shapeFuncCoef_bild = Shapes.from_points(bild_points, poly_power).coef
 
     # Generate some symbols
     num_nodes = shapeFuncCoef_bild.shape[0]
@@ -1246,7 +1290,7 @@ def gen_Configurational_Forces_Dynamic(poly_power, bild_points, int_points, int_
     Jacobi_Element_V = get_jac(shapeFunc, Element_V, r, s, t)
     dV_dx = (jac_inv * Jacobi_Element_V).T
 
-    # Calculate deformation gradient and time derivivative of deformation gradient
+    # Calculate deformation gradient and time derivative of deformation gradient
     Def_grad = dU_dx + sy.Matrix(np.eye(3))
     Def_grad_V = dV_dx
 
@@ -1276,7 +1320,7 @@ def gen_Configurational_Forces_Dynamic(poly_power, bild_points, int_points, int_
     ENER = SENER + PENER
     C = (ENER - T) * sy.Matrix(np.eye(3)) - Def_grad_mbf_dbf.T * Piola_1
 
-    # Caculate the inner part of the integral
+    # Calculate the inner part of the integral
     C_Force = (shapeFunc * P_m.T + dN_dxyz * C.T) * jacobi_det
 
     # generate_Code
