@@ -1,49 +1,66 @@
 r"""
 In this module all auxiliary functions are defined. The basic functionalities are:
 
-- Generating symbolic shape functions (Poly_coefs, generate_shape_func_coeff, get_shapeFunc)
-- Generating numeric matrices and Tensors (create_sym_Mat,gen_2D_Ten_from_Vec)
-- Analytical helper functions (get_jac, get_val_at_int_Pkt, get_det_and_inv, calc_dN_rst)
-- Code generation of analytical expressions (lambdify_numba, lambdify_C)
-- Generating wrappers and headers (gen_C_header, gen_Integration_C_static, gen_Python_Wrapper_static)
-- C-code generation including integration(gen_Configurational_Forces_Static)
+- Generating symbolic shape functions
+- Generating numeric matrices and Tensors
+- Analytical helper functions
+- Code generation of analytical expressions
+- Generating wrappers and headers
+- C-code generation including integration
 """
-
+from typing import Union, List, Tuple
 import numpy as np
 import sympy as sy
-import numpy.polynomial.polynomial as pol
+
+ARRAY_LIKE = Union[List, Tuple, np.ndarray]
 
 
 class Shapes(object):
     """
     Assembly of shape functions.
+    The shapes can be created from element points (nodes)
+    and the shape powers (e.g. `x**p0 * y**p1 * z**p2`)
 
-    The j-th shape function has the form
+    >>> points=np.array([
+    ...         [0, 0, 0],
+    ...         [1, 0, 0],
+    ...         [0, 1, 0]
+    ...     ])
+    >>> shapes = Shapes.from_points(
+    ...     nodes=points,
+    ...     shape_powers=[
+    ...         [0, 0, 0],
+    ...         [1, 0, 0],
+    ...         [0, 1, 0]
+    ...     ]
+    ... )
 
-    >>>  shapes(j, point) == sum([
-    ...    coef[j, shape_powers[i, 0], shape_powers[i, 1], shape_powers[i, 2]]
-    ...    * points[0]**shape_powers[i, 0]
-    ...    * point[1]**shape_powers[i, 1]
-    ...    * point[2]**shape_powers[i, 2]
-    ...])
+    This creates a coefficient matrix `coef` that guarantees
 
-    The coefficient matrix `coeff` must guarantee, that
-
-    >>> shapes(j, points[j]) == 1
+    >>> all([
+    ...     shapes.eval_shape(i, points[i]) == 1
+    ...     for i in range(len(points))
+    ... ])
+    True
 
     and
 
-    >>> shapes(j, points[i]) == 0
+    >>> all([
+    ...     shapes.eval_shape(j, points[i]) == 0
+    ...     for j in range(len(points))
+    ...     for i in range(len(points))
+    ...     if j != i
+    ... ])
+    True
 
-    for all `j != i`.
     """
 
-    def __init__(self, coef, shape_powers):
+    def __init__(self, coef: ARRAY_LIKE, shape_powers: ARRAY_LIKE):
         self.coef = np.array(coef)
         self.shape_powers = np.array(shape_powers)
 
     @classmethod
-    def from_points(cls, points, shape_powers):
+    def from_points(cls, points: ARRAY_LIKE, shape_powers: ARRAY_LIKE):
         """
         creates shape functions, such that each shape function is one at one point and zero at the other points
 
@@ -56,7 +73,7 @@ class Shapes(object):
 
         Returns
         -------
-        coef : (number of points, r coeff, s coeff, t coeff) nd-array
+        coef : (number of points, r coef, s coef, t coef) nd-array
             Coefficients of shape functions;
         """
         points = np.asarray(points, dtype=float)
@@ -73,14 +90,14 @@ class Shapes(object):
                 axis=-1
             ).T
 
-        # solve coeff_matrix * a = I,
+        # solve coef_matrix * a = I,
         # such that every shape function is one at exactly one point and zero at the other points
-        coeff_matrix = np.linalg.inv(a)
+        coef_matrix = np.linalg.inv(a)
 
         # shape_i(x,y,z) = sum([coef[i, j, k, l] * x**j * y**k * z**l for i, j, k in ...])
         coef = np.zeros([num_points] + [np.max(power) + 1 for power in shape_powers.T], dtype=float)
         for i, shape_power in enumerate(shape_powers):
-            coef[:, shape_power[0], shape_power[1], shape_power[2]] = coeff_matrix[:, i]
+            coef[:, shape_power[0], shape_power[1], shape_power[2]] = coef_matrix[:, i]
 
         return cls(coef, shape_powers)
 
@@ -88,7 +105,7 @@ class Shapes(object):
     def num_shapes(self):
         return len(self.coef)
 
-    def __call__(self, j, point):
+    def eval_shape(self, j: int, point: ARRAY_LIKE):
         """
         Evaluates the j-th shape function at the given point
 
@@ -105,6 +122,7 @@ class Shapes(object):
         """
         coef = self.coef
         shape_powers = self.shape_powers
+
         return sum([
             coef[j, shape_powers[i, 0], shape_powers[i, 1], shape_powers[i, 2]]
             * point[0] ** shape_powers[i, 0]
@@ -113,96 +131,27 @@ class Shapes(object):
             for i in range(self.num_shapes)
         ])
 
+    def to_symbolic(self, r: sy.Symbol, s: sy.Symbol, t: sy.Symbol):
+        """
+        Parameters
+        ----------
+        r: first coordinate
+        s: second coordinate
+        t: third coordinate
 
-def compute_shape_functions(points, shape_powers):
+        Returns
+        -------
+        symbolic shape functions of (r, s, t).
+        """
+        return sy.lambdify((r, s, t), sy.Matrix([
+            sy.nsimplify(self.eval_shape(j, (r, s, t)))
+            for j in range(self.num_shapes)
+        ]))
+
+
+def tensor_from_vector_notation(vec) -> sy.MutableMatrix:
     """
-    The j-th shape function has the form
-
-    >>>  shape_j(point) == sum([
-    ...    coef[j, shape_powers[i, 0], shape_powers[i, 1], shape_powers[i, 2]]
-    ...    * points[0]**shape_powers[i, 0]
-    ...    * point[1]**shape_powers[i, 1]
-    ...    * point[2]**shape_powers[i, 2]
-    ...])
-
-    The coefficient matrix `coeff` is computed, such that
-
-    >>> shape_j(points[j]) == 1
-
-    and
-
-    >>> shape_j(points[i]) == 0
-
-    for all `j != i`.
-
-    Parameters
-    ----------
-    points : (number of points,3) nd-array
-        Coordinates of points
-    shape_powers : (number of points,3) nd-array
-        Powers of shape functions in 3 dimensional space
-
-    Returns
-    -------
-    coef : (number of points, r coeff, s coeff, t coeff) nd-array
-        Coefficients of shape functions;
-    """
-    num_points = points.shape[0]
-    num_Power = shape_powers.shape[0]
-
-    # ignore higher polynomial orders if there are not sufficient nodes
-    Dim = min(num_points, num_Power)
-    A = np.zeros((num_points, Dim))
-    for i in range(num_points):
-        for j in range(Dim):
-            A[i, j] = points[i, 0] ** shape_powers[j, 0] * points[i, 1] ** shape_powers[j, 1] * points[i, 2] ** shape_powers[
-                j, 2]
-
-    coef = []
-
-    # Get solution for every Node
-    for i in range(num_points):
-        coef_i = np.zeros(np.max(shape_powers, axis=0) + 1)
-        Erg = np.zeros(len(points))
-        Erg[i] = 1.
-        Loes = np.linalg.lstsq(A, Erg, rcond=None)[0]
-        for j in range(Dim):
-            coef_i[shape_powers[j][0], shape_powers[j][1], shape_powers[j][2]] = Loes[j]
-        coef.append(coef_i)
-
-    # eg:(4, 2, 2, 1)
-    # (pkt_num,x,y,z)
-    return np.array(coef)
-
-
-def create_sym_Mat(name, shape_0, shape_1):
-    """
-    Creation of a symbolic matrix
-
-    Parameters
-    ----------
-    name : str
-        Name of symbols
-    shape_0 : int
-        Shape 0 of the matrix
-    shape_1 : int
-        Shape 1 of the matrix
-
-    Returns
-    -------
-    sym_Mat : symPy Matrix
-        Symbolic matrix
-    """
-    sym_Mat = np.empty((shape_0, shape_1), dtype=np.object)
-    for i in range(shape_0):
-        for j in range(shape_1):
-            sym_Mat[i, j] = sy.symbols(name + "_" + str(i) + str(j))
-    return sy.Matrix(sym_Mat)
-
-
-def gen_2D_Ten_from_vec(Vec):
-    """
-    Create a Second order Tensor from vector notation.
+    Create a symmetric second order Tensor from vector notation.
 
     This function is Abaqus specific. 
     eg. vector notation of the stress tensor:
@@ -210,58 +159,39 @@ def gen_2D_Ten_from_vec(Vec):
 
     Parameters
     ----------
-    Vec : (6) nd-array consisting of SymPy symbols or SymPy matrix
-        Second order tensor in vector notation
+    vec : (6, ) array_like
+     consisting of SymPy symbols or SymPy matrix
+     Second order tensor in vector notation
 
     Returns
     -------
-    S_Ten : SymPy matrix
+    tensor : SymPy matrix of shape (3, 3)
         Second order tensor (sympy matrix object)
     """
-    S_Ten = sy.Matrix(np.zeros((3, 3), dtype=np.object))
-
-    S_Ten[0, 0] = Vec[0]
-    S_Ten[1, 1] = Vec[1]
-    S_Ten[2, 2] = Vec[2]
-    S_Ten[0, 1] = Vec[3]
-    S_Ten[1, 0] = Vec[3]
-    S_Ten[0, 2] = Vec[4]
-    S_Ten[2, 0] = Vec[4]
-    S_Ten[1, 2] = Vec[5]
-    S_Ten[2, 1] = Vec[5]
-    return S_Ten
+    return sy.Matrix([
+            [vec[0], vec[3], vec[4]],
+            [vec[3], vec[1], vec[5]],
+            [vec[4], vec[5], vec[2]],
+        ])
 
 
-def get_shapeFunc(Ansatz_fkt_coeff, r, s, t):
+def vector_from_tensor_notation(tensor: sy.Matrix):
     """
-    Generate the symbolic representation of the shape functions
+    returns the abaqus vector notation of a tensor.
 
     Parameters
     ----------
-    Ansatz_fkt_coeff : (number of nodes, r,s,t) nd-array
-        Coefficients of shape functions 
-    r : SymPy symbol
-        Natural coordinate r
-    s : SymPy symbol
-        Natural coordinate s
-    t : SymPy symbol
-        Natural coordinate t
+    tensor: array_like (3, 3) matrix
 
     Returns
     -------
-    shapeFunc : (number of nodes, 1) SymPy matrix 
-        Symbolic definition of the shape functions
+    vector of shape (3, 1)
+
     """
-    shapeFunc = []
-    for node in range(Ansatz_fkt_coeff.shape[0]):
-        expr = 0
-        for x in range(Ansatz_fkt_coeff.shape[1]):
-            for y in range(Ansatz_fkt_coeff.shape[2]):
-                for z in range(Ansatz_fkt_coeff.shape[3]):
-                    expr += sy.nsimplify(Ansatz_fkt_coeff[node, x, y, z], tolerance=1e-5) * r ** x * s ** y * t ** z
-        shapeFunc.append(expr)
-    shapeFunc = np.array(shapeFunc)
-    return sy.Matrix(shapeFunc)
+    return sy.Matrix([
+        tensor[0, 0], tensor[1, 1], tensor[2, 2],
+        tensor[0, 1], tensor[0, 2], tensor[1, 2],
+    ])
 
 
 def get_jac(shapeFunc, points_xyz, r, s, t):
@@ -1167,7 +1097,8 @@ def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_w
         Python code as string
     """
     # generate shape functions
-    shapeFuncCoef_bild = Shapes.from_points(bild_points, poly_power).coef
+    shapes = Shapes.from_points(bild_points, poly_power)
+    shapeFuncCoef_bild = shapes.coef
 
     # Generate some symbols
     num_nodes = shapeFuncCoef_bild.shape[0]
@@ -1179,10 +1110,10 @@ def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_w
     SENER, PENER = sy.symbols("SENER PENER")
     S_Ten = sy.symbols("S11 S22 S33 S12 S13 S23")
     
-    S = gen_2D_Ten_from_vec(S_Ten)
+    S = tensor_from_vector_notation(S_Ten)
     
     # Generate Shape functions
-    shapeFunc = get_shapeFunc(shapeFuncCoef_bild, r, s, t)
+    shapeFunc = sy.Matrix(shapes.eval_shapes((r, s, t)))
 
     # Calculate Jacobi matrix
     jac = get_jac(shapeFunc, coord, r, s, t)
@@ -1254,7 +1185,8 @@ def gen_Configurational_Forces_Dynamic(poly_power, bild_points, int_points, int_
         Python code as string
     """
     # generate shape functions
-    shapeFuncCoef_bild = Shapes.from_points(bild_points, poly_power).coef
+    shapes = Shapes.from_points(bild_points, poly_power)
+    shapeFuncCoef_bild = shapes.coef
 
     # Generate some symbols
     num_nodes = shapeFuncCoef_bild.shape[0]
@@ -1271,10 +1203,10 @@ def gen_Configurational_Forces_Dynamic(poly_power, bild_points, int_points, int_
     Element_A = sy.MatrixSymbol('A', num_nodes, 3)
 
     # Generate tensor, vaild for Abaqus notation
-    S = gen_2D_Ten_from_vec(S_Ten)
+    S = tensor_from_vector_notation(S_Ten)
 
     # Generate Shape functions
-    shapeFunc = get_shapeFunc(shapeFuncCoef_bild, r, s, t)
+    shapeFunc = sy.Matrix(shapes.eval_shapes((r, s, t)))
 
     # Calculate Jacobi matrix
     jac = get_jac(shapeFunc, coord, r, s, t)

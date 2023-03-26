@@ -30,7 +30,7 @@ f_python_functions.write(sy_hfkt.gen_Python_Wrapper_Header("Conf_Forces"))
 
 for i in range(len(types)):
     poly_power = ele_def.poly_power[types[i]]
-    bild_points = ele_def.bild_points[types[i]]
+    bild_points = ele_def.ref_nodes[types[i]]
     int_points = ele_def.int_points[types[i]]
     int_weights = ele_def.int_weights[types[i]]
 
