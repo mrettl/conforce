@@ -59,21 +59,12 @@ class Element(object):
         values_at_nodes_mat = self._assure_matrix(values_at_nodes)
         return values_at_nodes_mat.T * self.reference_shapes
 
-    def diff(self, axis: int, values_at_nodes: ARRAY_LIKE = None):
+    def diff(self, axis: Union[int, slice, range] = None, values_at_nodes: ARRAY_LIKE = None):
         if values_at_nodes is None:
             values_at_nodes = self.nodes
 
         values_at_nodes_mat = self._assure_matrix(values_at_nodes)
         return values_at_nodes_mat.T * self.d_shapes_d_coordinates[:, axis]
-
-    def create_real_space_element(self, nodes: ARRAY_LIKE):
-        nodes = nodes[:, :self.count_dimensions()]
-        return Element(
-            self(nodes),
-            self.reference_coordinates,
-            self.reference_shapes,
-            nodes
-        )
 
     @classmethod
     def create_ref_space_element(
@@ -123,6 +114,30 @@ class Element(object):
 
         return cls(coordinates, coordinates, shape_functions, nodes)
 
+    def create_real_space_element(self, nodes: ARRAY_LIKE):
+        nodes = nodes[:, :self.count_dimensions()]
+        return Element(
+            self(nodes),
+            self.reference_coordinates,
+            self.reference_shapes,
+            nodes
+        )
+
+    def create_deformation(self, displacement: ARRAY_LIKE, stress_tensor: ARRAY_LIKE):
+        return Deformation(self, displacement, stress_tensor)
+
+
+class Deformation(object):
+    def __init__(self, element: Element, displacement: ARRAY_LIKE, stress_tensor: ARRAY_LIKE):
+        num_dim = element.count_dimensions()
+        self.element = element
+        self.displacement = displacement
+        self.stress_tensor = stress_tensor
+
+        self.d_displacement_d_coordinate = displacement.T * element.d_shapes_d_coordinates
+        self.deformation_gradient = sy.eye(num_dim) + self.d_displacement_d_coordinate
+        self.piola_stress_tensor = self.deformation_gradient.det() * stress_tensor * self.deformation_gradient.inv().T
+
 
 class IntegrationScheme(object):
     symbolic_int_weight = sy.symbols("w", real=True)
@@ -143,3 +158,83 @@ class IntegrationScheme(object):
             axis=-1
         )
         return result
+
+
+def tensor_from_vector_notation(vec: ARRAY_LIKE):
+    """
+    Create a symmetric second order Tensor from vector notation.
+
+    This function is Abaqus specific.
+    eg. vector notation of the stress tensor:
+    (S11,S22,S33,S12,S13,S23)
+
+    Parameters
+    ----------
+    vec : (6, ) array_like
+     consisting of SymPy symbols or SymPy matrix
+     Second order tensor in vector notation
+
+    Returns
+    -------
+    tensor : SymPy matrix of shape (3, 3)
+        Second order tensor (sympy matrix object)
+    """
+    return sy.Matrix([
+            [vec[0], vec[3], vec[4]],
+            [vec[3], vec[1], vec[5]],
+            [vec[4], vec[5], vec[2]],
+        ])
+
+
+def vector_from_tensor_notation(tensor: sy.Matrix):
+    """
+    returns the abaqus vector notation of a tensor.
+
+    Parameters
+    ----------
+    tensor: array_like (3, 3) matrix
+
+    Returns
+    -------
+    vector of shape (3, 1)
+
+    """
+    return sy.Matrix([
+        tensor[0, 0], tensor[1, 1], tensor[2, 2],
+        tensor[0, 1], tensor[0, 2], tensor[1, 2],
+    ])
+
+
+def gen_Configurational_Forces_Static(element: Element, typ, method='mbf'):
+    # Generate some symbols
+    num_nodes = element.count_nodes()
+    num_dim = element.count_dimensions()
+
+    coord = sy.MatrixSymbol('coord', num_nodes, num_dim)
+    displacement = sy.MatrixSymbol('U', num_nodes, num_dim)
+    strain_energy = sy.symbols("strain_energy", real=True)
+    plastic_energy = sy.symbols("plastic_energy", real=True)
+    stress_vector = sy.symbols("S11 S22 S33 S12 S13 S23", real=True)
+    stress_tensor = tensor_from_vector_notation(stress_vector)
+    stress_tensor = stress_tensor[:num_dim, :num_dim]
+
+    #
+    element = element.create_real_space_element(coord)
+    deformation = element.create_deformation(displacement, stress_tensor)
+
+    # Calculate Configurational stress
+    internal_energy = strain_energy + plastic_energy
+    if method == 'mbf':
+        config_stress_tensor = internal_energy * sy.eye(num_dim) \
+                               - deformation.deformation_gradient.T \
+                               * deformation.piola_stress_tensor
+    else:
+        config_stress_tensor = internal_energy * sy.eye(num_dim) \
+                               - deformation.d_displacement_d_coordinate.T \
+                               * deformation.piola_stress_tensor
+
+    # Calculate the inner part of the integral
+    config_force = element.d_shapes_d_coordinates * config_stress_tensor.T * element.det
+
+    return config_stress_tensor, config_force
+

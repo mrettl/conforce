@@ -121,6 +121,70 @@ class MyTestCase(unittest.TestCase):
             sy.Matrix([[0.], [1.]])
         )
 
+    def test_deformation(self):
+        typ = "C3D8"
+        nodes = ele_def.ref_nodes[typ]
+        powers = ele_def.poly_power[typ]
+        real_nodes = np.array([
+            (0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
+            (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)
+        ])
+
+        with self.subTest("deformation gradient"):
+            expected_deformation_gradient = np.array([
+                [1., 1., 0.],
+                [0., 1., 0.],
+                [0., 0., 1.]
+            ])
+            displacement = real_nodes @ expected_deformation_gradient.T - real_nodes
+
+            ref_element = Element.create_ref_space_element(nodes, powers)
+            real_element = ref_element.create_real_space_element(real_nodes)
+            deformation = real_element.create_deformation(
+                displacement=displacement,
+                stress_tensor=np.eye(3)
+            )
+            np.testing.assert_array_almost_equal(
+                deformation.deformation_gradient,
+                expected_deformation_gradient
+            )
+
+        with self.subTest("bergstroem, mechanics of solid polymers, page 169"):
+            expected_deformation_gradient = np.array([
+                [2., 0., 0.],
+                [0., 0.7, 0.],
+                [0., 0., 0.7]
+            ])
+            displacement = real_nodes @ expected_deformation_gradient.T - real_nodes
+
+            stress = sy.symbols("\\sigma", real=True)
+            stress_tensor = sy.Matrix([
+                [stress, 0, 0],
+                [0, 0, 0],
+                [0, 0, 0]
+            ])
+
+            ref_element = Element.create_ref_space_element(nodes, powers)
+            real_element = ref_element.create_real_space_element(real_nodes)
+            deformation = real_element.create_deformation(
+                displacement=displacement,
+                stress_tensor=stress_tensor
+            )
+
+            np.testing.assert_array_almost_equal(
+                deformation.deformation_gradient,
+                expected_deformation_gradient
+            )
+
+            piola_stress_tensor = sy.Matrix(deformation.piola_stress_tensor)
+            self.assertAlmostEqual(
+                0.,
+                (0.49*stress - piola_stress_tensor[0, 0]) / stress
+            )
+            piola_stress_tensor[0, 0] = 0
+            self.assertEqual(sy.zeros(3), piola_stress_tensor)
+
+
     def test_integration_scheme(self):
         typ = "CPE4"
         nodes = ele_def.ref_nodes[typ]
@@ -148,6 +212,36 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(
             sy.Matrix(int_scheme.integrate(real_element.det, sy.Matrix([t, 2.]))),
             sy.Matrix([8.5*t, 2*8.5])
+        )
+
+    def test_tensor_vector_notation(self):
+        vector = np.array([1, 2, 3, 4, 5, 6])
+        tensor = tensor_from_vector_notation(vector)
+
+        self.assertEqual((3, 3), tensor.shape)
+
+        vector_2 = vector_from_tensor_notation(tensor)
+
+        self.assertEqual((6, 1), vector_2.shape)
+        self.assertEqual(vector_2, sy.Matrix(vector))
+
+    def test_configurational_forces_static(self):
+        assert False
+        typ = "CPE4"
+        nodes = ele_def.ref_nodes[typ]
+        powers = ele_def.poly_power[typ]
+        int_points = ele_def.int_points[typ]
+        int_weights = ele_def.int_weights[typ]
+
+        ref_element = Element.create_ref_space_element(nodes, powers)
+        int_scheme = IntegrationScheme(
+            ref_element.reference_coordinates,
+            int_points,
+            int_weights
+        )
+
+        gen_Configurational_Forces_Static(
+            ref_element, int_scheme, typ
         )
 
 
