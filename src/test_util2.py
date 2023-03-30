@@ -1,8 +1,5 @@
 import unittest
 
-import numpy as np
-import sympy as sy
-
 import ele_def
 from util2 import *
 
@@ -13,8 +10,11 @@ class MyTestCase(unittest.TestCase):
             with self.subTest(typ):
                 nodes = ele_def.ref_nodes[typ]
                 powers = ele_def.poly_power[typ]
+                int_points = ele_def.int_points[typ]
+                int_weights = ele_def.int_weights[typ]
+                int_scheme = IntegrationScheme(int_points, int_weights)
 
-                ref_element = Element.create_ref_space_element(nodes, powers)
+                ref_element = Element.create_ref_space_element(nodes, powers, int_scheme)
 
                 np.testing.assert_array_almost_equal(nodes, ref_element.nodes)
                 self.assertIsNot(nodes, ref_element.nodes)  # copied
@@ -86,7 +86,7 @@ class MyTestCase(unittest.TestCase):
         real_nodes = -1 + nodes * [2, 3] + 1. * nodes * nodes[:, ::-1]
 
         real_element = Element\
-            .create_ref_space_element(nodes, shape_powers)\
+            .create_ref_space_element(nodes, shape_powers, None)\
             .create_real_space_element(real_nodes)
 
         np.testing.assert_array_almost_equal(real_element.nodes, real_nodes)
@@ -125,6 +125,10 @@ class MyTestCase(unittest.TestCase):
         typ = "C3D8"
         nodes = ele_def.ref_nodes[typ]
         powers = ele_def.poly_power[typ]
+        int_points = ele_def.int_points[typ]
+        int_weight = ele_def.int_weights[typ]
+        int_scheme = IntegrationScheme(int_points, int_weight)
+
         real_nodes = np.array([
             (0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
             (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)
@@ -138,9 +142,11 @@ class MyTestCase(unittest.TestCase):
             ])
             displacement = real_nodes @ expected_deformation_gradient.T - real_nodes
 
-            ref_element = Element.create_ref_space_element(nodes, powers)
+            ref_element = Element.create_ref_space_element(nodes, powers, int_scheme)
             real_element = ref_element.create_real_space_element(real_nodes)
-            deformation = real_element.create_deformation(
+            deformation = Deformation(
+                element=real_element,
+                internal_energy_density=1.,
                 displacement=displacement,
                 stress_tensor=np.eye(3)
             )
@@ -164,9 +170,11 @@ class MyTestCase(unittest.TestCase):
                 [0, 0, 0]
             ])
 
-            ref_element = Element.create_ref_space_element(nodes, powers)
+            ref_element = Element.create_ref_space_element(nodes, powers, int_scheme)
             real_element = ref_element.create_real_space_element(real_nodes)
-            deformation = real_element.create_deformation(
+            deformation = Deformation(
+                element=real_element,
+                internal_energy_density=1.,
                 displacement=displacement,
                 stress_tensor=stress_tensor
             )
@@ -184,65 +192,35 @@ class MyTestCase(unittest.TestCase):
             piola_stress_tensor[0, 0] = 0
             self.assertEqual(sy.zeros(3), piola_stress_tensor)
 
-
     def test_integration_scheme(self):
         typ = "CPE4"
         nodes = ele_def.ref_nodes[typ]
         powers = ele_def.poly_power[typ]
         int_points = ele_def.int_points[typ]
         int_weights = ele_def.int_weights[typ]
+        int_scheme = IntegrationScheme(
+            int_points,
+            int_weights)
 
         real_nodes = np.array([
             [-1., -1.], [1., -1.],
             [2., 3.], [-1., 2.]
         ])
 
-        ref_element = Element.create_ref_space_element(nodes, powers)
+        ref_element = Element.create_ref_space_element(nodes, powers, None)
         real_element = ref_element.create_real_space_element(real_nodes)
 
-        int_scheme = IntegrationScheme(
-            ref_element.reference_coordinates,
-            int_points,
-            int_weights)
-
         self.assertEqual(
-            int_scheme.integrate(real_element.det),
+            int_scheme.integrate(real_element.reference_coordinates, real_element.det),
             8.5
         )
         self.assertEqual(
-            sy.Matrix(int_scheme.integrate(real_element.det, sy.Matrix([t, 2.]))),
+            sy.Matrix(int_scheme.integrate(real_element.reference_coordinates, real_element.det, sy.Matrix([t, 2.]))),
             sy.Matrix([8.5*t, 2*8.5])
         )
 
-    def test_tensor_vector_notation(self):
-        vector = np.array([1, 2, 3, 4, 5, 6])
-        tensor = tensor_from_vector_notation(vector)
-
-        self.assertEqual((3, 3), tensor.shape)
-
-        vector_2 = vector_from_tensor_notation(tensor)
-
-        self.assertEqual((6, 1), vector_2.shape)
-        self.assertEqual(vector_2, sy.Matrix(vector))
-
-    def test_configurational_forces_static(self):
-        assert False
-        typ = "CPE4"
-        nodes = ele_def.ref_nodes[typ]
-        powers = ele_def.poly_power[typ]
-        int_points = ele_def.int_points[typ]
-        int_weights = ele_def.int_weights[typ]
-
-        ref_element = Element.create_ref_space_element(nodes, powers)
-        int_scheme = IntegrationScheme(
-            ref_element.reference_coordinates,
-            int_points,
-            int_weights
-        )
-
-        gen_Configurational_Forces_Static(
-            ref_element, int_scheme, typ
-        )
+    def test_configurational_force(self):
+        assert False  # TODO
 
 
 if __name__ == '__main__':

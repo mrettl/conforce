@@ -1,9 +1,10 @@
-from typing import Union, List, Tuple
+from functools import lru_cache
+from typing import Union, List, Optional, Tuple
 
 import numpy as np
 import sympy as sy
 
-ARRAY_LIKE = Union[List, Tuple, np.ndarray]
+ARRAY_LIKE = Union[List, Tuple, np.ndarray, sy.MatrixBase]
 
 
 # reference space coordinates
@@ -13,6 +14,29 @@ r, s, t = sy.symbols("r s t", real=True)
 x, y, z = sy.symbols("x y z", real=True)
 
 
+class IntegrationScheme(object):
+    symbolic_int_weight = sy.symbols("w", real=True)
+
+    def __init__(
+            self,
+            integration_points: ARRAY_LIKE,
+            integration_weight: ARRAY_LIKE
+    ):
+        self._integration_points = np.array(integration_points, dtype=float)
+        self._integration_weights = np.array(integration_weight, dtype=float)
+
+    def integrate(self, symbolic_coordinates, det: Union[sy.Expr, float], expression: Union[sy.Expr, float] = 1.):
+        function = sy.lambdify(
+            list(symbolic_coordinates) + [self.symbolic_int_weight],
+            expression * det * self.symbolic_int_weight
+        )
+        result = np.sum(
+            function(*self._integration_points.T, self._integration_weights),
+            axis=-1
+        )
+        return result
+
+
 class Element(object):
     def __init__(
             self,
@@ -20,17 +44,18 @@ class Element(object):
             reference_coordinates: sy.MatrixBase,
             reference_shapes: sy.MatrixBase,
             nodes: ARRAY_LIKE,
+            integration_scheme: Optional[IntegrationScheme]
     ):
-        self.nodes = nodes
         self.coordinates = coordinates
         self.reference_coordinates = reference_coordinates
+        self.reference_shapes = reference_shapes
+        self.nodes = nodes
+        self.integration_scheme = integration_scheme
 
         # jac[i, j] = d(coordinates[i])/d(ref_coordinates[j])
         self.jacobian = self.coordinates.jacobian(self.reference_coordinates)
         self.inv_jacobian = self.jacobian.inv()
         self.det = sy.det(self.jacobian)
-
-        self.reference_shapes = reference_shapes
 
         self.d_shapes_d_ref_coordinates = self.reference_shapes.jacobian(self.reference_coordinates)
         self.d_shapes_d_coordinates = self.d_shapes_d_ref_coordinates * self.inv_jacobian
@@ -70,7 +95,8 @@ class Element(object):
     def create_ref_space_element(
             cls,
             nodes: ARRAY_LIKE,
-            shape_powers: ARRAY_LIKE
+            shape_powers: ARRAY_LIKE,
+            integration_scheme: Optional[IntegrationScheme]
     ):
         nodes = np.array(nodes, dtype=float)
         shape_powers = np.array(shape_powers, dtype=int)
@@ -112,7 +138,7 @@ class Element(object):
         # combine shapes powers to shape functions
         shape_functions = coef_matrix * symbolic_shape_powers
 
-        return cls(coordinates, coordinates, shape_functions, nodes)
+        return cls(coordinates, coordinates, shape_functions, nodes, integration_scheme)
 
     def create_real_space_element(self, nodes: ARRAY_LIKE):
         nodes = nodes[:, :self.count_dimensions()]
@@ -120,121 +146,66 @@ class Element(object):
             self(nodes),
             self.reference_coordinates,
             self.reference_shapes,
-            nodes
+            nodes,
+            self.integration_scheme
         )
-
-    def create_deformation(self, displacement: ARRAY_LIKE, stress_tensor: ARRAY_LIKE):
-        return Deformation(self, displacement, stress_tensor)
 
 
 class Deformation(object):
-    def __init__(self, element: Element, displacement: ARRAY_LIKE, stress_tensor: ARRAY_LIKE):
-        num_dim = element.count_dimensions()
+    def __init__(
+            self,
+            element: Element,
+            internal_energy_density: Union[sy.Symbol, float],
+            displacement: ARRAY_LIKE,
+            stress_tensor: ARRAY_LIKE,
+    ):
+
+        self.num_dim = element.count_dimensions()
         self.element = element
+        self.internal_energy_density = internal_energy_density
         self.displacement = displacement
         self.stress_tensor = stress_tensor
 
         self.d_displacement_d_coordinate = displacement.T * element.d_shapes_d_coordinates
-        self.deformation_gradient = sy.eye(num_dim) + self.d_displacement_d_coordinate
+        self.deformation_gradient = sy.eye(self.num_dim) + self.d_displacement_d_coordinate
         self.piola_stress_tensor = self.deformation_gradient.det() * stress_tensor * self.deformation_gradient.inv().T
 
-
-class IntegrationScheme(object):
-    symbolic_int_weight = sy.symbols("w", real=True)
-
-    def __init__(self, reference_coordinates: sy.MatrixBase, integration_points: ARRAY_LIKE, integration_weight: ARRAY_LIKE):
-        self._reference_coordinates = reference_coordinates
-        n_dim = len(self._reference_coordinates)
-        self._integration_points = np.array(integration_points, dtype=float)[:, :n_dim]
-        self._integration_weights = np.array(integration_weight, dtype=float)
-
-    def integrate(self, det, expression=1.):
-        function = sy.lambdify(
-            list(self._reference_coordinates) + [self.symbolic_int_weight],
-            expression * det * self.symbolic_int_weight
+    @property
+    @lru_cache()
+    def configurational_stress_tensor_mbf(self):
+        configurational_stress_tensor = (
+                self.internal_energy_density * sy.eye(self.num_dim)
+                - self.deformation_gradient.T * self.piola_stress_tensor
         )
-        result = np.sum(
-            function(*self._integration_points.T, self._integration_weights),
-            axis=-1
+
+        return configurational_stress_tensor
+
+    @property
+    @lru_cache()
+    def configurational_stress_tensor_dbf(self):
+        configurational_stress_tensor = (
+                self.internal_energy_density * sy.eye(self.num_dim)
+                - self.d_displacement_d_coordinate.T * self.piola_stress_tensor
         )
-        return result
+        return configurational_stress_tensor
 
+    def _configurational_force(self, configurational_stress_tensor):
+        return self.element.integration_scheme.integrate(
+            self.element.reference_coordinates,
+            self.element.det,
+            (
+                    self.element.d_shapes_d_coordinates
+                    * configurational_stress_tensor.T
+                    * self.element.det
+            )
+        )
 
-def tensor_from_vector_notation(vec: ARRAY_LIKE):
-    """
-    Create a symmetric second order Tensor from vector notation.
+    @property
+    @lru_cache()
+    def configurational_force_mbf(self):
+        return self._configurational_force(self.configurational_stress_tensor_mbf)
 
-    This function is Abaqus specific.
-    eg. vector notation of the stress tensor:
-    (S11,S22,S33,S12,S13,S23)
-
-    Parameters
-    ----------
-    vec : (6, ) array_like
-     consisting of SymPy symbols or SymPy matrix
-     Second order tensor in vector notation
-
-    Returns
-    -------
-    tensor : SymPy matrix of shape (3, 3)
-        Second order tensor (sympy matrix object)
-    """
-    return sy.Matrix([
-            [vec[0], vec[3], vec[4]],
-            [vec[3], vec[1], vec[5]],
-            [vec[4], vec[5], vec[2]],
-        ])
-
-
-def vector_from_tensor_notation(tensor: sy.Matrix):
-    """
-    returns the abaqus vector notation of a tensor.
-
-    Parameters
-    ----------
-    tensor: array_like (3, 3) matrix
-
-    Returns
-    -------
-    vector of shape (3, 1)
-
-    """
-    return sy.Matrix([
-        tensor[0, 0], tensor[1, 1], tensor[2, 2],
-        tensor[0, 1], tensor[0, 2], tensor[1, 2],
-    ])
-
-
-def gen_Configurational_Forces_Static(element: Element, typ, method='mbf'):
-    # Generate some symbols
-    num_nodes = element.count_nodes()
-    num_dim = element.count_dimensions()
-
-    coord = sy.MatrixSymbol('coord', num_nodes, num_dim)
-    displacement = sy.MatrixSymbol('U', num_nodes, num_dim)
-    strain_energy = sy.symbols("strain_energy", real=True)
-    plastic_energy = sy.symbols("plastic_energy", real=True)
-    stress_vector = sy.symbols("S11 S22 S33 S12 S13 S23", real=True)
-    stress_tensor = tensor_from_vector_notation(stress_vector)
-    stress_tensor = stress_tensor[:num_dim, :num_dim]
-
-    #
-    element = element.create_real_space_element(coord)
-    deformation = element.create_deformation(displacement, stress_tensor)
-
-    # Calculate Configurational stress
-    internal_energy = strain_energy + plastic_energy
-    if method == 'mbf':
-        config_stress_tensor = internal_energy * sy.eye(num_dim) \
-                               - deformation.deformation_gradient.T \
-                               * deformation.piola_stress_tensor
-    else:
-        config_stress_tensor = internal_energy * sy.eye(num_dim) \
-                               - deformation.d_displacement_d_coordinate.T \
-                               * deformation.piola_stress_tensor
-
-    # Calculate the inner part of the integral
-    config_force = element.d_shapes_d_coordinates * config_stress_tensor.T * element.det
-
-    return config_stress_tensor, config_force
-
+    @property
+    @lru_cache()
+    def configurational_force_dbf(self):
+        return self._configurational_force(self.configurational_stress_tensor_dbf)
