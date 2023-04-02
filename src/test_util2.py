@@ -1,10 +1,64 @@
 import unittest
 
+import sympy as sy
+
 import ele_def
 from util2 import *
 
 
 class MyTestCase(unittest.TestCase):
+
+    def test_integration_scheme(self):
+        typ = "CPE4"
+        nodes = ele_def.ref_nodes[typ]
+        powers = ele_def.poly_power[typ]
+        int_points = ele_def.int_points[typ]
+        int_weights = ele_def.int_weights[typ]
+        int_scheme = IntegrationScheme(
+            int_points,
+            int_weights)
+
+        real_nodes = np.array([
+            [-1., -1.], [1., -1.],
+            [2., 3.], [-1., 2.]
+        ])
+
+        ref_element = Element.create_ref_space_element(nodes, powers, None)
+        real_element = ref_element.create_real_space_element(real_nodes)
+
+        with self.subTest("area of deformed element"):
+            self.assertEqual(
+                int_scheme.integrate(real_element.reference_coordinates, real_element.det).doit(),
+                8.5
+            )
+
+        with self.subTest("integrate matrix"):
+            self.assertEqual(
+                sy.Matrix(int_scheme.integrate(
+                    real_element.reference_coordinates,
+                    real_element.det,
+                    sy.Matrix([t, 2.])
+                )).doit(),
+                sy.Matrix([8.5*t, 2*8.5])
+            )
+
+        with self.subTest("replace symbols by values at integration points"):
+            a_mat = sy.MatrixSymbol("A", 1, 2)
+            ab_mat = sy.MatrixSymbol("AB", 2, 1)
+            for expr in [a_mat * ab_mat, (a_mat * ab_mat).as_explicit()]:
+                self.assertEqual(int_scheme.integrate(
+                    ref_element.reference_coordinates,
+                    ref_element.det,
+                    expr,
+                    value_replacements_at_integration_points=[
+                        {a_mat: sy.Matrix([[1, 2]]), ab_mat: sy.Matrix([[11], [22]])},
+                        {a_mat: sy.Matrix([[3, 4]]), ab_mat: sy.Matrix([[33], [44]])},
+                        {a_mat: sy.Matrix([[5, 6]]), ab_mat: sy.Matrix([[55], [66]])},
+                        {a_mat: sy.Matrix([[7, 8]]), ab_mat: sy.Matrix([[77], [88]])},
+                    ]).doit().flat(),
+                    [1*11+2*22+3*33+4*44+5*55+6*66+7*77+8*88]
+                )
+
     def test_reference_elements(self):
         for typ in ele_def.poly_power.keys():
             with self.subTest(typ):
@@ -147,8 +201,8 @@ class MyTestCase(unittest.TestCase):
             deformation = Deformation(
                 element=real_element,
                 internal_energy_density=1.,
-                displacement=displacement,
-                stress_tensor=np.eye(3)
+                displacements_at_nodes=displacement,
+                stress_tensors_at_integration_points=[np.eye(3)]*len(int_weight)
             )
             np.testing.assert_array_almost_equal(
                 deformation.deformation_gradient,
@@ -175,8 +229,8 @@ class MyTestCase(unittest.TestCase):
             deformation = Deformation(
                 element=real_element,
                 internal_energy_density=1.,
-                displacement=displacement,
-                stress_tensor=stress_tensor
+                displacements_at_nodes=displacement,
+                stress_tensors_at_integration_points=[stress_tensor]*len(int_weight)
             )
 
             np.testing.assert_array_almost_equal(
@@ -184,7 +238,9 @@ class MyTestCase(unittest.TestCase):
                 expected_deformation_gradient
             )
 
-            piola_stress_tensor = sy.Matrix(deformation.piola_stress_tensor)
+            piola_stress_tensor = sy.Matrix(
+                deformation.piola_stress_tensor
+            ).replace(S, stress_tensor)
             self.assertAlmostEqual(
                 0.,
                 (0.49*stress - piola_stress_tensor[0, 0]) / stress
@@ -192,7 +248,7 @@ class MyTestCase(unittest.TestCase):
             piola_stress_tensor[0, 0] = 0
             self.assertEqual(sy.zeros(3), piola_stress_tensor)
 
-    def test_integration_scheme(self):
+    def test_configurational_force(self):
         typ = "CPE4"
         nodes = ele_def.ref_nodes[typ]
         powers = ele_def.poly_power[typ]
@@ -202,24 +258,23 @@ class MyTestCase(unittest.TestCase):
             int_points,
             int_weights)
 
-        real_nodes = np.array([
-            [-1., -1.], [1., -1.],
-            [2., 3.], [-1., 2.]
-        ])
+        real_nodes = sy.MatrixSymbol("COORD", 4, 2)
+        energy_density = sy.Symbol("ENER", real=True, positive=True)
+        displacements = sy.MatrixSymbol("U", 4, 2)
 
-        ref_element = Element.create_ref_space_element(nodes, powers, None)
+        ref_element = Element.create_ref_space_element(nodes, powers, int_scheme)
         real_element = ref_element.create_real_space_element(real_nodes)
-
-        self.assertEqual(
-            int_scheme.integrate(real_element.reference_coordinates, real_element.det),
-            8.5
+        deformation = Deformation(
+            real_element,
+            energy_density,
+            displacements,
+            [
+                sy.MatrixSymbol(f"S_at_IP{i}", 2, 2)
+                for i in range(len(int_weights))
+            ]
         )
-        self.assertEqual(
-            sy.Matrix(int_scheme.integrate(real_element.reference_coordinates, real_element.det, sy.Matrix([t, 2.]))),
-            sy.Matrix([8.5*t, 2*8.5])
-        )
-
-    def test_configurational_force(self):
+        cf = deformation.configurational_force_dbf
+        print("ok")
         assert False  # TODO
 
 

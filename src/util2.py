@@ -13,10 +13,11 @@ r, s, t = sy.symbols("r s t", real=True)
 # real space coordinates
 x, y, z = sy.symbols("x y z", real=True)
 
+# symbolic stress tensor
+S = sy.MatrixSymbol("S", 3, 3)
+
 
 class IntegrationScheme(object):
-    symbolic_int_weight = sy.symbols("w", real=True)
-
     def __init__(
             self,
             integration_points: ARRAY_LIKE,
@@ -25,15 +26,37 @@ class IntegrationScheme(object):
         self._integration_points = np.array(integration_points, dtype=float)
         self._integration_weights = np.array(integration_weight, dtype=float)
 
-    def integrate(self, symbolic_coordinates, det: Union[sy.Expr, float], expression: Union[sy.Expr, float] = 1.):
-        function = sy.lambdify(
-            list(symbolic_coordinates) + [self.symbolic_int_weight],
-            expression * det * self.symbolic_int_weight
-        )
-        result = np.sum(
-            function(*self._integration_points.T, self._integration_weights),
-            axis=-1
-        )
+    def integrate(
+            self,
+            symbolic_coordinates,
+            det: Union[sy.Expr, float],
+            expression: Union[sy.Expr, sy.MatrixBase, float] = 1.,
+            value_replacements_at_integration_points: List[dict] = None
+    ):
+        if value_replacements_at_integration_points is None:
+            value_replacements_at_integration_points = [dict()] * len(self._integration_points)
+
+        assert len(value_replacements_at_integration_points) == len(self._integration_points)
+
+        terms = list()
+        for integration_point, integration_weight, value_replacement_at_integration_point \
+                in zip(
+                    self._integration_points,
+                    self._integration_weights,
+                    value_replacements_at_integration_points
+                ):
+
+            replacement_rules = {
+                symbol: value
+                for symbol, value in zip(symbolic_coordinates, integration_point)
+            }
+            replacement_rules.update(value_replacement_at_integration_point)
+
+            terms.append(
+                sy.Mul(integration_weight, (expression * det).xreplace(replacement_rules))
+            )
+
+        result = sy.Add(*terms)
         return result
 
 
@@ -55,7 +78,7 @@ class Element(object):
         # jac[i, j] = d(coordinates[i])/d(ref_coordinates[j])
         self.jacobian = self.coordinates.jacobian(self.reference_coordinates)
         self.inv_jacobian = self.jacobian.inv()
-        self.det = sy.det(self.jacobian)
+        self.det = self.jacobian.det()
 
         self.d_shapes_d_ref_coordinates = self.reference_shapes.jacobian(self.reference_coordinates)
         self.d_shapes_d_coordinates = self.d_shapes_d_ref_coordinates * self.inv_jacobian
@@ -156,19 +179,20 @@ class Deformation(object):
             self,
             element: Element,
             internal_energy_density: Union[sy.Symbol, float],
-            displacement: ARRAY_LIKE,
-            stress_tensor: ARRAY_LIKE,
+            displacements_at_nodes: ARRAY_LIKE,
+            stress_tensors_at_integration_points: ARRAY_LIKE,
     ):
 
         self.num_dim = element.count_dimensions()
         self.element = element
         self.internal_energy_density = internal_energy_density
-        self.displacement = displacement
-        self.stress_tensor = stress_tensor
+        self.displacements_at_nodes = displacements_at_nodes
+        self.stress_tensors_at_integration_points = stress_tensors_at_integration_points
 
-        self.d_displacement_d_coordinate = displacement.T * element.d_shapes_d_coordinates
+        sym_stress_tensor = S[:self.num_dim, :self.num_dim]
+        self.d_displacement_d_coordinate = displacements_at_nodes.T * element.d_shapes_d_coordinates
         self.deformation_gradient = sy.eye(self.num_dim) + self.d_displacement_d_coordinate
-        self.piola_stress_tensor = self.deformation_gradient.det() * stress_tensor * self.deformation_gradient.inv().T
+        self.piola_stress_tensor = self.deformation_gradient.det() * sym_stress_tensor * self.deformation_gradient.inv().T
 
     @property
     @lru_cache()
@@ -191,13 +215,17 @@ class Deformation(object):
 
     def _configurational_force(self, configurational_stress_tensor):
         return self.element.integration_scheme.integrate(
-            self.element.reference_coordinates,
-            self.element.det,
-            (
+            symbolic_coordinates=self.element.reference_coordinates,
+            det=self.element.det,
+            expression=(
                     self.element.d_shapes_d_coordinates
                     * configurational_stress_tensor.T
                     * self.element.det
-            )
+            ),
+            value_replacements_at_integration_points=[
+                {S: stress_tensor}
+                for stress_tensor in self.stress_tensors_at_integration_points
+            ]
         )
 
     @property
