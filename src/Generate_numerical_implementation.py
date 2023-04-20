@@ -67,7 +67,7 @@ f_python_functions.close()
 
 if os.name == 'nt':
     # Windows
-    subprocess.call("mingw32-gcc -shared -O3 -o Conf_Forces.dll Conf_Forces.c", shell=True)
+    subprocess.call("gcc -shared -O3 -o Conf_Forces.dll Conf_Forces.c", shell=True)
 else:
     # Unix based operating systems
-    subprocess.call("mingw32-gcc -shared -O3 -fPIC -o  Conf_Forces.so Conf_Forces.c", shell=True)
+    subprocess.call("gcc -shared -O3 -fPIC -o  Conf_Forces.so Conf_Forces.c", shell=True)
