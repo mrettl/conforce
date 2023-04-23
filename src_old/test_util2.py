@@ -2,7 +2,7 @@ import unittest
 
 import sympy as sy
 
-import ele_def
+import element_definitions as ele_def
 from util2 import *
 
 

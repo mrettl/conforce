@@ -4,7 +4,7 @@ import numpy as np
 import sympy as sy
 
 import util
-import ele_def
+import element_definitions
 
 
 r, s, t = sy.symbols("r s t")  # bild space
@@ -15,7 +15,7 @@ class MyTestCase(unittest.TestCase):
     def test_shapes(self):
         for typ in ele_def.poly_power.keys():
             with self.subTest(typ):
-                points = ele_def.ref_nodes[typ]
+                points = element_definitions.ref_nodes[typ]
                 powers = ele_def.poly_power[typ]
 
                 shapes = util.Shapes.from_points(points, powers)
@@ -48,7 +48,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_to_symbolic(self):
         typ = "CPE4"
-        points = ele_def.ref_nodes[typ]
+        points = element_definitions.ref_nodes[typ]
         powers = ele_def.poly_power[typ]
         i_points = ele_def.int_points[typ]
         i_weights = ele_def.int_weights[typ]

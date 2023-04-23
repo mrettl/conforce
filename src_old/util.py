@@ -1074,7 +1074,7 @@ def gen_Configurational_Forces_Static(poly_power, bild_points, int_points, int_w
     Generates the static configurational force implementation.
     This is a entry function and uses functions defined above to generate the numerical implementation 
     of configurational forces for the static and elasto-plastic case.
-    All Inputs are defined in ele_def.py
+    All Inputs are defined in element_definitions.py
 
     Parameters
     ----------
@@ -1164,7 +1164,7 @@ def gen_Configurational_Forces_Dynamic(poly_power, bild_points, int_points, int_
     Generates the dynamic configurational force implementation.
     This is a entry function and uses functions defined above to generate the numerical implementation 
     of configurational forces for the dynamic case.
-    All Inputs are defined in ele_def.py
+    All Inputs are defined in element_definitions.py
 
     Parameters
     ----------
