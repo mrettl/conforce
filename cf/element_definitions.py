@@ -306,12 +306,6 @@ exponents_of_shape_functions_of_element['CPE4'] = np.array((
     (0, 1), (1, 1)
 ))
 
-# CPS4  # TODO:
-R_at_integration_points_of_element['CPS4'] = R_at_integration_points_of_element['CPE4']
-weights_of_integration_points_of_element['CPS4'] = weights_of_integration_points_of_element['CPE4']
-R_at_nodes_of_element['CPS4'] = R_at_nodes_of_element['CPE4']
-exponents_of_shape_functions_of_element['CPS4'] = exponents_of_shape_functions_of_element['CPE4']
-
 # CPE4R
 R_at_integration_points_of_element['CPE4R'] = np.array(((0., 0.),))
 weights_of_integration_points_of_element['CPE4R'] = np.array((4.,))

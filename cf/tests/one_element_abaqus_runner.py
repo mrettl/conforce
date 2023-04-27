@@ -133,13 +133,13 @@ def simulate_all_element_types():
     result_file = f"{folder}/_result.json"
     if not os.path.exists(result_file):
         result = dict()
-        for element_type in el_def.R_at_nodes_of_element.keys() - {"C3D10R"} | {"CPS4"}:
+        for element_type in el_def.R_at_nodes_of_element.keys() - {"C3D10R"}:
             R_at_nodes = el_def.R_at_nodes_of_element[element_type]
             n, d = R_at_nodes.shape
             # rng = np.random.default_rng(0x5EED)
             # F = 1e-3 * rng.random(size=(d, d), dtype=float)
             F = 1e-3 * np.array([
-                [1, 0, 0],
+                [1, 1, 0],
                 [0, 0, 0],
                 [0, 0, 0]
             ])[:d, :d]
