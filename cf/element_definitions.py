@@ -38,7 +38,7 @@ Shape functions in reference space
 ----------------------------------
 
 >>> import sympy as sy
->>> from expressions import eval_H, eval_dH_dR, eval_J, eval_dH_dX
+>>> from cf.expressions import eval_H, eval_dH_dR, eval_J, eval_dH_dX
 
 The shape functions are defined in the reference coordinate system.
 For a 2D element this coordinate system has 2 variables:
@@ -306,6 +306,12 @@ exponents_of_shape_functions_of_element['CPE4'] = np.array((
     (0, 1), (1, 1)
 ))
 
+# CPS4  # TODO:
+R_at_integration_points_of_element['CPS4'] = R_at_integration_points_of_element['CPE4']
+weights_of_integration_points_of_element['CPS4'] = weights_of_integration_points_of_element['CPE4']
+R_at_nodes_of_element['CPS4'] = R_at_nodes_of_element['CPE4']
+exponents_of_shape_functions_of_element['CPS4'] = exponents_of_shape_functions_of_element['CPE4']
+
 # CPE4R
 R_at_integration_points_of_element['CPE4R'] = np.array(((0., 0.),))
 weights_of_integration_points_of_element['CPE4R'] = np.array((4.,))
@@ -557,6 +563,7 @@ exponents_of_shape_functions_of_element['C3D10'] = np.array((
 ))
 
 # C3D10R
+# not validated against abaqus
 R_at_integration_points_of_element['C3D10R'] = np.array(((0.25, 0.25, 0.25),))
 weights_of_integration_points_of_element['C3D10R'] = np.zeros(1) + 1. / 6.
 R_at_nodes_of_element['C3D10R'] = R_at_nodes_of_element['C3D10']

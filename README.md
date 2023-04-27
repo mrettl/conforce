@@ -1,7 +1,9 @@
 # Configurational forces
 
+## Installation
 
-```
-<Element Connectivity> ::= list of <Element Nodes>
-<Element Nodes> ::= list of <Node Indices>
-```
+### Installation of GCC on Windows
+
+https://github.com/skeeto/w64devkit/releases
+
+add w64devkit/bin to environment variables
