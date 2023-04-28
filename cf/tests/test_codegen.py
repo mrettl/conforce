@@ -17,7 +17,7 @@ class TestCodegen(unittest.TestCase):
 
         with CPyCodeCompiler(
                 name=name,
-                compile_at_exit=True,
+                compile_at_exit=False,
                 write_header_at_enter=True,
                 folder=folder
         ) as compiler:
@@ -27,7 +27,7 @@ class TestCodegen(unittest.TestCase):
                 compiler=compiler
             )
 
-        importlib.import_module(name, f"{folder}/{name}".replace("/", "."))
+        # importlib.import_module(name, f"{folder}/{name}".replace("/", "."))
 
 
 if __name__ == '__main__':

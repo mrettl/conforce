@@ -362,9 +362,13 @@ class TermCollector:
             in zip(np.array(points, dtype=float), point_names)
         }
 
+    def reset(self):
+        self.used_symbols_to_names.clear()
+        self.names_to_used_expressions.clear()
+
     def collect_expressions_for_array(self, result_array: sy.MatrixBase):
-        for i, j in product(*[range(dim) for dim in result_array.shape]):
-            self.collect_expressions_for_symbol(result_array[i, j])
+        for idx in product(*[range(dim) for dim in result_array.shape]):
+            self.collect_expressions_for_symbol(result_array[idx])
 
     def collect_expressions_for_symbol(self, result: sy.Expr):
         if result in self.used_symbols_to_names:
@@ -431,6 +435,7 @@ class TermCollector:
 
         return assignments
 
-    def doit(self, input_symbols, result_array: sy.MatrixBase, cse: bool = True):
+    def collect_assignments(self, input_symbols, result_array: sy.MatrixBase, cse: bool = True):
+        self.reset()
         self.collect_expressions_for_array(result_array)
         return self.to_assignments(input_symbols, cse)
