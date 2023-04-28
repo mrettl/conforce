@@ -1,13 +1,19 @@
-import importlib
 import unittest
+import shutil
 
 from cf.codegen import *
 
+folder = "cf/tests/generated"
+
 
 class TestCodegen(unittest.TestCase):
-    def test_something(self):
-        name = "test_cf"
-        folder = "simulations/tests/test_codegen"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        shutil.rmtree(folder)
+
+    def test_compilation(self):
+        name = "test_codegen"
         os.makedirs(folder, exist_ok=True)
 
         for ext in [".dll", ".so", ".py"]:
@@ -17,7 +23,7 @@ class TestCodegen(unittest.TestCase):
 
         with CPyCodeCompiler(
                 name=name,
-                compile_at_exit=False,
+                compile_at_exit=True,
                 write_header_at_enter=True,
                 folder=folder
         ) as compiler:
@@ -27,7 +33,9 @@ class TestCodegen(unittest.TestCase):
                 compiler=compiler
             )
 
-        # importlib.import_module(name, f"{folder}/{name}".replace("/", "."))
+        from cf.tests.generated import test_codegen
+        # TODO: call functions
+        print("ok")
 
 
 if __name__ == '__main__':

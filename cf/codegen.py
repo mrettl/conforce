@@ -60,18 +60,52 @@ def write_code_for_element_type(element_type: str, is_dbf: bool, compiler):
         is_dbf=is_dbf
     )
 
-
     #
-    sy.MatrixSymbol("CS", n_, d_)
+    int_repl_rules = expr.create_replacement_rules(
+        expr.eval_R(d_),
+        R_at_int_points_
+    )
+
+    # F
+    F_ = expr.create_symbolic_matrix(
+        "F{row}{col}",
+        ["x", "y", "z"][:d_],
+        ["x", "y", "z"][:d_],
+        *expr.eval_R(d_)
+    )
+    F_at_int_points_ = expr.apply_replacement_rules(
+        F_,
+        int_repl_rules
+    )
+    F_at_int_points = sy.IndexedBase("F_at_int_points", shape=(ips_, d_, d_))
+    symbols_to_expressions.update({
+        F_at_int_points[idx]: F_at_int_points_[idx]
+        for idx in product(*[range(int(dim)) for dim in F_at_int_points.shape])
+    })
+
+    # P
+    P_ = expr.create_symbolic_matrix(
+        "P{row}{col}",
+        ["x", "y", "z"][:d_],
+        ["x", "y", "z"][:d_],
+        *expr.eval_R(d_)
+    )
+    P_at_int_points_ = expr.apply_replacement_rules(
+        P_,
+        int_repl_rules
+    )
+    P_at_int_points = sy.IndexedBase("P_at_int_points", shape=(ips_, d_, d_))
+    symbols_to_expressions.update({
+        P_at_int_points[idx]: P_at_int_points_[idx]
+        for idx in product(*[range(int(dim)) for dim in P_at_int_points.shape])
+    })
+
+    # CS
     CS_ = expr.create_symbolic_matrix(
         "CS{row}{col}",
         ["x", "y", "z"][:d_],
         ["x", "y", "z"][:d_],
         *expr.eval_R(d_)
-    )
-    int_repl_rules = expr.create_replacement_rules(
-        expr.eval_R(d_),
-        R_at_int_points_
     )
     CS_at_int_points_ = expr.apply_replacement_rules(
         CS_,
@@ -91,13 +125,47 @@ def write_code_for_element_type(element_type: str, is_dbf: bool, compiler):
         point_names=[*int_point_names, *node_names]
     )
 
+    # F
+    if not is_dbf:
+        assignments = term_collector.collect_assignments(
+            input_symbols=[X_at_nodes, U_at_nodes],
+            result_array=F_at_int_points,
+            cse=True
+        )
+
+        compiler.write_function_for_F(
+            assignments=assignments,
+            element_typ=element_type,
+            X_at_nodes=X_at_nodes,
+            U_at_nodes=U_at_nodes,
+            number_of_integration_points=ips_,
+            F_at_int_points=F_at_int_points
+        )
+
+    # P
+    if not is_dbf:
+        assignments = term_collector.collect_assignments(
+            input_symbols=[X_at_nodes, U_at_nodes, S_at_int_points],
+            result_array=P_at_int_points,
+            cse=True
+        )
+
+        compiler.write_function_for_P(
+            assignments=assignments,
+            element_typ=element_type,
+            X_at_nodes=X_at_nodes,
+            U_at_nodes=U_at_nodes,
+            S_at_int_points=S_at_int_points,
+            P_at_int_points=P_at_int_points
+        )
+
     # CS
     assignments = term_collector.collect_assignments(
         input_symbols=[e_at_int_points, X_at_nodes, U_at_nodes, S_at_int_points],
         result_array=CS_at_int_points,
         cse=True
     )
-    # TODO:
+
     compiler.write_function_for_CS(
         assignments=assignments,
         element_typ=element_type,
@@ -209,8 +277,53 @@ else:
     )))
 
 # function lookup dictionaries
-_map_typ_and_method_to_CF_function = dict()
+_map_typ_to_F_function = dict()
+_map_typ_to_P_function = dict()
 _map_typ_and_method_to_CS_function = dict()
+_map_typ_and_method_to_CF_function = dict()
+
+
+def compute_F(
+        X_at_nodes,
+        U_at_nodes,
+        element_type
+):
+    fun = _map_typ_to_F_function[str(element_type)]
+    return fun(
+        X_at_nodes,
+        U_at_nodes
+    )
+ 
+
+def compute_P(
+        X_at_nodes,
+        U_at_nodes,
+        S_at_int_points,
+        element_type
+):
+    fun = _map_typ_to_P_function[str(element_type)]
+    return fun(
+        X_at_nodes,
+        U_at_nodes,
+        S_at_int_points
+    )
+
+
+def compute_CS(
+        e_at_int_points,
+        X_at_nodes,
+        U_at_nodes,
+        S_at_int_points,
+        element_type,
+        method
+):
+    fun = _map_typ_and_method_to_CS_function[(str(element_type), str(method))]
+    return fun(
+        e_at_int_points,
+        X_at_nodes,
+        U_at_nodes,
+        S_at_int_points
+    )
 
 
 def compute_CF(
@@ -228,24 +341,238 @@ def compute_CF(
         U_at_nodes,
         S_at_int_points
     )
- 
-
-def compute_CS(
-        e_at_int_points,
-        X_at_nodes,
-        U_at_nodes,
-        S_at_int_points,
-        element_type,
-        method
-):
-    fun = _map_typ_and_method_to_CS_function[(str(element_type), str(method))]
-    return fun(
-        e_at_int_points,
-        X_at_nodes,
-        U_at_nodes,
-        S_at_int_points
-    )
 ''')
+
+    def write_function_for_F(
+            self,
+            assignments: List[ast.Assignment],
+            element_typ: str,
+            X_at_nodes: sy.IndexedBase,
+            U_at_nodes: sy.IndexedBase,
+            number_of_integration_points: int,
+            F_at_int_points: sy.IndexedBase
+    ):
+
+        c_printer = CCodePrinter()
+        n_, d_ = X_at_nodes.shape
+        ips_ = int(number_of_integration_points)
+
+        function_name_one_element = f"compute_F_for_one_element_of_type_{element_typ}"
+        function_name_n_elements = f"compute_F_for_{element_typ}"
+
+        # c code for one element
+        self._c_file_handle.write(f'''
+/**
+ * Computes the deformation gradients for one element of typ {element_typ}.
+ * The element has n={n_} nodes and ips={ips_} integration points.
+ * 
+ * @param[in] {X_at_nodes} Coordinates at n nodes of the element.
+ * @param[in] {U_at_nodes} Displacements at n nodes of the element.
+ * @param[out] {F_at_int_points} The resulting deformation gradients for ips integration points are written 
+ *             to this array.
+ */
+void {function_name_one_element}(
+        double {X_at_nodes}[{n_}][{d_}], 
+        double {U_at_nodes}[{n_}][{d_}], 
+        double {F_at_int_points}[{ips_}][{d_}][{d_}]
+) {{
+    // COMPUTER GENERATED CODE:
+''')
+
+        for assignment in assignments:
+            lhs = assignment.lhs
+            rhs = assignment.rhs
+
+            lhs_code = c_printer.doprint(lhs)
+            rhs_code = c_printer.doprint(rhs)
+            if "[" in lhs_code:
+                self._c_file_handle.write(f"    {lhs_code} = {rhs_code};\n")
+            else:
+                self._c_file_handle.write(f"    double {lhs_code} = {rhs_code};\n")
+
+        self._c_file_handle.write("}\n")
+
+        # c code for multiple elements
+        self._c_file_handle.write(f'''
+/**
+ * Computes the deformation gradients for num_elem elements of typ {element_typ}.
+ * Each element has n={n_} nodes and ips={ips_} integration points.
+ * A static load case is assumed.
+ * 
+ * @param[in] num_elem number of elements
+ * @param[in] {X_at_nodes} Coordinates at n nodes of num_elem elements.
+ * @param[in] {U_at_nodes} Displacements at n nodes of num_elem elements.
+ * @param[out] {F_at_int_points} The resulting deformation gradients for ips integration points are written 
+ *             to this array.
+ */
+CF_API void {function_name_n_elements}(
+        int num_elem, 
+        double {X_at_nodes}[][{n_}][{d_}], 
+        double {U_at_nodes}[][{n_}][{d_}], 
+        double {F_at_int_points}[][{ips_}][{d_}][{d_}] 
+) {{
+    // COMPUTER GENERATED CODE:
+    #pragma omp parallel for
+    for (size_t i=0; i<num_elem; i++) {{
+        {function_name_one_element}(
+            {X_at_nodes}[i], 
+            {U_at_nodes}[i], 
+            {F_at_int_points}[i]
+        );
+    }}
+}}
+''')
+
+        # python code for multiple elements
+        # TODO: doc
+        self._py_file_handle.write(f"""
+
+def {function_name_n_elements}(
+        {X_at_nodes},
+        {U_at_nodes}):
+
+    {X_at_nodes} = np.ascontiguousarray({X_at_nodes}, dtype=np.float64)
+    {U_at_nodes} = np.ascontiguousarray({U_at_nodes}, dtype=np.float64)
+
+    num_elem = {X_at_nodes}.shape[0]
+
+    {F_at_int_points} = np.zeros((num_elem, {ips_}, {d_}, {d_}), dtype=np.float64)
+
+    assert {X_at_nodes}.shape == (num_elem, {n_}, {d_})
+    assert {U_at_nodes}.shape == (num_elem, {n_}, {d_})
+
+    lib.{function_name_n_elements}(
+        ctypes.c_size_t(num_elem),
+        {X_at_nodes}.ctypes.data_as(ctypes.c_void_p),
+        {U_at_nodes}.ctypes.data_as(ctypes.c_void_p),
+        {F_at_int_points}.ctypes.data_as(ctypes.c_void_p)
+    )
+
+    return {F_at_int_points}
+
+
+_map_typ_to_F_function['{element_typ}'] = {function_name_n_elements}
+""")
+
+    def write_function_for_P(
+            self,
+            assignments: List[ast.Assignment],
+            element_typ: str,
+            X_at_nodes: sy.IndexedBase,
+            U_at_nodes: sy.IndexedBase,
+            S_at_int_points: sy.IndexedBase,
+            P_at_int_points: sy.IndexedBase
+    ):
+        c_printer = CCodePrinter()
+        n_, d_ = X_at_nodes.shape
+        ips_ = S_at_int_points.shape[0]
+
+        function_name_one_element = f"compute_P_for_one_element_of_type_{element_typ}"
+        function_name_n_elements = f"compute_P_for_{element_typ}"
+
+        # c code for one element
+        self._c_file_handle.write(f'''
+/**
+ * Computes the first Piola-Kirchhoff stress tensor for one element of typ {element_typ}.
+ * The element has n={n_} nodes and ips={ips_} integration points.
+ * 
+ * @param[in] {X_at_nodes} Coordinates at n nodes of the element.
+ * @param[in] {U_at_nodes} Displacements at n nodes of the element.
+ * @param[in] {S_at_int_points} Symmetric stress tensors at ips integration points.
+ * @param[out] {P_at_int_points} The resulting Piola-Kirchhoff stress tensors for ips integration points are written 
+ *             to this array.
+ */
+void {function_name_one_element}(
+        double {X_at_nodes}[{n_}][{d_}], 
+        double {U_at_nodes}[{n_}][{d_}], 
+        double {S_at_int_points}[{ips_}][{d_}][{d_}], 
+        double {P_at_int_points}[{ips_}][{d_}][{d_}]
+) {{
+    // COMPUTER GENERATED CODE:
+''')
+
+        for assignment in assignments:
+            lhs = assignment.lhs
+            rhs = assignment.rhs
+
+            lhs_code = c_printer.doprint(lhs)
+            rhs_code = c_printer.doprint(rhs)
+            if "[" in lhs_code:
+                self._c_file_handle.write(f"    {lhs_code} = {rhs_code};\n")
+            else:
+                self._c_file_handle.write(f"    double {lhs_code} = {rhs_code};\n")
+
+        self._c_file_handle.write("}\n")
+
+        # c code for multiple elements
+        self._c_file_handle.write(f'''
+/**
+ * Computes the first Piola-Kirchhoff stress tensor for num_elem elements of typ {element_typ}.
+ * Each element has n={n_} nodes and ips={ips_} integration points.
+ * A static load case is assumed.
+ * 
+ * @param[in] num_elem number of elements
+ * @param[in] {X_at_nodes} Coordinates at n nodes of num_elem elements.
+ * @param[in] {U_at_nodes} Displacements at n nodes of num_elem elements.
+ * @param[in] {S_at_int_points} Symmetric stress tensors at ips integration points 
+ *            for num_elem elements.
+ * @param[out] {P_at_int_points} The resulting Piola-Kirchhoff stress tensors for ips integration points are written 
+ *             to this array.
+ */
+CF_API void {function_name_n_elements}(
+        int num_elem, 
+        double {X_at_nodes}[][{n_}][{d_}], 
+        double {U_at_nodes}[][{n_}][{d_}], 
+        double {S_at_int_points}[][{ips_}][{d_}][{d_}], 
+        double {P_at_int_points}[][{ips_}][{d_}][{d_}] 
+) {{
+    // COMPUTER GENERATED CODE:
+    #pragma omp parallel for
+    for (size_t i=0; i<num_elem; i++) {{
+        {function_name_one_element}(
+            {X_at_nodes}[i], 
+            {U_at_nodes}[i], 
+            {S_at_int_points}[i], 
+            {P_at_int_points}[i]
+        );
+    }}
+}}
+''')
+
+        # python code for multiple elements
+        # TODO: doc
+        self._py_file_handle.write(f"""
+
+def {function_name_n_elements}(
+        {X_at_nodes},
+        {U_at_nodes},
+        {S_at_int_points}):
+
+    {X_at_nodes} = np.ascontiguousarray({X_at_nodes}, dtype=np.float64)
+    {U_at_nodes} = np.ascontiguousarray({U_at_nodes}, dtype=np.float64)
+    {S_at_int_points} = np.ascontiguousarray({S_at_int_points}, dtype=np.float64)
+
+    num_elem = {X_at_nodes}.shape[0]
+
+    {P_at_int_points} = np.zeros((num_elem, {ips_}, {d_}, {d_}), dtype=np.float64)
+
+    assert {X_at_nodes}.shape == (num_elem, {n_}, {d_})
+    assert {U_at_nodes}.shape == (num_elem, {n_}, {d_})
+    assert {S_at_int_points}.shape == (num_elem, {ips_}, {d_}, {d_})
+
+    lib.{function_name_n_elements}(
+        ctypes.c_size_t(num_elem),
+        {X_at_nodes}.ctypes.data_as(ctypes.c_void_p),
+        {U_at_nodes}.ctypes.data_as(ctypes.c_void_p),
+        {S_at_int_points}.ctypes.data_as(ctypes.c_void_p),
+        {P_at_int_points}.ctypes.data_as(ctypes.c_void_p)
+    )
+
+    return {P_at_int_points}
+
+
+_map_typ_to_P_function['{element_typ}'] = {function_name_n_elements}
+""")
 
     def write_function_for_CS(
             self,
