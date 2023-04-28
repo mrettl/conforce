@@ -6,6 +6,13 @@ import sympy as sy
 from sympy.codegen import ast
 
 
+R_3d = sy.Matrix(sy.symbols("r s t", real=True))
+
+
+def eval_R(d_: int):
+    return sy.Matrix(R_3d[:d_])
+
+
 def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
     R_at_nodes_ = np.array(R_at_nodes_, dtype=float)
     exponents_ = np.array(exponents_, dtype=int)
@@ -105,16 +112,31 @@ def eval_CF(
 
 def compute_CF(
         R_at_nodes_, exponents_,
-        R_at_int_points, int_weights,
-        X_at_nodes_, U_at_nodes_, S_at_int_points_, e_,
+        R_at_int_points_, int_weights_,
+        X_at_nodes_, U_at_nodes_,
+        S_at_int_points_, e_at_int_points_,
         is_dbf: bool = True):
 
-    mat_symbols_to_expression = dict()
-    symbols_to_expressions = dict()
+    # check shapes
+    n_, d_ = R_at_nodes_.shape
+    ips_ = len(int_weights_)
+
+    assert d_ in {2, 3}
+    assert R_at_nodes_.shape == (n_, d_)
+    assert exponents_.shape == (n_, d_)
+    assert R_at_int_points_.shape == (ips_, d_)
+    assert int_weights_.shape == (ips_,)
+    assert X_at_nodes_.shape == (n_, d_)
+    assert U_at_nodes_.shape == (n_, d_)
+    assert S_at_int_points_.shape == (ips_, d_, d_)
+    assert e_at_int_points_.shape == (ips_, )
+
+    #
+    symbols_to_expression = dict()
     n_, d_ = R_at_nodes_.shape
     dim_n = list(range(n_))
 
-    R = create_symbolic_matrix("{row}", ["r", "s", "t"][:d_], 1)
+    R = eval_R(d_)
     dim_r = [r.name for r in R]
 
     X = create_symbolic_matrix("{row}", ["x", "y", "z"][:d_], 1, *R)
@@ -123,51 +145,54 @@ def compute_CF(
     U = create_symbolic_matrix("U{row}", dim_x, 1, *R)
     S = create_symbolic_matrix("S{row}{col}", dim_x, dim_x, *R, is_symmetric=True)
 
-    e = sy.Symbol("e", real=True)
-    symbols_to_expressions[e] = e_
+    e = sy.Function("e", real=True)(*R)
+    symbols_to_expression[e] = e_at_int_points_
 
     #
     nodes_replacements = create_replacement_rules(R, R_at_nodes_)
-    int_points_replacements = create_replacement_rules(R, R_at_int_points)
+    int_points_replacements = create_replacement_rules(R, R_at_int_points_)
 
     X_at_nodes = sy.Matrix(apply_replacement_rules(X, nodes_replacements)[:, :, 0]).as_immutable()
-    mat_symbols_to_expression[X_at_nodes] = X_at_nodes_
+    symbols_to_expression[X_at_nodes] = X_at_nodes_
 
     U_at_nodes = sy.Matrix(apply_replacement_rules(U, nodes_replacements)[:, :, 0]).as_immutable()
-    mat_symbols_to_expression[U_at_nodes] = U_at_nodes_
+    symbols_to_expression[U_at_nodes] = U_at_nodes_
 
     S_at_int_points = apply_replacement_rules(S, int_points_replacements)
-    mat_symbols_to_expression[S_at_int_points] = S_at_int_points_
+    symbols_to_expression[S_at_int_points] = S_at_int_points_
+
+    e_at_int_points = apply_replacement_rules(e, int_points_replacements)
+    symbols_to_expression[e_at_int_points] = e_at_int_points_
 
     #
     H = create_symbolic_matrix("H{row}", dim_n, 1, *R)
     H_ = eval_H(R, R_at_nodes_, exponents_).doit()
-    mat_symbols_to_expression[H] = H_
+    symbols_to_expression[H] = H_
 
     dH_dR = create_symbolic_matrix("dH{row}_d{col}", dim_n, dim_r, *R)
     dH_dR_ = eval_dH_dR(H_, R).doit()
-    mat_symbols_to_expression[dH_dR] = dH_dR_
+    symbols_to_expression[dH_dR] = dH_dR_
 
     J = create_symbolic_matrix("J{row}{col}", dim_x, dim_r, *R)
     J_ = eval_J(X_at_nodes, dH_dR_).doit()
-    mat_symbols_to_expression[J] = J_
+    symbols_to_expression[J] = J_
 
     dH_dX = create_symbolic_matrix("dH{row}_d{col}", dim_n, dim_x, *R)
     dH_dX_ = eval_dH_dX(dH_dR_, J).doit()
-    mat_symbols_to_expression[dH_dX] = dH_dX_
+    symbols_to_expression[dH_dX] = dH_dX_
 
     dU_dX = create_symbolic_matrix("dU{row}_d{col}", dim_x, dim_x, *R)
     dU_dX_ = eval_dU_dX(U_at_nodes, dH_dX).doit()
-    mat_symbols_to_expression[dU_dX] = dU_dX_
+    symbols_to_expression[dU_dX] = dU_dX_
 
     #
     F = create_symbolic_matrix("F{row}{col}", dim_x, dim_x, *R)
     F_ = eval_F(d_, dU_dX).doit()
-    mat_symbols_to_expression[F] = F_
+    symbols_to_expression[F] = F_
 
     P = create_symbolic_matrix("P{row}{col}", dim_x, dim_x, *R)
     P_ = eval_P(F, S).doit()
-    mat_symbols_to_expression[P] = P_
+    symbols_to_expression[P] = P_
 
     CS = create_symbolic_matrix("CS{row}{col}", dim_x, dim_x, *R)
     if is_dbf:
@@ -175,7 +200,7 @@ def compute_CF(
     else:
         CS_ = eval_CS_mbf(d_, e, F, P).doit()
 
-    mat_symbols_to_expression[CS] = CS_
+    symbols_to_expression[CS] = CS_
 
     #
     CF_at_nodes = sy.MatrixSymbol("CF", n_, d_)
@@ -183,22 +208,23 @@ def compute_CF(
         dH_dX,
         CS,
         J,
-        int_weights,
+        int_weights_,
         int_points_replacements
     ).doit()
-    mat_symbols_to_expression[CF_at_nodes] = CF_at_nodes_
+    symbols_to_expression[CF_at_nodes] = CF_at_nodes_
 
-    symbols_to_expressions.update(chain(
+    symbols_to_expression.update(chain(
         *[
             {
                 symbols[idx]: expressions[idx]
                 for idx in product(*[range(int(dim)) for dim in symbols.shape])
             }.items()
-            for symbols, expressions in mat_symbols_to_expression.items()
+            for symbols, expressions in symbols_to_expression.items()
+            if hasattr(symbols, "shape")
         ]
     ))
 
-    return R, CF_at_nodes, symbols_to_expressions
+    return R, CF_at_nodes, symbols_to_expression
 
 
 def inverse(matrix: sy.MatrixBase) -> sy.Matrix:
@@ -304,11 +330,16 @@ def create_replacement_rules(R, list_of_R_):
     ]
 
 
-def apply_replacement_rules(expr_: sy.MatrixExpr, replacement_rules):
+def apply_replacement_rules(expr_: Union[sy.MatrixExpr, sy.MatrixBase], replacement_rules):
     num_rules = len(replacement_rules)
-    expr_shape = [int(dim) for dim in expr_.shape]
+    if hasattr(expr_, "shape"):
+        expr_shape = [int(dim) for dim in expr_.shape]
+        expr_slice = [slice(None)] * len(expr_shape)  # type: list
+    else:
+        expr_shape = []
+        expr_slice = []  # type: list
+
     new_shape = [num_rules] + expr_shape
-    expr_slice = [slice(None)] * len(expr_shape)  # type: list
 
     replaced_expressions = sy.MutableDenseNDimArray(np.zeros(new_shape))
     for i in range(num_rules):

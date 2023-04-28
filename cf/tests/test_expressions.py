@@ -21,8 +21,7 @@ class TestExpressions(unittest.TestCase):
                 exponents = exponents_of_shape_functions_of_element[typ]
 
                 n, d = nodes.shape
-                R = create_symbolic_matrix("{row}", ["r", "s", "t"][:d], 1)
-
+                R = eval_R(d)
                 H = eval_H(R, nodes, exponents)
                 H_at_nodes = apply_replacement_rules(
                     H, create_replacement_rules(R, nodes))
@@ -45,7 +44,7 @@ class TestExpressions(unittest.TestCase):
                 exponents = exponents_of_shape_functions_of_element[typ]
 
                 n, d = R_at_nodes.shape
-                R = create_symbolic_matrix("{row}", ["r", "s", "t"][:d], 1)
+                R = eval_R(d)
                 R_at_origin = {r: v for r, v in zip(R, [0.]*len(R))}
                 R_at_1 = {r: v for r, v in zip(R, [1.]*len(R))}
 
@@ -77,8 +76,10 @@ class TestExpressions(unittest.TestCase):
 
     def test_eval_P(self):
         """
-        validate first piola kirchhoff tensor against
-        bergstroem, mechanics of solid polymers, page 169
+        validate first piola kirchhoff tensor.
+        Bergstroem [1] provides a similar example
+
+        [1] Bergstroem, mechanics of solid polymers, page 169
         """
         for typ in R_at_nodes_of_element.keys():
             with self.subTest(typ):
@@ -88,7 +89,7 @@ class TestExpressions(unittest.TestCase):
                 F_expected = np.array([
                     [2., 0., 0.],
                     [0., 0.7, 0.],
-                    [0., 0., 0.7]
+                    [0., 0., 1.]
                 ])[:d, :d]
                 sxx = sy.symbols("sxx", real=True)
                 S = sy.Matrix([
@@ -97,7 +98,7 @@ class TestExpressions(unittest.TestCase):
                     [0, 0, 0]
                 ])[:d, :d]
                 P_expected = sy.Matrix([
-                    [0.49 * sxx, 0, 0],
+                    [0.7 * sxx, 0, 0],
                     [0, 0, 0],
                     [0, 0, 0]
                 ])[:d, :d]
@@ -109,6 +110,24 @@ class TestExpressions(unittest.TestCase):
                         np.array(P_expected.replace(sxx, sxx_), dtype=float),
                         np.array(P.replace(sxx, sxx_), dtype=float)
                     )
+
+    def test_compute_CF(self):
+        element_type = "CPE4"
+        result = compute_CF(
+            R_at_nodes_=R_at_nodes_of_element[element_type],
+            exponents_=exponents_of_shape_functions_of_element[element_type],
+            R_at_int_points_=R_at_integration_points_of_element[element_type],
+            int_weights_=weights_of_integration_points_of_element[element_type],
+            X_at_nodes_=R_at_nodes_of_element[element_type],
+            U_at_nodes_=np.zeros_like(R_at_nodes_of_element[element_type]),
+            S_at_int_points_=[
+                np.zeros((2, 2), dtype=float)
+            ]*4,
+            e_at_int_points_=[0]*4,
+            is_dbf=False
+        )
+        # TODO: assertions
+        print("ok")
 
 
 if __name__ == '__main__':

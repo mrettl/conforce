@@ -42,8 +42,15 @@ class TestEnergyGradient(unittest.TestCase):
         S_at_integration_points[:, 0, 2] = S_at_integration_points[:, 2, 0] = S[:, 4]
         S_at_integration_points[:, 1, 2] = S_at_integration_points[:, 2, 1] = S[:, 5]
 
-        actual_CF = cf_c.compute_static_dbf_CF_for_multiple_C3D8(
-            e=[origin["element"]["ESEDEN"]],
+        a = cf_c.compute_static_dbf_CF_for_multiple_C3D8(
+            e_at_int_points=[np.array(origin["integration_points"]["SENER"]).flatten()],
+            X_at_nodes=[origin["nodes"]["COORD"]],
+            U_at_nodes=[origin["nodes"]["U"]],
+            S_at_int_points=[np.zeros_like(S_at_integration_points[:, :3, :3])]
+        ).reshape((n, d))
+
+        actual_CF = cf_c.compute_static_mbf_CF_for_multiple_C3D8(
+            e_at_int_points=[np.array(origin["integration_points"]["SENER"]).flatten()],
             X_at_nodes=[origin["nodes"]["COORD"]],
             U_at_nodes=[origin["nodes"]["U"]],
             S_at_int_points=[S_at_integration_points[:, :3, :3]]

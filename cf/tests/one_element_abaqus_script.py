@@ -36,7 +36,8 @@ def main():
             "ALLSE": float(ho.historyOutputs['ALLSE'].data[-1][-1])
         },
         "element": {
-            "ESEDEN": float(fo["ESEDEN"].bulkDataBlocks[0].data[0][0])
+            "ESEDEN": float(fo["ESEDEN"].bulkDataBlocks[0].data[0][0]),
+            "EVOL": float(fo["EVOL"].bulkDataBlocks[0].data[0][0])
         },
         "nodes": {
             key: fo[key].getSubset(position=abqConst.NODAL).bulkDataBlocks[0].data.tolist()
@@ -44,7 +45,7 @@ def main():
         },
         "integration_points": {
             key: fo[key].getSubset(position=abqConst.INTEGRATION_POINT).bulkDataBlocks[0].data.tolist()
-            for key in ["COORD", "S", "E"]
+            for key in ["COORD", "S", "E", "SENER"]
         }
     }
 

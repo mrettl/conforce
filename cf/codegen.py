@@ -12,12 +12,13 @@ from cf import element_definitions
 from cf.expressions import compute_CF, TermCollector
 
 
-def write_code_for_all_element_types():
-    # generate and compile c and python code
-    with CPyCodeGenerator("cf_c", compile_at_exit=True) as compiler:
-        compiler.write_headers()
+def write_code_for_all_element_types(*types):
+    if len(types) == 0:
+        types = element_definitions.R_at_nodes_of_element.keys()
 
-        for element_type in element_definitions.R_at_nodes_of_element.keys():
+    # generate and compile c and python code
+    with CPyCodeCompiler("cf_c", compile_at_exit=True, write_header_at_enter=True) as compiler:
+        for element_type in types:
             for is_dbf in [True, False]:
                 print(f"element_type={element_type}, is_dbf={is_dbf}")
                 write_code_for_element_type(
@@ -41,7 +42,7 @@ def write_code_for_element_type(element_type: str, is_dbf: bool, compiler):
     X_at_nodes = sy.IndexedBase("X_at_nodes", shape=(n_, d_))
     U_at_nodes = sy.IndexedBase("U_at_nodes", shape=(n_, d_))
     S_at_int_points = sy.IndexedBase("S_at_int_points", shape=(ips_, d_, d_))
-    e = sy.Symbol("e", real=True)
+    e_at_int_points = sy.IndexedBase("e_at_int_points", shape=(ips_, ))
 
     # compute CF
     R, CF_at_nodes, symbols_to_expressions = compute_CF(
@@ -52,7 +53,7 @@ def write_code_for_element_type(element_type: str, is_dbf: bool, compiler):
         X_at_nodes,
         U_at_nodes,
         S_at_int_points,
-        e,
+        e_at_int_points,
         is_dbf=is_dbf
     )
 
@@ -63,7 +64,7 @@ def write_code_for_element_type(element_type: str, is_dbf: bool, compiler):
         points=np.concatenate([R_at_int_points_, R_at_nodes_], dtype=float),
         point_names=[*int_point_names, *node_names]
     ).doit(
-        input_symbols=[e, X_at_nodes, U_at_nodes, S_at_int_points],
+        input_symbols=[e_at_int_points, X_at_nodes, U_at_nodes, S_at_int_points],
         result_array=CF_at_nodes,
         cse=True
     )
@@ -71,7 +72,7 @@ def write_code_for_element_type(element_type: str, is_dbf: bool, compiler):
     compiler.write_function(
         assignments=assignments,
         element_typ=element_type,
-        e=e,
+        e=e_at_int_points,
         X_at_nodes=X_at_nodes,
         U_at_nodes=U_at_nodes,
         S_at_int_points=S_at_int_points,
@@ -88,10 +89,11 @@ class CCodePrinter(C99CodePrinter):
         return self._print_MatrixElement(expr)
 
 
-class CPyCodeGenerator(object):
-    def __init__(self, name: str, compile_at_exit: bool, folder: str = None):
+class CPyCodeCompiler(object):
+    def __init__(self, name: str, compile_at_exit: bool, write_header_at_enter: bool, folder: str = None):
         self._name = str(name)
         self._compile_at_exit = bool(compile_at_exit)
+        self._write_header_at_enter = bool(write_header_at_enter)
         if folder is None:
             folder = os.path.abspath(os.path.join(__file__, os.pardir))
         self._folder = os.path.abspath(folder)
@@ -105,6 +107,9 @@ class CPyCodeGenerator(object):
     def __enter__(self):
         self._py_file_handle = open(os.path.join(self._folder, self._name + ".py"), "w")
         self._c_file_handle = open(os.path.join(self._folder, self._name + ".c"), "w")
+
+
+        self.write_headers()
 
         return self
 
@@ -189,7 +194,7 @@ class CPyCodeGenerator(object):
             f" *             to this array.\n"
             f" */\n"
             f"void compute_static_{'dbf' if is_dbf else 'mbf'}_CF_for_{element_typ}(\n"
-            f"        double {e}, \n"
+            f"        double {e}[{ips_}], \n"
             f"        double {X_at_nodes}[{n_}][{d_}], \n"
             f"        double {U_at_nodes}[{n_}][{d_}], \n"
             f"        double {S_at_int_points}[{ips_}][{d_}][{d_}], \n"
@@ -231,7 +236,7 @@ class CPyCodeGenerator(object):
             f" */\n"
             f"CF_API void compute_static_{'dbf' if is_dbf else 'mbf'}_CF_for_multiple_{element_typ}(\n"
             f"        int num_elem, \n"
-            f"        double {e}[], \n"
+            f"        double {e}[][{ips_}], \n"
             f"        double {X_at_nodes}[][{n_}][{d_}], \n"
             f"        double {U_at_nodes}[][{n_}][{d_}], \n"
             f"        double {S_at_int_points}[][{ips_}][{d_}][{d_}], \n"
@@ -269,7 +274,7 @@ def compute_static_{'dbf' if is_dbf else 'mbf'}_CF_for_multiple_{element_typ}(
 
     {CF_at_nodes} = np.zeros((num_elem, {n_}, {d_}), dtype=np.float64)
 
-    assert {e}.shape == (num_elem, )
+    assert {e}.shape == (num_elem, {ips_})
     assert {X_at_nodes}.shape == (num_elem, {n_}, {d_})
     assert {U_at_nodes}.shape == (num_elem, {n_}, {d_})
     assert {S_at_int_points}.shape == (num_elem, {ips_}, {d_}, {d_})
@@ -289,11 +294,11 @@ def compute_static_{'dbf' if is_dbf else 'mbf'}_CF_for_multiple_{element_typ}(
 
 def main():
     # generate and compile c and python code
-    with CPyCodeGenerator("cf_c", compile_at_exit=True) as compiler:
+    with CPyCodeCompiler("cf_c", compile_at_exit=True) as compiler:
         compiler.write_headers()
         write_code_for_element_type("CPE4", True, compiler)
 
 
 if __name__ == '__main__':
-    # write_code_for_all_element_types()
+    write_code_for_all_element_types("CPE4", "C3D8")
     print("ok")

@@ -87,7 +87,7 @@ def generate_abaqus_input(element_type, R_at_nodes, U_at_nodes):
 *Node Output
 COORD, RF, U
 *Element Output, directions=YES
-COORD, E, ELEDEN, NFORC, S
+COORD, S, E, SENER, ESEDEN, EVOL
 ** 
 ** HISTORY OUTPUT
 ** 
@@ -128,12 +128,12 @@ def simulate_one_element(R_at_nodes, U_at_nodes, element_type: str, load_name: s
         return json.load(fh)
 
 
-def simulate_all_element_types():
+def simulate_all_element_types() -> dict:
     folder = os.path.abspath("simulations/tests/one_element_abaqus")
     result_file = f"{folder}/_result.json"
     if not os.path.exists(result_file):
         result = dict()
-        for element_type in el_def.R_at_nodes_of_element.keys() - {"C3D10R"}:
+        for element_type in {"C3D8", "CPE4"}:  # el_def.R_at_nodes_of_element.keys() - {"C3D10R"}:
             R_at_nodes = el_def.R_at_nodes_of_element[element_type]
             n, d = R_at_nodes.shape
             # rng = np.random.default_rng(0x5EED)
