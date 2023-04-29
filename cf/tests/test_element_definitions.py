@@ -4,7 +4,8 @@ import sympy as sy
 
 from cf.element_definitions import *
 from cf.tests import one_element_abaqus_runner
-from cf.expressions import eval_H, eval_dH_dR, eval_J, R_3d, create_replacement_rules, apply_replacement_rules
+from cf.expressions import eval_H, eval_dH_dR, eval_J, R_3d
+from cf.math_util import create_replacement_rules, apply_replacement_rules
 
 
 class TestElementDefinitions(unittest.TestCase):

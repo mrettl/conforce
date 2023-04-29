@@ -2,6 +2,7 @@ import unittest
 
 import numpy as np
 
+import cf.math_util
 from cf.tests import one_element_abaqus_runner
 from cf import element_definitions as el_def
 from cf import cf_c
@@ -65,8 +66,8 @@ class TestEnergyGradient(unittest.TestCase):
             method="dbf"
         )
         #
-        R = exp.create_symbolic_matrix("{row}", ["r", "s", "t"], 1)
-        S = exp.create_symbolic_matrix("S{row}{col}", 3, 3, *R, is_symmetric=True)
+        R = cf.math_util.create_symbolic_matrix("{row}", ["r", "s", "t"], 1)
+        S = cf.math.create_symbolic_matrix("S{row}{col}", 3, 3, *R, is_symmetric=True)
         H_ = exp.eval_H(
             R,
             el_def.R_at_nodes_of_element[element_type],

@@ -78,6 +78,7 @@ Each shape function corresponds to one node.
 At this node the shape function is one, whereas at other nodes
 it is zero.
 E.g. The i-th shape function is one at the i-th node.
+
 >>> i = 1
 >>> node_i = ref_nodes[i]
 >>> float(H.xreplace(dict(zip([r, s], node_i)))[i])
@@ -108,7 +109,7 @@ Matrix([
 [1.0*r],
 [1.0*s]])
 
-In the simple example the interpolated quantities are :py:math:`(1*r, 1*s)`.
+In the simple example the interpolated quantities are :math:`(1*r, 1*s)`.
 
 
 Derivative of interpolation in reference space
@@ -127,6 +128,7 @@ matrix multiplication.
 >>> dQ_dR = quantity.T * dH_dR
 
 E.g. the i-th quantity derived by the j-th reference space coordinate is
+
 >>> i, j = (0, 0)
 >>> dQ_dR[i, j]
 1.00000000000000
@@ -236,10 +238,12 @@ Integration in the real space
 The jacobian is also used for the integration
 in the real space.
 E.g. the strain energy density is computed out of strain and stress tensors.
+
 >>> stress_tensor = 2 * 400 * strain_tensor + 600 * np.trace(strain_tensor) * np.eye(2)
 >>> stress_tensor
 array([[360.,   0.],
        [  0.,  40.]])
+
 >>> se_density = 0.5 * np.tensordot(strain_tensor, stress_tensor)
 >>> se_density
 52.0

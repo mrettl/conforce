@@ -8,6 +8,7 @@ from cf.element_definitions import (
     exponents_of_shape_functions_of_element,
     R_at_integration_points_of_element,
     weights_of_integration_points_of_element)
+from cf.math_util import create_replacement_rules, apply_replacement_rules
 
 
 class TestExpressions(unittest.TestCase):
@@ -111,19 +112,17 @@ class TestExpressions(unittest.TestCase):
                         np.array(P.replace(sxx, sxx_), dtype=float)
                     )
 
-    def test_compute_CF(self):
+    def test_computation(self):
         element_type = "CPE4"
-        result = compute_CF(
+        computation = Computation(
             R_at_nodes_=R_at_nodes_of_element[element_type],
             exponents_=exponents_of_shape_functions_of_element[element_type],
             R_at_int_points_=R_at_integration_points_of_element[element_type],
             int_weights_=weights_of_integration_points_of_element[element_type],
             X_at_nodes_=R_at_nodes_of_element[element_type],
             U_at_nodes_=np.zeros_like(R_at_nodes_of_element[element_type]),
-            S_at_int_points_=[
-                np.zeros((2, 2), dtype=float)
-            ]*4,
-            e_at_int_points_=[0]*4,
+            S_at_int_points_=np.zeros((4, 2, 2), dtype=float),
+            e_at_int_points_=np.zeros((4,), dtype=float),
             is_dbf=False
         )
         # TODO: assertions

@@ -1,4 +1,4 @@
-# Configurational forces
+# CF - Configurational Forces Plug-in
 
 ## Installation
 

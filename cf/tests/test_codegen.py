@@ -1,6 +1,9 @@
 import unittest
 import shutil
 
+import numpy as np
+
+from cf import element_definitions as el_def
 from cf.codegen import *
 
 folder = "cf/tests/generated"
@@ -14,6 +17,7 @@ class TestCodegen(unittest.TestCase):
 
     def test_compilation(self):
         name = "test_codegen"
+        element_type = "CPE4R"
         os.makedirs(folder, exist_ok=True)
 
         for ext in [".dll", ".so", ".py"]:
@@ -28,14 +32,31 @@ class TestCodegen(unittest.TestCase):
                 folder=folder
         ) as compiler:
             write_code_for_element_type(
-                element_type="CPE4",
+                element_type=element_type,
                 is_dbf=False,
+                write_F=True,
+                write_P=True,
+                write_CS=True,
+                write_CF=True,
                 compiler=compiler
             )
 
         from cf.tests.generated import test_codegen
-        # TODO: call functions
-        print("ok")
+
+        X_at_nodes = el_def.R_at_nodes_of_element[element_type]
+        U_at_nodes = 2 * X_at_nodes
+
+        F_at_int_point = test_codegen.compute_F(
+            [X_at_nodes],
+            [U_at_nodes],
+            element_type
+        )[0, 0]
+        F_at_int_point_expected = 2 * np.eye(2) + np.eye(2)
+
+        np.testing.assert_array_almost_equal(
+            F_at_int_point,
+            F_at_int_point_expected
+        )
 
 
 if __name__ == '__main__':

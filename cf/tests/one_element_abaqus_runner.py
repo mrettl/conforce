@@ -142,7 +142,7 @@ def simulate_all_element_types() -> dict:
                 [1, 1, 0],
                 [0, 0, 0],
                 [0, 0, 0]
-            ])[:d, :d]
+            ])[:d, :d]  # TODO: not F
 
             origin = simulate_one_element(
                 R_at_nodes=R_at_nodes,
