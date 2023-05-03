@@ -762,5 +762,5 @@ _map_typ_and_method_to_CF_function[('{element_typ}', '{method}')] = {function_na
 
 
 if __name__ == '__main__':
-    write_code_for_all_element_types("CPE4R")
+    # write_code_for_all_element_types()
     print("ok")
