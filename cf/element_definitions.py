@@ -562,7 +562,7 @@ def _write_integration_data_file(integration_data_file_path):
     """
     simulation_results = {
         element_type: simulate_one_element(
-            R_at_nodes=R_at_nodes,
+            X_at_nodes=R_at_nodes,
             U_at_nodes=1e-100 * np.ones_like(R_at_nodes),
             element_type=element_type,
             load_name="dummy_load",
