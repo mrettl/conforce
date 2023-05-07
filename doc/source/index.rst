@@ -30,7 +30,7 @@ Table of Contents
 -----------------
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
 	
     README.md
     reference

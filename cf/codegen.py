@@ -11,7 +11,7 @@ from sympy.printing.c import C99CodePrinter
 
 from cf import element_definitions
 from cf.expressions import Computation
-from cf.math_util import TermCollector
+from cf.symbolic_util import TermCollector
 
 
 def write_code_for_all_element_types(*types):
@@ -108,7 +108,7 @@ def write_code_for_element_type(
     if write_F:
         assignments = term_collector.collect_assignments(
             input_symbols=[X_at_nodes, U_at_nodes],
-            result_array=F_at_int_points,
+            result_symbol=F_at_int_points,
             cse=True
         )
 
@@ -125,7 +125,7 @@ def write_code_for_element_type(
     if write_P:
         assignments = term_collector.collect_assignments(
             input_symbols=[X_at_nodes, U_at_nodes, S_at_int_points],
-            result_array=P_at_int_points,
+            result_symbol=P_at_int_points,
             cse=True
         )
 
@@ -142,7 +142,7 @@ def write_code_for_element_type(
     if write_CS:
         assignments = term_collector.collect_assignments(
             input_symbols=[e_at_int_points, X_at_nodes, U_at_nodes, S_at_int_points],
-            result_array=CS_at_int_points,
+            result_symbol=CS_at_int_points,
             cse=True
         )
 
@@ -161,7 +161,7 @@ def write_code_for_element_type(
     if write_CF:
         assignments = term_collector.collect_assignments(
             input_symbols=[e_at_int_points, X_at_nodes, U_at_nodes, S_at_int_points],
-            result_array=CF_at_nodes,
+            result_symbol=CF_at_nodes,
             cse=True
         )
 

@@ -8,7 +8,7 @@ from cf.element_definitions import (
     exponents_of_shape_functions_of_element,
     R_at_integration_points_of_element,
     weights_of_integration_points_of_element)
-from cf.math_util import create_replacement_rules, apply_replacement_rules
+from cf.symbolic_util import create_replacement_rules, apply_replacement_rules
 
 
 class TestExpressions(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestExpressions(unittest.TestCase):
                 R = eval_R(d)
                 H = eval_H(R, nodes, exponents)
                 H_at_nodes = apply_replacement_rules(
-                    H, create_replacement_rules(R, nodes))
+                    H, *create_replacement_rules(R, *nodes))
 
                 for i, H_at_node_i in enumerate(H_at_nodes):
                     np.testing.assert_array_almost_equal(

@@ -101,7 +101,7 @@ def build():
 
     job = abq.mdb.Job(
         name='Job-1', model=model.name, type=abqConst.ANALYSIS,
-        explicitPrecision=abqConst.DOUBLE, nodalOutputPrecision=abqConst.FULL
+        nodalOutputPrecision=abqConst.FULL
     )
     job.submit()
     job.waitForCompletion()
@@ -110,5 +110,6 @@ def build():
 
 
 if __name__ == '__main__':
-    odb = build()
-    odb = add_field_outputs(odb)
+    pass
+    # odb = build()
+    # odb = add_field_outputs(odb)

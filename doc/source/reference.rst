@@ -9,4 +9,5 @@ Reference
 	cf.cf_c
 	cf.element_definitions
 	cf.expressions
-	cf.math_util
+	cf.symbolic_util
+	cf.tensor_util

@@ -1,6 +1,4 @@
 r"""
-The elements are defined in a reference coordinate system.
-For the application, they have to be transformed to the real coordinate system.
 This module defines elements by four dictionaries:
 
  - :py:data:`integration_points`: Integration points in the reference coordinate system
@@ -8,8 +6,12 @@ This module defines elements by four dictionaries:
  - :py:data:`reference_nodes`: Coordinates of the element nodes in the reference coordinate system
  - :py:data:`shape_function_exponents`: Exponents of polynomial powers used inside the shape functions
 
+The elements are defined in a reference coordinate system.
+For the application, they have to be transformed to the real coordinate system.
 
-ACCESS TO DICTIONARIES
+.. todo:: C3D15
+
+Access to dictionaries
 ----------------------
 
 To acces the nodes, exponents, etc. for a specific element,
@@ -231,13 +233,13 @@ array([[ 0.3,  0. ],
        [-0. , -0.1]])
 
 
-
 Integration in the real space
 -----------------------------
 
 The jacobian is also used for the integration
 in the real space.
 E.g. the strain energy density is computed out of strain and stress tensors.
+The stress tensor is computed using Lamé parameters :math:`\lambda=600` and :math:`\mu=400`.
 
 >>> stress_tensor = 2 * 400 * strain_tensor + 600 * np.trace(strain_tensor) * np.eye(2)
 >>> stress_tensor
@@ -559,10 +561,3 @@ exponents_of_shape_functions_of_element['C3D10'] = np.array((
     (1, 1, 0), (1, 0, 1), (0, 1, 1),
     (2, 0, 0), (0, 2, 0), (0, 0, 2)
 ))
-
-# C3D10R
-# not validated against abaqus
-R_at_integration_points_of_element['C3D10R'] = np.array(((0.25, 0.25, 0.25),))
-weights_of_integration_points_of_element['C3D10R'] = np.zeros(1) + 1. / 6.
-R_at_nodes_of_element['C3D10R'] = R_at_nodes_of_element['C3D10']
-exponents_of_shape_functions_of_element['C3D10R'] = exponents_of_shape_functions_of_element['C3D10']

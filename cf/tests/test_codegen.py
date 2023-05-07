@@ -1,8 +1,6 @@
 import unittest
 import shutil
 
-import numpy as np
-
 from cf import element_definitions as el_def
 from cf.codegen import *
 

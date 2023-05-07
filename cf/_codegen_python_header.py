@@ -1,14 +1,14 @@
 """
 # DO NOT IMPORT OR RUN THIS FILE. THIS IS JUST A TEMPLATE USED BY THE CODE GENERATION!
 This module is a C-extension and provides a fast implementation for the computation of:
- - the deformation gradients
- - the Piola-Kirchhoff stress tensor
+ - the deformation gradient
+ - the first Piola-Kirchhoff stress tensor
  - the configurational stresses
  - the configurational forces
 
 
-Examples:
----------
+Examples
+--------
 
 >>> import numpy
 >>> element_type = "CPE4R"
@@ -29,6 +29,10 @@ Examples:
 ...     [0., 0.]
 ... ]])
 >>> e_at_int_points = numpy.array([20.])
+
+The deformation gradient for the first (and only) element is evaluated
+at the first integration point in the element.
+
 >>> element_id = 0
 >>> int_point_id = 0
 >>> compute_F(
@@ -38,6 +42,10 @@ Examples:
 ... )[element_id, int_point_id]
 array([[1.1, 0. ],
        [0. , 0.9]])
+
+The first Piola-Kirchhoff stress tensor is computed at the same position
+as the deformation gradient.
+
 >>> compute_P(
 ...     [X_at_nodes],
 ...     [U_at_nodes],
@@ -46,6 +54,10 @@ array([[1.1, 0. ],
 ... )[element_id, int_point_id]
 array([[180.,   0.],
        [  0.,   0.]])
+
+The configuration stresses are computed using the motion based formulation "mbf" method
+(see :py:func:`cf.expressions.eval_CS_mbf`).
+
 >>> compute_CS(
 ...     [e_at_int_points],
 ...     [X_at_nodes],
@@ -56,6 +68,9 @@ array([[180.,   0.],
 ... )[element_id, int_point_id]
 array([[-178.,   -0.],
        [  -0.,   20.]])
+
+The configuration forces are evaluated at the nodes of each element.
+
 >>> compute_CF(
 ...     [e_at_int_points],
 ...     [X_at_nodes],

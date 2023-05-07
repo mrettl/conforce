@@ -1,4 +1,4 @@
-{{ fullname.split('.')[-1] | escape | underline }}
+{{ objname | escape | underline }}
 
 .. automodule:: {{ fullname }}
 
@@ -34,6 +34,19 @@
 
 .. autosummary::
 {% for item in exceptions %}
+	{{ item }}
+{%- endfor %}
+{% endif %}
+{% endblock %}
+
+
+{% block attributes %}
+{% if attributes %}
+.. rubric:: Attributes
+
+.. autosummary::
+	:toctree: {{ objname }}
+{% for item in attributes %}
 	{{ item }}
 {%- endfor %}
 {% endif %}

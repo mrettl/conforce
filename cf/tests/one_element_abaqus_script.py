@@ -21,7 +21,8 @@ def main():
     job_name = os.path.basename(INP_FILE_PATH).split(".")[0]
     job = abq.mdb.JobFromInputFile(
         name=job_name,
-        inputFileName=INP_FILE_PATH
+        inputFileName=INP_FILE_PATH,
+        nodalOutputPrecision=abqConst.FULL
     )
     job.submit()
     job.waitForCompletion()
@@ -45,7 +46,7 @@ def main():
         },
         "integration_points": {
             key: fo[key].getSubset(position=abqConst.INTEGRATION_POINT).bulkDataBlocks[0].data.tolist()
-            for key in ["COORD", "S", "E", "SENER"]
+            for key in ["COORD", "S", "E", "SENER", "IVOL"]
         }
     }
 

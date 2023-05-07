@@ -77,6 +77,13 @@ html_sidebars = {
 
 # -- Extension configuration -------------------------------------------------
 
+# -- Options for intersphinx extension ---------------------------------------------
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'sympy': ('https://docs.sympy.org/latest', None)
+}
+
+
 # -- Options for to do extension ---------------------------------------------
 todo_include_todos = True
 

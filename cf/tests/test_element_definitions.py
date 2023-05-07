@@ -5,7 +5,7 @@ import sympy as sy
 from cf.element_definitions import *
 from cf.tests import one_element_abaqus_runner
 from cf.expressions import eval_H, eval_dH_dR, eval_J, R_3d
-from cf.math_util import create_replacement_rules, apply_replacement_rules
+from cf.symbolic_util import create_replacement_rules, apply_replacement_rules
 
 
 class TestElementDefinitions(unittest.TestCase):
@@ -38,10 +38,7 @@ class TestElementDefinitions(unittest.TestCase):
                 J = eval_J(X_at_nodes_abaqus, dH_dR)
                 detJ = J.det()
 
-                int_repl_rules = create_replacement_rules(
-                    R=R,
-                    list_of_R_=R_at_int_points_current
-                )
+                int_repl_rules = create_replacement_rules(R, *R_at_int_points_current)
 
                 # check volume
                 vol_current = np.sum([
@@ -57,14 +54,15 @@ class TestElementDefinitions(unittest.TestCase):
 
                 # check integration point position
                 X_at_int_points_current = np.array(apply_replacement_rules(
-                    expr_=X,
-                    replacement_rules=int_repl_rules
+                    X, *int_repl_rules
                 ), dtype=float)[:, :, 0]
                 np.testing.assert_array_almost_equal(
                     X_at_int_points_current,
                     X_at_int_points_abaqus,
                     decimal=6
                 )
+
+                # TODO: compare IVOL with integration weights
 
 
 if __name__ == '__main__':

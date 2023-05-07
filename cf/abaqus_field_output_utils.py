@@ -1,10 +1,10 @@
-import abaqus as abq
+import odbAccess
 import abaqusConstants as abqConst
 
 import numpy as np
 
 from cf import cf_c
-from cf.abaqus_util import tensor_from_vector
+from cf.tensor_util import tensor_from_abaqus_notation, abaqus_notation_from_tensor, rotation_matrix_from_quaternion
 
 
 class FieldOutputReader(object):
@@ -207,7 +207,7 @@ class FieldOutputReader(object):
         self._S_el_labels, self._S_at_int_points = self.extract_integration_points_values(
             self.fo_S.bulkDataBlocks
         )
-        self._S_at_int_points = tensor_from_vector(self._S_at_int_points)
+        self._S_at_int_points = tensor_from_abaqus_notation(self._S_at_int_points)
 
     @property
     def S_el_labels(self):
@@ -528,17 +528,72 @@ def field_output_expression(field_outputs, expression):
     return fo
 
 
+def rotate_field_output_to_global_coordinate_system(frame, field_output, name, description):
+    if field_output.type == abqConst.SCALAR:
+        return field_output
+
+    new_field_output = frame.FieldOutput(
+        name=name,
+        description=description,
+        type=field_output.type,
+        validInvariants=field_output.validInvariants
+    )
+
+    for block in field_output.bulkDataBlocks:
+        if block.position == abqConst.NODAL:
+            labels = block.nodeLabels
+        elif block.position == abqConst.INTEGRATION_POINT:
+            labels = block.elementLabels
+            repeat_labels = np.unique(labels, return_counts=True)[1][0]
+            labels = labels[::repeat_labels]
+        else:
+            raise NotImplementedError("not supported position " + str(block.position))
+
+        if block.localCoordSystem is None:
+            data = block.data
+
+        elif field_output.type == abqConst.VECTOR:
+            ROT = rotation_matrix_from_quaternion(block.localCoordSystem)
+
+            if block.data.shape[1] == 1:
+                local_vectors = block.data
+            else:
+                # create 3D vector out of 2D vector
+                local_vectors = np.zeros((block.data.shape[0], 3), dtype=float)
+                local_vectors[:, :2] = block.data
+
+            data = np.einsum("...ji,...j", ROT, local_vectors)
+
+        else:  # TENSOR
+            ROT = rotation_matrix_from_quaternion(block.localCoordSystem)
+
+            local_vectors = block.data
+            local_tensors = tensor_from_abaqus_notation(local_vectors)
+            global_tensors = np.einsum("...ji,...jk,...kl", ROT, local_tensors, ROT)
+            data = abaqus_notation_from_tensor(global_tensors, local_vectors.shape[-1])
+
+        # add data
+        new_field_output.addData(
+            position=block.position,
+            instance=block.instance,
+            labels=np.ascontiguousarray(labels),
+            data=np.ascontiguousarray(data)
+        )
+
+    return new_field_output
+
+
 def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="SENER+PENER"):
     path = odb.path
     is_read_only = odb.isReadOnly
     if is_read_only:
         odb.save()
         odb.close()
-        odb = abq.session.openOdb(path, readOnly=False)
+        odb = odbAccess.openOdb(path, readOnly=False)
 
     fo_reader = FieldOutputReader()
     csys = odb.rootAssembly.DatumCsysByThreePoints(
-        name="global",
+        name="my_global",
         coordSysType=abqConst.CARTESIAN,
         origin=(0, 0, 0),
         point1=(1, 0, 0),
@@ -555,18 +610,24 @@ def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="
 
                 d = fo_U.bulkDataBlocks[0].data.shape[1]
 
-                if d == 3:
-                    print("local coordinate systems are not supported")  # TODO: logger
-                    """
-                    fo_U = fo_U.getTransformedField(csys)
-                    fo_S = fo_S.getTransformedField(csys)
-                    """
-                elif len(odb.rootAssembly.datumCsyses) > 0:
-                    print("local coordinate systems are not supported for 2d")  # TODO: logger
+                try:
+                    fo_S_trial = fo_S.getTransformedField(csys)
+                    fo_U_trial = fo_U.getTransformedField(csys)
 
-                fo_reader.set_fo_U(fo_U.getTransformedField(csys))
+                    assert fo_S_trial.bulkDataBlocks is not None
+                    assert fo_U_trial.bulkDataBlocks is not None
+
+                    fo_S = fo_S_trial
+                    fo_U = fo_U_trial
+                except BaseException as e:
+                    print(
+                        "local coordinate systems are not supported. " +
+                        "Set nodalOutputPrecision=SINGLE. " +
+                        str(type(e)))  # TODO: logger
+
+                fo_reader.set_fo_U(fo_U)
                 fo_reader.set_fo_e(fo_e)
-                fo_reader.set_fo_S(fo_S.getTransformedField(csys))
+                fo_reader.set_fo_S(fo_S)
 
                 fo_writers = list()
                 if "F" in fields:
@@ -586,4 +647,5 @@ def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="
 
     odb.save()
     odb.close()
-    return abq.session.openOdb(path, readOnly=False)
+    return odbAccess.openOdb(path, readOnly=False)
+

@@ -1,15 +1,21 @@
-from itertools import product, chain
 from typing import Union, List, Dict, Any
 
 import numpy as np
 import sympy as sy
 
-from cf.math_util import create_symbolic_matrix, inverse, create_replacement_rules, apply_replacement_rules
+from cf.symbolic_util import create_symbolic_matrix, inverse, create_replacement_rules, apply_replacement_rules, expand_matrices_in_symbols_to_expressions
 
-R_3d = sy.Matrix(sy.symbols("r s t", real=True))
+R_3d = create_symbolic_matrix("{row}", ["r", "s", "t"], 1)
+"""symbolic reference space coordinates for the 3d space"""
 
 
 def eval_R(d_: int):
+    """
+    Create reference space coordinates
+
+    :param d_: dimensions
+    :return: matrix containing symbolic reference space coordinates
+    """
     return sy.Matrix(R_3d[:d_])
 
 
@@ -151,19 +157,19 @@ class Computation(object):
         symbols_to_expressions[e] = e_at_int_points_
 
         #
-        nodes_replacements = create_replacement_rules(R, R_at_nodes_)
-        int_points_replacements = create_replacement_rules(R, R_at_int_points_)
+        nodes_replacements = create_replacement_rules(R, *R_at_nodes_)
+        int_points_replacements = create_replacement_rules(R, *R_at_int_points_)
 
-        X_at_nodes = sy.Matrix(apply_replacement_rules(X, nodes_replacements)[:, :, 0]).as_immutable()
+        X_at_nodes = sy.Matrix(apply_replacement_rules(X, *nodes_replacements)[:, :, 0]).as_immutable()
         symbols_to_expressions[X_at_nodes] = X_at_nodes_
 
-        U_at_nodes = sy.Matrix(apply_replacement_rules(U, nodes_replacements)[:, :, 0]).as_immutable()
+        U_at_nodes = sy.Matrix(apply_replacement_rules(U, *nodes_replacements)[:, :, 0]).as_immutable()
         symbols_to_expressions[U_at_nodes] = U_at_nodes_
 
-        S_at_int_points = apply_replacement_rules(S, int_points_replacements)
+        S_at_int_points = apply_replacement_rules(S, *int_points_replacements)
         symbols_to_expressions[S_at_int_points] = S_at_int_points_
 
-        e_at_int_points = apply_replacement_rules(e, int_points_replacements)
+        e_at_int_points = apply_replacement_rules(e, *int_points_replacements)
         symbols_to_expressions[e_at_int_points] = e_at_int_points_
 
         #
@@ -225,16 +231,11 @@ class Computation(object):
         self.CF_at_nodes = CF_at_nodes
 
     def expand_matrices_in_symbols_to_expressions(self):
-        self.symbols_to_expressions.update(chain(
-            *[
-                {
-                    symbols[idx]: expressions[idx]
-                    for idx in product(*[range(int(dim)) for dim in symbols.shape])
-                }.items()
-                for symbols, expressions in self.symbols_to_expressions.items()
-                if hasattr(symbols, "shape")
-            ]
-        ))
+        self.symbols_to_expressions.update(
+            expand_matrices_in_symbols_to_expressions(
+                self.symbols_to_expressions
+            )
+        )
 
     def map_symbolic_to_expression(self, symbolic: sy.Expr, expr: sy.Expr):
         self.symbols_to_expressions[symbolic] = expr
@@ -242,5 +243,5 @@ class Computation(object):
     def at_int_point(self, symbolic: Union[sy.MatrixBase, sy.MatrixExpr]):
         return apply_replacement_rules(
             symbolic,
-            self.int_points_replacements
+            *self.int_points_replacements
         )

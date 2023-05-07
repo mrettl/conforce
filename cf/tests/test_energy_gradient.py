@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-import cf.math_util
+import cf.symbolic_util
 from cf.tests import one_element_abaqus_runner
 from cf import element_definitions as el_def
 from cf import cf_c
