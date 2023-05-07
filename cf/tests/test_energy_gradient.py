@@ -3,8 +3,7 @@ import unittest
 import numpy as np
 
 import cf.symbolic_util
-from cf.tests import one_element_abaqus_runner
-from cf import element_definitions as el_def
+from cf import element_definitions as el_def, one_element_runner
 from cf import cf_c
 from cf import expressions as exp
 import Conf_Forces_py as cf_m

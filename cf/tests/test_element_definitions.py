@@ -3,7 +3,7 @@ import unittest
 import sympy as sy
 
 from cf.element_definitions import *
-from cf.tests import one_element_abaqus_runner
+from cf import one_element_runner
 from cf.expressions import eval_H, eval_dH_dR, eval_J, R_3d
 from cf.symbolic_util import create_replacement_rules, apply_replacement_rules
 
