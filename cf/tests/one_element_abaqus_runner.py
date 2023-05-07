@@ -129,7 +129,7 @@ def simulate_one_element(R_at_nodes, U_at_nodes, element_type: str, load_name: s
 
 
 def simulate_all_element_types() -> dict:
-    folder = os.path.abspath("simulations/tests/one_element_abaqus")
+    folder = os.path.abspath("res/tests/one_element_abaqus")
     result_file = f"{folder}/_result.json"
     if not os.path.exists(result_file):
         result = dict()
