@@ -43,18 +43,18 @@ def build():
     part.BaseShell(sketch=sketch)
 
     material = model.Material(name="Material-1")
-    material.Elastic(table=((1000.0, 0.3), ))
+    material.Elastic(table=((1000.0, 0.3),))
     section = model.HomogeneousSolidSection(
         name='Section-1',
         material=material.name,
         thickness=None)
 
     part.SectionAssignment(
-        region=(part.faces, ),
+        region=(part.faces,),
         sectionName=section.name
     )
     part.MaterialOrientation(
-        region=(part.faces, ),
+        region=(part.faces,),
         localCsys=None,
         axis=abqConst.AXIS_3,
         angle=30.0,
@@ -67,7 +67,7 @@ def build():
     elemType1 = cae.mesh.ElemType(elemCode=abqConst.CPE4, elemLibrary=abqConst.STANDARD)
     elemType2 = cae.mesh.ElemType(elemCode=abqConst.CPE3, elemLibrary=abqConst.STANDARD)
     part.setElementType(
-        regions=(part.faces, ),
+        regions=(part.faces,),
         elemTypes=(elemType1, elemType2))
     part.generateMesh()
 
@@ -81,7 +81,7 @@ def build():
     model.YsymmBC(
         name="BC-1",
         createStepName="Initial",
-        region=(instance.edges.findAt(((0., 15., 0.), )),))
+        region=(instance.edges.findAt(((0., 15., 0.),)),))
     model.PinnedBC(
         name="BC-2",
         createStepName="Initial",

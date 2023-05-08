@@ -39,19 +39,19 @@ def build_2d(full_output_precision, has_material_orientation):
     part.BaseShell(sketch=sketch)
 
     material = model.Material(name="Material-1")
-    material.Elastic(table=((1000.0, 0.3), ))
+    material.Elastic(table=((1000.0, 0.3),))
     section = model.HomogeneousSolidSection(
         name='Section-1',
         material=material.name,
         thickness=None)
 
     part.SectionAssignment(
-        region=(part.faces, ),
+        region=(part.faces,),
         sectionName=section.name
     )
     if has_material_orientation:
         part.MaterialOrientation(
-            region=(part.faces, ),
+            region=(part.faces,),
             localCsys=None,
             axis=abqConst.AXIS_3,
             angle=30.0,
@@ -64,7 +64,7 @@ def build_2d(full_output_precision, has_material_orientation):
     elemType1 = cae.mesh.ElemType(elemCode=abqConst.CPE4, elemLibrary=abqConst.STANDARD)
     elemType2 = cae.mesh.ElemType(elemCode=abqConst.CPE3, elemLibrary=abqConst.STANDARD)
     part.setElementType(
-        regions=(part.faces, ),
+        regions=(part.faces,),
         elemTypes=(elemType1, elemType2))
     part.generateMesh()
 
@@ -78,7 +78,7 @@ def build_2d(full_output_precision, has_material_orientation):
     model.YsymmBC(
         name="BC-1",
         createStepName="Initial",
-        region=(instance.edges.findAt(((0., 15., 0.), )),))
+        region=(instance.edges.findAt(((0., 15., 0.),)),))
     model.PinnedBC(
         name="BC-2",
         createStepName="Initial",
@@ -136,19 +136,19 @@ def build_3d(full_output_precision, has_material_orientation):
     part.BaseSolidExtrude(sketch=sketch, depth=5.0)
 
     material = model.Material(name="Material-1")
-    material.Elastic(table=((1000.0, 0.3), ))
+    material.Elastic(table=((1000.0, 0.3),))
     section = model.HomogeneousSolidSection(
         name='Section-1',
         material=material.name,
         thickness=None)
 
     part.SectionAssignment(
-        region=(part.cells, ),
+        region=(part.cells,),
         sectionName=section.name
     )
     if has_material_orientation:
         part.MaterialOrientation(
-            region=(part.cells, ),
+            region=(part.cells,),
             localCsys=None,
             axis=abqConst.AXIS_3,
             angle=30.0,
@@ -162,7 +162,7 @@ def build_3d(full_output_precision, has_material_orientation):
     elemType2 = cae.mesh.ElemType(elemCode=abqConst.C3D6, elemLibrary=abqConst.STANDARD)
     elemType3 = cae.mesh.ElemType(elemCode=abqConst.C3D4, elemLibrary=abqConst.STANDARD)
     part.setElementType(
-        regions=(part.cells, ),
+        regions=(part.cells,),
         elemTypes=(elemType1, elemType2, elemType3))
     part.generateMesh()
 
@@ -176,7 +176,7 @@ def build_3d(full_output_precision, has_material_orientation):
     model.YsymmBC(
         name="BC-1",
         createStepName="Initial",
-        region=(instance.faces.findAt(((0., 15., 2.5), )),))
+        region=(instance.faces.findAt(((0., 15., 2.5),)),))
     model.ZsymmBC(
         name="BC-2",
         createStepName="Initial",

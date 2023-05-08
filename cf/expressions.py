@@ -1,21 +1,330 @@
+r"""
+This module contains symbolic expressions of various physical quantities.
+
+Abbreviations
+-------------
+
+    - `d`: number of space dimensions (2D, 3D)
+    - `n`: number of nodes
+    - `ips`: number of integration points
+
+    - `R`: (d, 1)-Matrix of reference space coordinates
+    - `X`: (d, 1)-Matrix of real space coordinates
+
+    - `H`: (n, 1)-Matrix of shape functions
+    - `dH_dR`: (n, d)-Matrix: :math:`dh\_dr_{ik} = \partial h_{i} / \partial r_{k}`
+    - `dH_dX`: (n, d)-Matrix: :math:`dh\_dr_{ik} = \partial h_{i} / \partial x_{k}`
+    - `J`: (d, d)-Jacobian matrix: :math:`j_{ik}= \partial x_{i} / \partial r_{k}`
+    - `U`: (n, d)-Matrix of displacements in the real space
+    - `dU_dX`: (d, d)-Matrix: :math:`du\_dx_{ik} = \partial u_{i} / \partial x_{k}`
+    - `S`: (d, d)-Cauchy stress tensor
+    - `F`: (d, d)-Deformation gradient
+    - `P`: (d, d)-First Piola-Kirchhoff stress tensor
+    - `e`: internal energy density
+    - `CS`: (d, d)-Matrix of configurational stresses. Implemented formulations:
+
+        - `mbf`: motion based formulation (original formulation)
+        - `dbf`: displacement based formulation
+
+    - `CF`: (d, n)-Matrix of configurational forces
+
+
+Define an element
+-----------------
+
+>>> import cf.element_definitions as el_def
+>>> typ = el_def.CPE4R
+>>> R_at_nodes = el_def.R_at_nodes_of_element[typ]
+>>> shape_exponents = el_def.exponents_of_shape_functions_of_element[typ]
+>>> R_at_int_points = el_def.R_at_integration_points_of_element[typ]
+>>> int_weights = el_def.weights_of_integration_points_of_element[typ]
+
+>>> n, d = R_at_nodes.shape
+>>> ips = len(R_at_int_points)
+>>> n, d, ips
+(4, 2, 1)
+
+
+Reference space `R`
+-------------------
+
+For a 2D element the reference space has 2 variables:
+
+>>> R = eval_R(2)
+>>> r1, r2 = R
+
+Shape functions in reference space `H`
+--------------------------------------
+
+The shape functions are defined in the reference coordinate system.
+A shape function consists out of coefficients
+
+>>> COEF = sy.MatrixSymbol("C", len(shape_exponents), 1).as_explicit()
+
+and powers of the reference space variables
+
+>>> POWER = sy.zeros(len(shape_exponents), 1)
+>>> for i in range(len(shape_exponents)):
+...     POWER[i, 0] = r1**shape_exponents[i, 0] * r2**shape_exponents[i, 1]
+>>> POWER
+Matrix([
+[    1],
+[   r0],
+[   r1],
+[r0*r1]])
+
+The shape function is a matrix multiplication of the coefficients and the powers
+
+>>> h0 = (COEF.T * POWER)[0]
+>>> h0
+r0*r1*C[3, 0] + r0*C[1, 0] + r1*C[2, 0] + C[0, 0]
+
+The coefficients are computed out of the coordinates of the element nodes
+and the powers of the shape functions.
+
+>>> H = eval_H(R, R_at_nodes, shape_exponents)
+>>> H[0]
+0.25*r0*r1 - 0.25*r0 - 0.25*r1 + 0.25
+
+Each shape function corresponds to one node.
+At this node the shape function is one, whereas at other nodes
+it is zero.
+E.g. The i-th shape function is one at the i-th node.
+
+>>> i = 1
+>>> node_i = R_at_nodes[i]
+>>> float(H.xreplace(dict(zip([r1, r2], node_i)))[i])
+1.0
+
+but is zero at any j-th node (j != i).
+
+>>> j = 0
+>>> node_j = R_at_nodes[j]
+>>> float(H.xreplace(dict(zip([r1, r2], node_j)))[i])
+0.0
+
+
+Interpolation of nodal values using `H`
+---------------------------------------
+
+Shape functions are used to interpolate quantities inside the element.
+Values for a quantity are provided at the element nodes.
+E.g. The coordinates are provided at the element nodes.
+
+>>> quantity = sy.Matrix(R_at_nodes)
+
+The interpolation is done by a matrix multiplication with the shape functions.
+
+>>> interpolation = quantity.T * H
+>>> interpolation
+Matrix([
+[1.0*r0],
+[1.0*r1]])
+
+In this simple example the interpolated quantities are :math:`(1*r, 1*s)`.
+
+
+Derivative of interpolation in reference space using `dH_dR`
+------------------------------------------------------------
+
+To derive the interpolation of a quantity,
+it is sufficient to derive the shape function
+with respect to the reference space coordinates.
+
+>>> dH_dR = eval_dH_dR(H, sy.Matrix([r1, r2]))
+
+The derivative of the quantities with respect to
+the reference space coordinates is again a
+matrix multiplication.
+
+>>> dQ_dR = quantity.T * dH_dR
+
+E.g. the i-th quantity derived by the j-th reference space coordinate is
+
+>>> i, j = (0, 0)
+>>> dQ_dR[i, j]
+1.00000000000000
+
+
+Integration in the reference space using integration points
+-----------------------------------------------------------
+
+Since, the shape functions are multidimensional polynomials, they can be
+integrated using Gaussian quadrature.
+E.g. the function
+
+>>> f = r1*r2 + 1
+
+is integrated over the element volume in the reference space, by
+
+>>> integral = 0
+>>> for R_at_int_point, int_weight in zip(R_at_int_points, int_weights):
+...     integral += int_weight * float(f.xreplace(dict(zip([r1, r2], R_at_int_point))))
+>>> integral
+4.0
+
+However, reduced elements like CPE4R have less integration points
+than it would be necessary to integrate the shape function exactly.
+
+
+Real space `X`
+--------------
+
+For an application the element is transformed to the real space.
+E.g. the element nodes have now real space coordinates
+
+>>> X_at_nodes = np.array([
+...     [1.0, 2.0],
+...     [3.0, 3.0],
+...     [4.0, 5.0],
+...     [1.0, 4.0]
+... ])
+
+The coordiantes in the real space are interpolated
+from the real space coordinates of the element nodes.
+
+>>> X_at_nodes.T @ H
+Matrix([
+[0.25*r0*r1 + 1.25*r0 + 0.25*r1 + 2.25],
+[                0.5*r0 + 1.0*r1 + 3.5]])
+
+
+Jacobian matrix `J`
+-------------------
+
+For the space transformation the jacobian is computed.
+
+>>> J = eval_J(X_at_nodes, dH_dR)
+
+The jacobian derives the real space coordinates
+with respect to the reference space coordinates.
+The i-th real space coordinate derived by the
+j-th reference space coordinate is
+
+>>> i, j = (1, 0)
+>>> J[i, j]
+0.500000000000000
+
+
+Derivatives in real space `dH_dX` and `dU_dX`
+---------------------------------------------
+
+Imagine, displacements are given in the real space
+
+>>> STRAIN = np.array([
+...     [0.3, 0.0],
+...     [0.0, -0.1]
+... ])
+>>> U_at_nodes = X_at_nodes @ STRAIN
+>>> U_at_nodes
+array([[ 0.3, -0.2],
+       [ 0.9, -0.3],
+       [ 1.2, -0.5],
+       [ 0.3, -0.4]])
+
+They can be interpolated using the shape functions
+
+>>> U = U_at_nodes.T * H
+
+However, at the moment you can only derive them with
+respect to the reference space.
+
+To derive an interpolation like `U` with respect to the
+real space, the jacobian is used to transfer `dH_dR` to
+
+>>> dH_dX = eval_dH_dX(dH_dR, J)
+
+Now the displacements can be derived with respect to the
+real space.
+
+>>> dU_dX = U_at_nodes.T * dH_dX
+
+This is exactly the same as
+
+>>> dU_dX = eval_dU_dX(U_at_nodes, dH_dX)
+
+The derivative is evaluated at the center of element and returns the
+expected strain tensor.
+
+>>> np.array(dU_dX.subs({r1: 0., r2: 0.}), dtype=float).round(7)
+array([[ 0.3,  0. ],
+       [-0. , -0.1]])
+
+
+Integration in the real space
+-----------------------------
+
+The jacobian is also used for the integration in the real space.
+E.g. the strain energy density is computed out of strain and stress tensors.
+The Cauchy stress tensor is computed using Lamé parameters :math:`\lambda=600` and :math:`\mu=400`.
+
+>>> S = 2 * 400 * STRAIN + 600 * np.trace(STRAIN) * np.eye(2)
+>>> S
+array([[360.,   0.],
+       [  0.,  40.]])
+
+The strain energy density is
+
+>>> e = 0.5 * np.tensordot(STRAIN, S)
+>>> e
+52.0
+
+The strain energy is the integral of the strain energy density
+over the element in the real space coordinates.
+In addition to the integral in the reference space,
+the determinat of the jacobian is added.
+
+>>> integral = 0.
+>>> for R_at_int_point, int_weight in zip(R_at_int_points, int_weights):
+...     integral += (
+...         int_weight
+...         * e
+...         * float(J.det().xreplace(dict(zip([r1, r2], R_at_int_point))))
+...     )
+>>> integral
+234.0
+
+
+Deformation gradient `F`
+------------------------
+
+.. todo: F
+
+First Piola-Kirchhoff stresses `P`
+----------------------------------
+
+.. todo: P
+
+Configurational stresses `CS`
+-----------------------------
+
+.. todo: CS
+
+
+Configurational forces `CF`
+---------------------------
+
+.. todo: CF
+
+Computation
+-----------
+
+.. todo:
+    Computation
+
+"""
 from typing import Union, List, Dict, Any
 
 import numpy as np
 import sympy as sy
 
-from cf.symbolic_util import create_symbolic_matrix, inverse, create_replacement_rules, apply_replacement_rules, expand_matrices_in_symbols_to_expressions
+from cf.symbolic_util import create_symbolic_matrix, inverse, create_replacement_rules, apply_replacement_rules
 
-R_3d = create_symbolic_matrix("{row}", ["r", "s", "t"], 1)
+R_3d = create_symbolic_matrix("r{row}", 3, 1)
 """symbolic reference space coordinates for the 3d space"""
 
 
 def eval_R(d_: int):
-    """
-    Create reference space coordinates
-
-    :param d_: dimensions
-    :return: matrix containing symbolic reference space coordinates
-    """
     return sy.Matrix(R_3d[:d_])
 
 
@@ -125,6 +434,20 @@ class Computation(object):
         S_at_int_points_, e_at_int_points_,
         is_dbf: bool = True
     ):
+        """
+        Compute `F`, `P`, `CS`, and `CF`.
+
+        :param R_at_nodes_: array of shape (n, d) of reference space nodal coordinates
+        :param exponents_: array of shape (n, d) of integer exponents
+        :param R_at_int_points_: array of shape (ips, d) of reference space coordinates
+        :param int_weights_: array of shape (ips,)
+        :param X_at_nodes_: array of shape (n, d) of real space nodal coordinates
+        :param U_at_nodes_: array of shape (n, d) of real space nodal displacements
+        :param S_at_int_points_: array of shape (ips, d, d) of real space Cauchy stresses
+        :param e_at_int_points_: array of shape (ips,) of energy densities
+        :param is_dbf: use "dbf" if True else "mbf"
+        """
+
         # check shapes
         n_, d_ = R_at_nodes_.shape
         ips_ = len(int_weights_)
@@ -147,7 +470,7 @@ class Computation(object):
         R = eval_R(d_)
         dim_r = [r.name for r in R]
 
-        X = create_symbolic_matrix("{row}", ["x", "y", "z"][:d_], 1, *R)
+        X = create_symbolic_matrix("x{row}", d_, 1, *R)
         dim_x = [x.name for x in X]
 
         U = create_symbolic_matrix("U{row}", dim_x, 1, *R)
@@ -157,19 +480,19 @@ class Computation(object):
         symbols_to_expressions[e] = e_at_int_points_
 
         #
-        nodes_replacements = create_replacement_rules(R, *R_at_nodes_)
-        int_points_replacements = create_replacement_rules(R, *R_at_int_points_)
+        replacements_by_nodes = create_replacement_rules(R, *R_at_nodes_)
+        replacements_by_int_points = create_replacement_rules(R, *R_at_int_points_)
 
-        X_at_nodes = sy.Matrix(apply_replacement_rules(X, *nodes_replacements)[:, :, 0]).as_immutable()
+        X_at_nodes = sy.Matrix(apply_replacement_rules(X, *replacements_by_nodes)[:, :, 0]).as_immutable()
         symbols_to_expressions[X_at_nodes] = X_at_nodes_
 
-        U_at_nodes = sy.Matrix(apply_replacement_rules(U, *nodes_replacements)[:, :, 0]).as_immutable()
+        U_at_nodes = sy.Matrix(apply_replacement_rules(U, *replacements_by_nodes)[:, :, 0]).as_immutable()
         symbols_to_expressions[U_at_nodes] = U_at_nodes_
 
-        S_at_int_points = apply_replacement_rules(S, *int_points_replacements)
+        S_at_int_points = apply_replacement_rules(S, *replacements_by_int_points)
         symbols_to_expressions[S_at_int_points] = S_at_int_points_
 
-        e_at_int_points = apply_replacement_rules(e, *int_points_replacements)
+        e_at_int_points = apply_replacement_rules(e, *replacements_by_int_points)
         symbols_to_expressions[e_at_int_points] = e_at_int_points_
 
         #
@@ -217,31 +540,24 @@ class Computation(object):
             CS,
             J,
             int_weights_,
-            int_points_replacements
+            replacements_by_int_points
         ).doit()
         symbols_to_expressions[CF_at_nodes] = CF_at_nodes_
 
         #
         self.symbols_to_expressions = symbols_to_expressions
-        self.int_points_replacements = int_points_replacements
+        self.replacements_by_int_points = replacements_by_int_points
         self.R = R
         self.F = F
         self.P = P
         self.CS = CS
         self.CF_at_nodes = CF_at_nodes
 
-    def expand_matrices_in_symbols_to_expressions(self):
-        self.symbols_to_expressions.update(
-            expand_matrices_in_symbols_to_expressions(
-                self.symbols_to_expressions
-            )
-        )
-
     def map_symbolic_to_expression(self, symbolic: sy.Expr, expr: sy.Expr):
-        self.symbols_to_expressions[symbolic] = expr
+        """
+        Add the mapping `symbolic -> expr` to :py:attr:`symbols_to_expressions`.
 
-    def at_int_point(self, symbolic: Union[sy.MatrixBase, sy.MatrixExpr]):
-        return apply_replacement_rules(
-            symbolic,
-            *self.int_points_replacements
-        )
+        :param symbolic: symbol that is mapped to the expression
+        :param expr: An expression
+        """
+        self.symbols_to_expressions[symbolic] = expr

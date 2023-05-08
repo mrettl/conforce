@@ -172,25 +172,25 @@ def apply_replacement_rules(expression: Union[sy.MatrixExpr, sy.MatrixBase], *re
 
     In the following expression some symbols should be replaced by values.
 
-    >>> r, s, t = sy.symbols("r s t")
-    >>> expr = 1*r + 2*s + 3*t
+    >>> r1, r2, r3 = sy.symbols("r1 r2 r3")
+    >>> expr = 1*r1 + 2*r2 + 3*r3
 
     Three replacement rules map `r` and `s` to values.
 
     >>> repl = create_replacement_rules(
-    ...     [r, s],
+    ...     [r1, r2],
     ...     [1, 0],
     ...     [0, 1],
     ...     [1, 1]
     ... )
     >>> repl
-    [{r: 1, s: 0}, {r: 0, s: 1}, {r: 1, s: 1}]
+    [{r1: 1, r2: 0}, {r1: 0, r2: 1}, {r1: 1, r2: 1}]
 
     Each of the three replacement rules is applied independently.
     The `t` symbol is not replaceed.
 
     >>> apply_replacement_rules(expr, *repl)
-    [3*t + 1, 3*t + 2, 3*t + 3]
+    [3*r3 + 1, 3*r3 + 2, 3*r3 + 3]
 
     .. seealso:: :py:func:`create_replacement_rules`
 

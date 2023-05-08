@@ -183,7 +183,7 @@ def compute_CS(
             - "mbf" :py:func:`cf.expressions.eval_CS_mbf`
             - "dbf" :py:func:`cf.expressions.eval_CS_dbf`
 
-    :param e_at_int_points: Array of shape (num_elem, ) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem,) containing the internal energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, d) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, d) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, d, d)
@@ -222,7 +222,7 @@ def compute_CF(
             - "mbf" :py:func:`cf.expressions.eval_CS_mbf`
             - "dbf" :py:func:`cf.expressions.eval_CS_dbf`
 
-    :param e_at_int_points: Array of shape (num_elem, ) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem,) containing the internal energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, d) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, d) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, d, d)

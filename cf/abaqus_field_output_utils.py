@@ -1,3 +1,6 @@
+"""
+This module requires Abaqus.
+"""
 import odbAccess
 import abaqusConstants as abqConst
 

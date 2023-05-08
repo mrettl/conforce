@@ -11,7 +11,7 @@ from sympy.printing.c import C99CodePrinter
 
 from cf import element_definitions
 from cf.expressions import Computation
-from cf.symbolic_util import TermCollector
+from cf.symbolic_util import TermCollector, expand_matrices_in_symbols_to_expressions, apply_replacement_rules
 
 
 def write_code_for_all_element_types(*types):
@@ -75,17 +75,20 @@ def write_code_for_element_type(
     R = computation.R
 
     # F
-    F_at_int_points_ = computation.at_int_point(computation.F)
+    F_at_int_points_ = apply_replacement_rules(
+        computation.F, computation.replacements_by_int_points)
     F_at_int_points = sy.IndexedBase("F_at_int_points", shape=(ips_, d_, d_))
     computation.map_symbolic_to_expression(F_at_int_points, F_at_int_points_)
 
     # P
-    P_at_int_points_ = computation.at_int_point(computation.P)
+    P_at_int_points_ = apply_replacement_rules(
+        computation.P, computation.replacements_by_int_points)
     P_at_int_points = sy.IndexedBase("P_at_int_points", shape=(ips_, d_, d_))
     computation.map_symbolic_to_expression(P_at_int_points, P_at_int_points_)
 
     # CS
-    CS_at_int_points_ = computation.at_int_point(computation.CS)
+    CS_at_int_points_ = apply_replacement_rules(
+        computation.CS, computation.replacements_by_int_points)
     CS_at_int_points = sy.IndexedBase("CS_at_int_points", shape=(ips_, d_, d_))
     computation.map_symbolic_to_expression(CS_at_int_points, CS_at_int_points_)
 
@@ -93,8 +96,9 @@ def write_code_for_element_type(
     CF_at_nodes = computation.CF_at_nodes
 
     #
-    computation.expand_matrices_in_symbols_to_expressions()
     symbols_to_expressions = computation.symbols_to_expressions
+    symbols_to_expressions.update(
+        expand_matrices_in_symbols_to_expressions(symbols_to_expressions))
 
     # create abstract code assignments
     term_collector = TermCollector(

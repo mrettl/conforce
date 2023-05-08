@@ -1,3 +1,6 @@
+"""
+This module requires Abaqus (including Abaqus cae).
+"""
 from __future__ import print_function
 
 import sys

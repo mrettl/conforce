@@ -33,8 +33,9 @@ Table of Contents
     :maxdepth: 2
 	
     README.md
+    CONTRIBUTING.md
+    CHANGELOG.md
     reference
-    changelog.md
 
 
 

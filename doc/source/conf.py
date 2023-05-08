@@ -4,7 +4,7 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-# -- Path setup --------------------------------------------------------------
+# -- Path setup ---------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -17,7 +17,7 @@ import datetime
 
 sys.path.insert(0, os.path.abspath('../..'))
 
-# -- Project information -----------------------------------------------------
+# -- Project information ------------------------------------------------------
 
 project = 'CF - Configurational Forces Plug-in'
 copyright = '2022, Matthias Rettl'
@@ -26,7 +26,7 @@ author = 'Matthias Rettl'
 # The full version, including alpha/beta/rc tags
 release = datetime.date.strftime(datetime.date.today(), "%Y-%m-%d")
 
-# -- General configuration ---------------------------------------------------
+# -- General configuration ----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -58,7 +58,7 @@ add_module_names = False
 # and once as one page per starting letter. Default is False.
 html_split_index = True
 
-# -- Options for HTML output -------------------------------------------------
+# -- Options for HTML output --------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -75,22 +75,22 @@ html_sidebars = {
     '**': ['searchbox.html', 'relations.html', 'sourcelink.html', 'globaltoc.html']
 }
 
-# -- Extension configuration -------------------------------------------------
+# -- Extension configuration --------------------------------------------------
 
-# -- Options for intersphinx extension ---------------------------------------------
+# -- Options for intersphinx extension ----------------------------------------
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'sympy': ('https://docs.sympy.org/latest', None)
 }
 
 
-# -- Options for to do extension ---------------------------------------------
+# -- Options for to do extension ----------------------------------------------
 todo_include_todos = True
 
-# -- Options for autosummary extension ---------------------------------------
+# -- Options for autosummary extension ----------------------------------------
 autosummary_generate = True
 
-# -- Options for doctest extension -------------------------------------------
+# -- Options for doctest extension --------------------------------------------
 doctest_global_setup = """
 import os
 os.chdir('..')
@@ -100,51 +100,31 @@ import os
 os.chdir('doc')
 """
 
-# -- Create _static dir ------------------------------------------------------
+# -- Create _static dir -------------------------------------------------------
 
 static_dir_path = os.path.abspath(os.path.join(__file__, "../_static"))
 if not os.path.exists(static_dir_path):
     print('make directory ' + static_dir_path)
     os.mkdir(static_dir_path)
 
-# -- Copy readme -------------------------------------------------------------
+# -- Copy files for root directory --------------------------------------------
 
-source_readme = os.path.abspath(os.path.join(__file__, "../../../README.md"))
-destination_readme = os.path.abspath(os.path.join(__file__, "../README.md"))
+for file_name in ["README.md", "CONTRIBUTING.md", "LICENSE.txt", "CHANGELOG.md"]:
+    source_readme = os.path.abspath(os.path.join(__file__, f"../../../{file_name}"))
+    destination_readme = os.path.abspath(os.path.join(__file__, f"../{file_name}"))
 
-if os.path.exists(destination_readme):
-    source_time = os.path.getmtime(source_readme)
-    destination_time = os.path.getmtime(destination_readme)
+    if os.path.exists(destination_readme):
+        source_time = os.path.getmtime(source_readme)
+        destination_time = os.path.getmtime(destination_readme)
 
-    if source_time > destination_time:
-        print(f'update README.md')
+        if source_time > destination_time:
+            print(f'update {file_name}')
+            shutil.copyfile(
+                src=source_readme,
+                dst=destination_readme)
+
+    else:
+        print(f'add {file_name}')
         shutil.copyfile(
             src=source_readme,
             dst=destination_readme)
-
-else:
-    print(f'add README.md')
-    shutil.copyfile(
-        src=source_readme,
-        dst=destination_readme)
-
-# -- Copy changelog -------------------------------------------------------------
-
-source_readme = os.path.abspath(os.path.join(__file__, "../../../changelog.md"))
-destination_readme = os.path.abspath(os.path.join(__file__, "../changelog.md"))
-
-if os.path.exists(destination_readme):
-    source_time = os.path.getmtime(source_readme)
-    destination_time = os.path.getmtime(destination_readme)
-
-    if source_time > destination_time:
-        print(f'update changelog.md')
-        shutil.copyfile(
-            src=source_readme,
-            dst=destination_readme)
-
-else:
-    print(f'add changelog.md')
-    shutil.copyfile(
-        src=source_readme,
-        dst=destination_readme)

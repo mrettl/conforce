@@ -43,18 +43,18 @@ def build():
     part.BaseSolidExtrude(sketch=sketch, depth=5.0)
 
     material = model.Material(name="Material-1")
-    material.Elastic(table=((1000.0, 0.3), ))
+    material.Elastic(table=((1000.0, 0.3),))
     section = model.HomogeneousSolidSection(
         name='Section-1',
         material=material.name,
         thickness=None)
 
     part.SectionAssignment(
-        region=(part.cells, ),
+        region=(part.cells,),
         sectionName=section.name
     )
     part.MaterialOrientation(
-        region=(part.cells, ),
+        region=(part.cells,),
         localCsys=None,
         axis=abqConst.AXIS_3,
         angle=30.0,
@@ -68,7 +68,7 @@ def build():
     elemType2 = cae.mesh.ElemType(elemCode=abqConst.C3D6, elemLibrary=abqConst.STANDARD)
     elemType3 = cae.mesh.ElemType(elemCode=abqConst.C3D4, elemLibrary=abqConst.STANDARD)
     part.setElementType(
-        regions=(part.cells, ),
+        regions=(part.cells,),
         elemTypes=(elemType1, elemType2, elemType3))
     part.generateMesh()
 
@@ -82,7 +82,7 @@ def build():
     model.YsymmBC(
         name="BC-1",
         createStepName="Initial",
-        region=(instance.faces.findAt(((0., 15., 2.5), )),))
+        region=(instance.faces.findAt(((0., 15., 2.5),)),))
     model.ZsymmBC(
         name="BC-2",
         createStepName="Initial",
