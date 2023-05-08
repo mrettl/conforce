@@ -11,6 +11,11 @@ This module defines elements by the dictionaries:
 The integration points and weights are computed using Abaqus.
 The other dictionaries are defined manually.
 
+.. seealso::
+    The module :py:mod:`cf.expressions`
+    describes how to use the nodes, exponents, etc.
+
+
 Access dictionaries
 -------------------
 
@@ -41,7 +46,42 @@ is a *four*-noded *2* D element with *one* integration point.
 >>> adjacent_nodes.shape
 (4, 4)
 
-.. seealso:: :py:mod:`cf.expressions`
+
+Examples
+--------
+
+The corner nodes of an element are saved as boolean array.
+
+>>> R_at_nodes = R_at_nodes_of_element[CPE6]
+>>> corner_nodes = corner_nodes_of_element[CPE6]
+>>> corner_nodes
+array([ True,  True,  True, False, False, False])
+
+This boolean array can be used as slice to get the coordinates of the corner nodes.
+
+>>> R_at_nodes[corner_nodes]
+array([[0., 0.],
+       [1., 0.],
+       [0., 1.]])
+
+The i-th node is also accesible by an index.
+
+>>> i = 0
+>>> R_at_nodes[i, :]
+array([0., 0.])
+
+The adjacent nodes of this i-th node are saved as a boolean array.
+
+>>> adjacent_nodes = adjacent_nodes_of_element[CPE6]
+>>> adjacent_nodes[i, :]
+array([False, False, False,  True, False,  True])
+
+Consequently, the boolean array can be used as slice to
+get the coordinates of nodes adjacent to the i-th node.
+
+>>> R_at_nodes[adjacent_nodes[i, :], :]
+array([[0.5, 0. ],
+       [0. , 0.5]])
 
 """
 import os
@@ -115,8 +155,8 @@ adjacent_nodes_of_element[C3D20] = np.array([
     [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-])
-corner_nodes_of_element[C3D20] = np.sum(adjacent_nodes_of_element[C3D20], axis=1) == 3
+], dtype=bool)
+corner_nodes_of_element[C3D20] = np.sum(adjacent_nodes_of_element[C3D20].astype(int), axis=1) == 3
 
 C3D20R = "C3D20R"
 """3D 20-node quadratic brick, reduced integration"""
@@ -149,10 +189,11 @@ def _add_connections_bypassing_mid_nodes(graph):
     :param graph: numpy array of shape (n, n) containing an adjacency matrix
     :return: numpy array of shape (n, n) containing an adjacency matrix
     """
-    return np.array([
+    new_graph = np.array([
         np.logical_or.reduce(graph[row, :], axis=0)
         for row in graph.astype(bool)
     ], dtype=int) - np.eye(len(graph), dtype=int)
+    return new_graph.astype(graph.dtype)
 
 
 C3D8 = "C3D8"
@@ -210,7 +251,7 @@ adjacent_nodes_of_element[C3D10] = np.array([
     [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
     [0, 0, 1, 1, 0, 0, 0, 0, 0, 0]
 ])
-corner_nodes_of_element[C3D10] = np.sum(adjacent_nodes_of_element[C3D10], axis=1) == 3
+corner_nodes_of_element[C3D10] = np.sum(adjacent_nodes_of_element[C3D10].astype(int), axis=1) == 3
 
 C3D4 = "C3D4"
 """3D 4-node linear tetrahedron"""
@@ -255,8 +296,8 @@ adjacent_nodes_of_element[C3D15] = np.array([
     [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-])
-corner_nodes_of_element[C3D15] = np.sum(adjacent_nodes_of_element[C3D15], axis=1) == 3
+], dtype=bool)
+corner_nodes_of_element[C3D15] = np.sum(adjacent_nodes_of_element[C3D15].astype(int), axis=1) == 3
 
 CPE6 = "CPE6"
 """2D 6-node quadratic triangle"""

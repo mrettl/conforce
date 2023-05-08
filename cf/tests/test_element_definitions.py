@@ -3,7 +3,7 @@ import unittest
 import sympy as sy
 
 from cf.element_definitions import *
-from cf import one_element_runner
+from cf.one_element_runner import simulate_one_element
 from cf.expressions import eval_H, eval_dH_dR, eval_J, R_3d
 from cf.symbolic_util import create_replacement_rules, apply_replacement_rules
 
@@ -12,7 +12,38 @@ class TestElementDefinitions(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.abaqus_data = None  # TODO: check Volumne; check shapes
+        cls.abaqus_data = {
+            element_type: simulate_one_element(
+                X_at_nodes=R_at_nodes,
+                U_at_nodes=np.ones_like(R_at_nodes),
+                element_type=element_type,
+                load_name="translation",
+                folder="res/tests/test_element_definitions"
+            )
+            for element_type, R_at_nodes in R_at_nodes_of_element.items()
+        }
+
+    def test_check_shapes(self):
+        for element_type, data in self.abaqus_data.items():
+            with self.subTest(element_type):
+                R_at_nodes = R_at_nodes_of_element[element_type]
+                R_at_int_points = R_at_integration_points_of_element[element_type]
+                weights_of_int_points = weights_of_integration_points_of_element[element_type]
+                exponents = exponents_of_shape_functions_of_element[element_type]
+                corner_nodes = corner_nodes_of_element[element_type]
+                adjacency_matrix = adjacent_nodes_of_element[element_type]
+
+                n, d = R_at_nodes.shape
+                ips = R_at_int_points.shape[0]
+
+                # check shapes
+                self.assertEqual((n, d), R_at_nodes.shape)
+                self.assertEqual((ips, d), R_at_int_points.shape)
+                self.assertEqual((ips,), weights_of_int_points.shape)
+                self.assertEqual((n, d), exponents.shape)
+                self.assertEqual((n,), corner_nodes.shape)
+                self.assertEqual((n, n), adjacency_matrix.shape)
+
 
     def test_validation_against_abaqus(self):
         for element_type, data in self.abaqus_data.items():
@@ -24,10 +55,9 @@ class TestElementDefinitions(unittest.TestCase):
                 exponents = exponents_of_shape_functions_of_element[element_type]
 
                 # abaqus data
-                model = data["origin"]
-                X_at_nodes_abaqus = np.array(model["nodes"]["COORD"])
-                X_at_int_points_abaqus = np.array(model["integration_points"]["COORD"])
-                vol_abaqus = model["element"]["EVOL"]
+                X_at_nodes_abaqus = np.array(data["nodes"]["COORD"])
+                X_at_int_points_abaqus = np.array(data["integration_points"]["COORD"])
+                vol_abaqus = data["element"]["EVOL"]
 
                 # computation
                 n, d = X_at_nodes_abaqus.shape
@@ -61,8 +91,6 @@ class TestElementDefinitions(unittest.TestCase):
                     X_at_int_points_abaqus,
                     decimal=6
                 )
-
-                # TODO: compare IVOL with integration weights
 
 
 if __name__ == '__main__':
