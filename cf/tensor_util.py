@@ -125,7 +125,7 @@ def rotation_matrix_from_quaternion(Q):
 
     **Examples**
 
-    Given the quaternion for a 90° rotation along the z-axis,
+    Given the quaternion for a 90-degree rotation along the z-axis,
     the corresponding rotation matrix is computed.
 
     >>> Q90z = np.array([ 0, 0, 0.7071068, 0.7071068])

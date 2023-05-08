@@ -76,19 +76,19 @@ def write_code_for_element_type(
 
     # F
     F_at_int_points_ = apply_replacement_rules(
-        computation.F, computation.replacements_by_int_points)
+        computation.F, *computation.replacements_by_int_points)
     F_at_int_points = sy.IndexedBase("F_at_int_points", shape=(ips_, d_, d_))
     computation.map_symbolic_to_expression(F_at_int_points, F_at_int_points_)
 
     # P
     P_at_int_points_ = apply_replacement_rules(
-        computation.P, computation.replacements_by_int_points)
+        computation.P, *computation.replacements_by_int_points)
     P_at_int_points = sy.IndexedBase("P_at_int_points", shape=(ips_, d_, d_))
     computation.map_symbolic_to_expression(P_at_int_points, P_at_int_points_)
 
     # CS
     CS_at_int_points_ = apply_replacement_rules(
-        computation.CS, computation.replacements_by_int_points)
+        computation.CS, *computation.replacements_by_int_points)
     CS_at_int_points = sy.IndexedBase("CS_at_int_points", shape=(ips_, d_, d_))
     computation.map_symbolic_to_expression(CS_at_int_points, CS_at_int_points_)
 

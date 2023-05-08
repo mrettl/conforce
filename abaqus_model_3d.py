@@ -110,6 +110,5 @@ def build():
 
 
 if __name__ == '__main__':
-    pass
-    # odb = build()
-    # odb = add_field_outputs(odb)
+    odb = build()
+    odb = add_field_outputs(odb)

@@ -12,7 +12,7 @@ class TestElementDefinitions(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.abaqus_data = one_element_abaqus_runner.simulate_all_element_types()
+        cls.abaqus_data = None  # TODO: check Volumne; check shapes
 
     def test_validation_against_abaqus(self):
         for element_type, data in self.abaqus_data.items():

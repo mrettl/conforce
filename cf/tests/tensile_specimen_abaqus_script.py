@@ -4,7 +4,7 @@ import caeModules as cae
 import regionToolset
 
 
-def build_2d(full_output_precision, has_material_orientation):
+def build_2d(full_output_precision, material_orientation_in_degree):
     # reset model
     abq.Mdb()
 
@@ -49,12 +49,12 @@ def build_2d(full_output_precision, has_material_orientation):
         region=(part.faces,),
         sectionName=section.name
     )
-    if has_material_orientation:
+    if material_orientation_in_degree is not None:
         part.MaterialOrientation(
             region=(part.faces,),
             localCsys=None,
             axis=abqConst.AXIS_3,
-            angle=30.0,
+            angle=material_orientation_in_degree,
             stackDirection=abqConst.STACK_3,
             orientationType=abqConst.SYSTEM,
             additionalRotationType=abqConst.ROTATION_ANGLE
@@ -101,7 +101,7 @@ def build_2d(full_output_precision, has_material_orientation):
     return abq.session.openOdb(job.name + ".odb", readOnly=False)
 
 
-def build_3d(full_output_precision, has_material_orientation):
+def build_3d(full_output_precision, material_orientation_in_degree):
     # reset model
     abq.Mdb()
 
@@ -146,12 +146,12 @@ def build_3d(full_output_precision, has_material_orientation):
         region=(part.cells,),
         sectionName=section.name
     )
-    if has_material_orientation:
+    if material_orientation_in_degree is not None:
         part.MaterialOrientation(
             region=(part.cells,),
             localCsys=None,
             axis=abqConst.AXIS_3,
-            angle=30.0,
+            angle=material_orientation_in_degree,
             stackDirection=abqConst.STACK_3,
             orientationType=abqConst.SYSTEM,
             additionalRotationType=abqConst.ROTATION_ANGLE

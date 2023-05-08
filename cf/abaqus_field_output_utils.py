@@ -558,8 +558,11 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
         elif field_output.type == abqConst.VECTOR:
             ROT = rotation_matrix_from_quaternion(block.localCoordSystem)
 
-            if block.data.shape[1] == 1:
+            d = block.data.shape[1]
+            assert d == 3 or d == 2
+            if d == 3:
                 local_vectors = block.data
+
             else:
                 # create 3D vector out of 2D vector
                 local_vectors = np.zeros((block.data.shape[0], 3), dtype=float)
@@ -568,7 +571,16 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
             data = np.einsum("...ji,...j", ROT, local_vectors)
 
         else:  # TENSOR
-            ROT = rotation_matrix_from_quaternion(block.localCoordSystem)
+            d_quaternion = block.localCoordSystem.shape[1]
+            assert d_quaternion == 4 or d_quaternion == 2
+            if d_quaternion == 4:
+                Q = block.localCoordSystem
+            else:
+                # Create full quaternions from the given `Q[..., 2]*k + Q[..., 3]`
+                Q = np.zeros((block.localCoordSystem.shape[0], 4), dtype=float)
+                Q[:, 2:] = block.localCoordSystem
+
+            ROT = rotation_matrix_from_quaternion(Q)
 
             local_vectors = block.data
             local_tensors = tensor_from_abaqus_notation(local_vectors)
@@ -595,43 +607,38 @@ def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="
         odb = odbAccess.openOdb(path, readOnly=False)
 
     fo_reader = FieldOutputReader()
-    csys = odb.rootAssembly.DatumCsysByThreePoints(
-        name="my_global",
-        coordSysType=abqConst.CARTESIAN,
-        origin=(0, 0, 0),
-        point1=(1, 0, 0),
-        point2=(0, 1, 0))
 
     for odb_inst in odb.rootAssembly.instances.values():
         fo_reader.set_odb_inst(odb_inst)
 
         for step in odb.steps.values():
             for frame in step.frames:
+                # get field outputs and rotate them to the global coordinate system
                 fo_e = field_output_expression(frame.fieldOutputs, e_name)
-                fo_U = frame.fieldOutputs["U"]
-                fo_S = frame.fieldOutputs["S"]
 
+                fo_U = frame.fieldOutputs["U"]
+                fo_U = rotate_field_output_to_global_coordinate_system(
+                    frame,
+                    fo_U,
+                    "U_GLOBAL_CSYS",
+                    "Displacement in global coordinate system"
+                )
                 d = fo_U.bulkDataBlocks[0].data.shape[1]
 
-                try:
-                    fo_S_trial = fo_S.getTransformedField(csys)
-                    fo_U_trial = fo_U.getTransformedField(csys)
+                fo_S = frame.fieldOutputs["S"]
+                fo_S = rotate_field_output_to_global_coordinate_system(
+                    frame,
+                    fo_S,
+                    "S_GLOBAL_CSYS",
+                    "Stresses in global coordinate system"
+                )
 
-                    assert fo_S_trial.bulkDataBlocks is not None
-                    assert fo_U_trial.bulkDataBlocks is not None
-
-                    fo_S = fo_S_trial
-                    fo_U = fo_U_trial
-                except BaseException as e:
-                    print(
-                        "local coordinate systems are not supported. " +
-                        "Set nodalOutputPrecision=SINGLE. " +
-                        str(type(e)))  # TODO: logger
-
+                # read odb output
                 fo_reader.set_fo_U(fo_U)
                 fo_reader.set_fo_e(fo_e)
                 fo_reader.set_fo_S(fo_S)
 
+                # write computed fields to odb
                 fo_writers = list()
                 if "F" in fields:
                     fo_writers.append(FFieldOutputWriter(frame, d))

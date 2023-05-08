@@ -13,6 +13,7 @@ class TestEnergyGradient(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        # TODO:
         cls.abaqus_data = one_element_abaqus_runner.simulate_all_element_types()
 
 

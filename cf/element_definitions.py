@@ -275,8 +275,8 @@ corner_nodes_of_element[C3D6] = corner_nodes_of_element[C3D15][:6]
 
 CPE3 = "CPE3"
 """2D 3-node linear triangle"""
-R_at_nodes_of_element[CPE3] = R_at_nodes_of_element[C3D6][:3, :]
-exponents_of_shape_functions_of_element[CPE3] = exponents_of_shape_functions_of_element[C3D6][:3, :]
+R_at_nodes_of_element[CPE3] = R_at_nodes_of_element[C3D6][:3, :2]
+exponents_of_shape_functions_of_element[CPE3] = exponents_of_shape_functions_of_element[C3D6][:3, :2]
 adjacent_nodes_of_element[CPE3] = adjacent_nodes_of_element[C3D6][:3, :3]
 corner_nodes_of_element[CPE3] = corner_nodes_of_element[C3D6][:3]
 
