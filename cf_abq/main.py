@@ -4,5 +4,8 @@ from field_output_util import add_field_outputs
 
 
 def main():
-    for odb in abq.session.odbs.values():
-        add_field_outputs(odb=odb)
+    session = abq.session
+    vp = session.viewports[abq.session.currentViewportName]
+    odb = vp.displayedObject
+    add_field_outputs(odb=odb)
+

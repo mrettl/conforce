@@ -618,24 +618,36 @@ def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="
         for step in odb.steps.values():
             for frame in step.frames:
                 # get field outputs and rotate them to the global coordinate system
-                fo_e = field_output_expression(frame.fieldOutputs, e_name)
+                fo = frame.fieldOutputs
 
-                fo_U = frame.fieldOutputs["U"]
-                fo_U = rotate_field_output_to_global_coordinate_system(
-                    frame,
-                    fo_U,
-                    "U_GLOBAL_CSYS",
-                    "Displacement in global coordinate system"
-                )
-                d = fo_U.bulkDataBlocks[0].data.shape[1]
+                # energy density
+                fo_e = field_output_expression(fo, e_name)
 
-                fo_S = frame.fieldOutputs["S"]
-                fo_S = rotate_field_output_to_global_coordinate_system(
-                    frame,
-                    fo_S,
-                    "S_GLOBAL_CSYS",
-                    "Stresses in global coordinate system"
-                )
+                # displacements in global coordinate system
+                if "U_GLOBAL_CSYS" in fo.keys():
+                    fo_U = fo["U_GLOBAL_CSYS"]
+
+                else:
+                    fo_U = fo["U"]
+                    fo_U = rotate_field_output_to_global_coordinate_system(
+                        frame,
+                        fo_U,
+                        "U_GLOBAL_CSYS",
+                        "Displacement in global coordinate system"
+                    )
+
+                # stresses in global coordinate system
+                if "S_GLOBAL_CSYS" in fo.keys():
+                    fo_S = fo["S_GLOBAL_CSYS"]
+
+                else:
+                    fo_S = fo["S"]
+                    fo_S = rotate_field_output_to_global_coordinate_system(
+                        frame,
+                        fo_S,
+                        "S_GLOBAL_CSYS",
+                        "Stresses in global coordinate system"
+                    )
 
                 # read odb output
                 fo_reader.set_fo_U(fo_U)
@@ -643,17 +655,21 @@ def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="
                 fo_reader.set_fo_S(fo_S)
 
                 # write computed fields to odb
+                d = fo_U.bulkDataBlocks[0].data.shape[1]
                 fo_writers = list()
-                if "F" in fields:
+                if "F" in fields and "DEF_GRAD_11" not in fo.keys():
                     fo_writers.append(FFieldOutputWriter(frame, d))
-                if "P" in fields:
+                if "P" in fields and "FIRST_PIOLA_STRESS_11" not in fo.keys():
                     fo_writers.append(PFieldOutputWriter(frame, d))
-                if "CS" in fields:
+                if "CS" in fields and "CONF_STRESS_11" not in fo.keys():
                     fo_writers.append(CSFieldOutputWriter(frame, d, method=method))
-                if "CF" in fields:
+                if "CF" in fields and "CONF_FORCE" not in fo.keys():
                     fo_writers.append(CFFieldOutputWriter(frame, d, method=method))
 
-                for element_type in element_types(frame.fieldOutputs["S"].bulkDataBlocks):
+                for element_type in element_types(fo["S"].bulkDataBlocks):
+                    if element_type not in cf_c.map_typ_to_P_function.keys():
+                        continue  # TODO: log element type not supported
+
                     fo_reader.set_element_type(element_type)
 
                     for fo_writer in fo_writers:

@@ -100,10 +100,10 @@ else:
     )))
 
 # function lookup dictionaries
-_map_typ_to_F_function = dict()
-_map_typ_to_P_function = dict()
-_map_typ_and_method_to_CS_function = dict()
-_map_typ_and_method_to_CF_function = dict()
+map_typ_to_F_function = dict()
+map_typ_to_P_function = dict()
+map_typ_and_method_to_CS_function = dict()
+map_typ_and_method_to_CF_function = dict()
 
 
 def compute_F(
@@ -125,7 +125,7 @@ def compute_F(
     :return: F_at_int_points: Array of shape (num_elem, ips, d, d) containing the deformation gradients
         evaluated on ips integration points for num_elem element.
     """
-    fun = _map_typ_to_F_function[str(element_type)]
+    fun = map_typ_to_F_function[str(element_type)]
     return fun(
         X_at_nodes,
         U_at_nodes
@@ -154,7 +154,7 @@ def compute_P(
     :return: P_at_int_points: Array of shape (num_elem, ips, d, d) containing the 1. Piola-Kirchhoff stress tensors
         evaluated on ips integration points for num_elem element.
     """
-    fun = _map_typ_to_P_function[str(element_type)]
+    fun = map_typ_to_P_function[str(element_type)]
     return fun(
         X_at_nodes,
         U_at_nodes,
@@ -192,7 +192,7 @@ def compute_CS(
     :return: CS_at_int_points: Array of shape (num_elem, ips, d, d) containing the configurational stresses
         evaluated on ips integration points for num_elem element.
     """
-    fun = _map_typ_and_method_to_CS_function[(str(element_type), str(method))]
+    fun = map_typ_and_method_to_CS_function[(str(element_type), str(method))]
     return fun(
         e_at_int_points,
         X_at_nodes,
@@ -231,7 +231,7 @@ def compute_CF(
     :return: CF_at_nodes: Array of shape (num_elem, n, d) containing the configurational forces
         evaluated on n nodes for num_elem element.
     """
-    fun = _map_typ_and_method_to_CF_function[(str(element_type), str(method))]
+    fun = map_typ_and_method_to_CF_function[(str(element_type), str(method))]
     return fun(
         e_at_int_points,
         X_at_nodes,
@@ -273,7 +273,7 @@ def compute_F_for_CPE4(
     return F_at_int_points
 
 
-_map_typ_to_F_function['CPE4'] = compute_F_for_CPE4
+map_typ_to_F_function['CPE4'] = compute_F_for_CPE4
 
 
 def compute_P_for_CPE4(
@@ -315,7 +315,7 @@ def compute_P_for_CPE4(
     return P_at_int_points
 
 
-_map_typ_to_P_function['CPE4'] = compute_P_for_CPE4
+map_typ_to_P_function['CPE4'] = compute_P_for_CPE4
 
 
 def compute_CS_for_CPE4_using_dbf(
@@ -362,7 +362,7 @@ def compute_CS_for_CPE4_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE4', 'dbf')] = compute_CS_for_CPE4_using_dbf
+map_typ_and_method_to_CS_function[('CPE4', 'dbf')] = compute_CS_for_CPE4_using_dbf
 
 
 def compute_CF_for_CPE4_using_dbf(
@@ -409,7 +409,7 @@ def compute_CF_for_CPE4_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE4', 'dbf')] = compute_CF_for_CPE4_using_dbf
+map_typ_and_method_to_CF_function[('CPE4', 'dbf')] = compute_CF_for_CPE4_using_dbf
 
 
 def compute_CS_for_CPE4_using_mbf(
@@ -456,7 +456,7 @@ def compute_CS_for_CPE4_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE4', 'mbf')] = compute_CS_for_CPE4_using_mbf
+map_typ_and_method_to_CS_function[('CPE4', 'mbf')] = compute_CS_for_CPE4_using_mbf
 
 
 def compute_CF_for_CPE4_using_mbf(
@@ -503,7 +503,7 @@ def compute_CF_for_CPE4_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE4', 'mbf')] = compute_CF_for_CPE4_using_mbf
+map_typ_and_method_to_CF_function[('CPE4', 'mbf')] = compute_CF_for_CPE4_using_mbf
 
 
 def compute_F_for_CPE4R(
@@ -539,7 +539,7 @@ def compute_F_for_CPE4R(
     return F_at_int_points
 
 
-_map_typ_to_F_function['CPE4R'] = compute_F_for_CPE4R
+map_typ_to_F_function['CPE4R'] = compute_F_for_CPE4R
 
 
 def compute_P_for_CPE4R(
@@ -581,7 +581,7 @@ def compute_P_for_CPE4R(
     return P_at_int_points
 
 
-_map_typ_to_P_function['CPE4R'] = compute_P_for_CPE4R
+map_typ_to_P_function['CPE4R'] = compute_P_for_CPE4R
 
 
 def compute_CS_for_CPE4R_using_dbf(
@@ -628,7 +628,7 @@ def compute_CS_for_CPE4R_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE4R', 'dbf')] = compute_CS_for_CPE4R_using_dbf
+map_typ_and_method_to_CS_function[('CPE4R', 'dbf')] = compute_CS_for_CPE4R_using_dbf
 
 
 def compute_CF_for_CPE4R_using_dbf(
@@ -675,7 +675,7 @@ def compute_CF_for_CPE4R_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE4R', 'dbf')] = compute_CF_for_CPE4R_using_dbf
+map_typ_and_method_to_CF_function[('CPE4R', 'dbf')] = compute_CF_for_CPE4R_using_dbf
 
 
 def compute_CS_for_CPE4R_using_mbf(
@@ -722,7 +722,7 @@ def compute_CS_for_CPE4R_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE4R', 'mbf')] = compute_CS_for_CPE4R_using_mbf
+map_typ_and_method_to_CS_function[('CPE4R', 'mbf')] = compute_CS_for_CPE4R_using_mbf
 
 
 def compute_CF_for_CPE4R_using_mbf(
@@ -769,7 +769,7 @@ def compute_CF_for_CPE4R_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE4R', 'mbf')] = compute_CF_for_CPE4R_using_mbf
+map_typ_and_method_to_CF_function[('CPE4R', 'mbf')] = compute_CF_for_CPE4R_using_mbf
 
 
 def compute_F_for_CPE8(
@@ -805,7 +805,7 @@ def compute_F_for_CPE8(
     return F_at_int_points
 
 
-_map_typ_to_F_function['CPE8'] = compute_F_for_CPE8
+map_typ_to_F_function['CPE8'] = compute_F_for_CPE8
 
 
 def compute_P_for_CPE8(
@@ -847,7 +847,7 @@ def compute_P_for_CPE8(
     return P_at_int_points
 
 
-_map_typ_to_P_function['CPE8'] = compute_P_for_CPE8
+map_typ_to_P_function['CPE8'] = compute_P_for_CPE8
 
 
 def compute_CS_for_CPE8_using_dbf(
@@ -894,7 +894,7 @@ def compute_CS_for_CPE8_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE8', 'dbf')] = compute_CS_for_CPE8_using_dbf
+map_typ_and_method_to_CS_function[('CPE8', 'dbf')] = compute_CS_for_CPE8_using_dbf
 
 
 def compute_CF_for_CPE8_using_dbf(
@@ -941,7 +941,7 @@ def compute_CF_for_CPE8_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE8', 'dbf')] = compute_CF_for_CPE8_using_dbf
+map_typ_and_method_to_CF_function[('CPE8', 'dbf')] = compute_CF_for_CPE8_using_dbf
 
 
 def compute_CS_for_CPE8_using_mbf(
@@ -988,7 +988,7 @@ def compute_CS_for_CPE8_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE8', 'mbf')] = compute_CS_for_CPE8_using_mbf
+map_typ_and_method_to_CS_function[('CPE8', 'mbf')] = compute_CS_for_CPE8_using_mbf
 
 
 def compute_CF_for_CPE8_using_mbf(
@@ -1035,7 +1035,7 @@ def compute_CF_for_CPE8_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE8', 'mbf')] = compute_CF_for_CPE8_using_mbf
+map_typ_and_method_to_CF_function[('CPE8', 'mbf')] = compute_CF_for_CPE8_using_mbf
 
 
 def compute_F_for_CPE8R(
@@ -1071,7 +1071,7 @@ def compute_F_for_CPE8R(
     return F_at_int_points
 
 
-_map_typ_to_F_function['CPE8R'] = compute_F_for_CPE8R
+map_typ_to_F_function['CPE8R'] = compute_F_for_CPE8R
 
 
 def compute_P_for_CPE8R(
@@ -1113,7 +1113,7 @@ def compute_P_for_CPE8R(
     return P_at_int_points
 
 
-_map_typ_to_P_function['CPE8R'] = compute_P_for_CPE8R
+map_typ_to_P_function['CPE8R'] = compute_P_for_CPE8R
 
 
 def compute_CS_for_CPE8R_using_dbf(
@@ -1160,7 +1160,7 @@ def compute_CS_for_CPE8R_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE8R', 'dbf')] = compute_CS_for_CPE8R_using_dbf
+map_typ_and_method_to_CS_function[('CPE8R', 'dbf')] = compute_CS_for_CPE8R_using_dbf
 
 
 def compute_CF_for_CPE8R_using_dbf(
@@ -1207,7 +1207,7 @@ def compute_CF_for_CPE8R_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE8R', 'dbf')] = compute_CF_for_CPE8R_using_dbf
+map_typ_and_method_to_CF_function[('CPE8R', 'dbf')] = compute_CF_for_CPE8R_using_dbf
 
 
 def compute_CS_for_CPE8R_using_mbf(
@@ -1254,7 +1254,7 @@ def compute_CS_for_CPE8R_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE8R', 'mbf')] = compute_CS_for_CPE8R_using_mbf
+map_typ_and_method_to_CS_function[('CPE8R', 'mbf')] = compute_CS_for_CPE8R_using_mbf
 
 
 def compute_CF_for_CPE8R_using_mbf(
@@ -1301,7 +1301,7 @@ def compute_CF_for_CPE8R_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE8R', 'mbf')] = compute_CF_for_CPE8R_using_mbf
+map_typ_and_method_to_CF_function[('CPE8R', 'mbf')] = compute_CF_for_CPE8R_using_mbf
 
 
 def compute_F_for_CPE3(
@@ -1337,7 +1337,7 @@ def compute_F_for_CPE3(
     return F_at_int_points
 
 
-_map_typ_to_F_function['CPE3'] = compute_F_for_CPE3
+map_typ_to_F_function['CPE3'] = compute_F_for_CPE3
 
 
 def compute_P_for_CPE3(
@@ -1379,7 +1379,7 @@ def compute_P_for_CPE3(
     return P_at_int_points
 
 
-_map_typ_to_P_function['CPE3'] = compute_P_for_CPE3
+map_typ_to_P_function['CPE3'] = compute_P_for_CPE3
 
 
 def compute_CS_for_CPE3_using_dbf(
@@ -1426,7 +1426,7 @@ def compute_CS_for_CPE3_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE3', 'dbf')] = compute_CS_for_CPE3_using_dbf
+map_typ_and_method_to_CS_function[('CPE3', 'dbf')] = compute_CS_for_CPE3_using_dbf
 
 
 def compute_CF_for_CPE3_using_dbf(
@@ -1473,7 +1473,7 @@ def compute_CF_for_CPE3_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE3', 'dbf')] = compute_CF_for_CPE3_using_dbf
+map_typ_and_method_to_CF_function[('CPE3', 'dbf')] = compute_CF_for_CPE3_using_dbf
 
 
 def compute_CS_for_CPE3_using_mbf(
@@ -1520,7 +1520,7 @@ def compute_CS_for_CPE3_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE3', 'mbf')] = compute_CS_for_CPE3_using_mbf
+map_typ_and_method_to_CS_function[('CPE3', 'mbf')] = compute_CS_for_CPE3_using_mbf
 
 
 def compute_CF_for_CPE3_using_mbf(
@@ -1567,7 +1567,7 @@ def compute_CF_for_CPE3_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE3', 'mbf')] = compute_CF_for_CPE3_using_mbf
+map_typ_and_method_to_CF_function[('CPE3', 'mbf')] = compute_CF_for_CPE3_using_mbf
 
 
 def compute_F_for_CPE6(
@@ -1603,7 +1603,7 @@ def compute_F_for_CPE6(
     return F_at_int_points
 
 
-_map_typ_to_F_function['CPE6'] = compute_F_for_CPE6
+map_typ_to_F_function['CPE6'] = compute_F_for_CPE6
 
 
 def compute_P_for_CPE6(
@@ -1645,7 +1645,7 @@ def compute_P_for_CPE6(
     return P_at_int_points
 
 
-_map_typ_to_P_function['CPE6'] = compute_P_for_CPE6
+map_typ_to_P_function['CPE6'] = compute_P_for_CPE6
 
 
 def compute_CS_for_CPE6_using_dbf(
@@ -1692,7 +1692,7 @@ def compute_CS_for_CPE6_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE6', 'dbf')] = compute_CS_for_CPE6_using_dbf
+map_typ_and_method_to_CS_function[('CPE6', 'dbf')] = compute_CS_for_CPE6_using_dbf
 
 
 def compute_CF_for_CPE6_using_dbf(
@@ -1739,7 +1739,7 @@ def compute_CF_for_CPE6_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE6', 'dbf')] = compute_CF_for_CPE6_using_dbf
+map_typ_and_method_to_CF_function[('CPE6', 'dbf')] = compute_CF_for_CPE6_using_dbf
 
 
 def compute_CS_for_CPE6_using_mbf(
@@ -1786,7 +1786,7 @@ def compute_CS_for_CPE6_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('CPE6', 'mbf')] = compute_CS_for_CPE6_using_mbf
+map_typ_and_method_to_CS_function[('CPE6', 'mbf')] = compute_CS_for_CPE6_using_mbf
 
 
 def compute_CF_for_CPE6_using_mbf(
@@ -1833,7 +1833,7 @@ def compute_CF_for_CPE6_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('CPE6', 'mbf')] = compute_CF_for_CPE6_using_mbf
+map_typ_and_method_to_CF_function[('CPE6', 'mbf')] = compute_CF_for_CPE6_using_mbf
 
 
 def compute_F_for_C3D8(
@@ -1869,7 +1869,7 @@ def compute_F_for_C3D8(
     return F_at_int_points
 
 
-_map_typ_to_F_function['C3D8'] = compute_F_for_C3D8
+map_typ_to_F_function['C3D8'] = compute_F_for_C3D8
 
 
 def compute_P_for_C3D8(
@@ -1911,7 +1911,7 @@ def compute_P_for_C3D8(
     return P_at_int_points
 
 
-_map_typ_to_P_function['C3D8'] = compute_P_for_C3D8
+map_typ_to_P_function['C3D8'] = compute_P_for_C3D8
 
 
 def compute_CS_for_C3D8_using_dbf(
@@ -1958,7 +1958,7 @@ def compute_CS_for_C3D8_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D8', 'dbf')] = compute_CS_for_C3D8_using_dbf
+map_typ_and_method_to_CS_function[('C3D8', 'dbf')] = compute_CS_for_C3D8_using_dbf
 
 
 def compute_CF_for_C3D8_using_dbf(
@@ -2005,7 +2005,7 @@ def compute_CF_for_C3D8_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D8', 'dbf')] = compute_CF_for_C3D8_using_dbf
+map_typ_and_method_to_CF_function[('C3D8', 'dbf')] = compute_CF_for_C3D8_using_dbf
 
 
 def compute_CS_for_C3D8_using_mbf(
@@ -2052,7 +2052,7 @@ def compute_CS_for_C3D8_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D8', 'mbf')] = compute_CS_for_C3D8_using_mbf
+map_typ_and_method_to_CS_function[('C3D8', 'mbf')] = compute_CS_for_C3D8_using_mbf
 
 
 def compute_CF_for_C3D8_using_mbf(
@@ -2099,7 +2099,7 @@ def compute_CF_for_C3D8_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D8', 'mbf')] = compute_CF_for_C3D8_using_mbf
+map_typ_and_method_to_CF_function[('C3D8', 'mbf')] = compute_CF_for_C3D8_using_mbf
 
 
 def compute_F_for_C3D8R(
@@ -2135,7 +2135,7 @@ def compute_F_for_C3D8R(
     return F_at_int_points
 
 
-_map_typ_to_F_function['C3D8R'] = compute_F_for_C3D8R
+map_typ_to_F_function['C3D8R'] = compute_F_for_C3D8R
 
 
 def compute_P_for_C3D8R(
@@ -2177,7 +2177,7 @@ def compute_P_for_C3D8R(
     return P_at_int_points
 
 
-_map_typ_to_P_function['C3D8R'] = compute_P_for_C3D8R
+map_typ_to_P_function['C3D8R'] = compute_P_for_C3D8R
 
 
 def compute_CS_for_C3D8R_using_dbf(
@@ -2224,7 +2224,7 @@ def compute_CS_for_C3D8R_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D8R', 'dbf')] = compute_CS_for_C3D8R_using_dbf
+map_typ_and_method_to_CS_function[('C3D8R', 'dbf')] = compute_CS_for_C3D8R_using_dbf
 
 
 def compute_CF_for_C3D8R_using_dbf(
@@ -2271,7 +2271,7 @@ def compute_CF_for_C3D8R_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D8R', 'dbf')] = compute_CF_for_C3D8R_using_dbf
+map_typ_and_method_to_CF_function[('C3D8R', 'dbf')] = compute_CF_for_C3D8R_using_dbf
 
 
 def compute_CS_for_C3D8R_using_mbf(
@@ -2318,7 +2318,7 @@ def compute_CS_for_C3D8R_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D8R', 'mbf')] = compute_CS_for_C3D8R_using_mbf
+map_typ_and_method_to_CS_function[('C3D8R', 'mbf')] = compute_CS_for_C3D8R_using_mbf
 
 
 def compute_CF_for_C3D8R_using_mbf(
@@ -2365,7 +2365,7 @@ def compute_CF_for_C3D8R_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D8R', 'mbf')] = compute_CF_for_C3D8R_using_mbf
+map_typ_and_method_to_CF_function[('C3D8R', 'mbf')] = compute_CF_for_C3D8R_using_mbf
 
 
 def compute_F_for_C3D20(
@@ -2401,7 +2401,7 @@ def compute_F_for_C3D20(
     return F_at_int_points
 
 
-_map_typ_to_F_function['C3D20'] = compute_F_for_C3D20
+map_typ_to_F_function['C3D20'] = compute_F_for_C3D20
 
 
 def compute_P_for_C3D20(
@@ -2443,7 +2443,7 @@ def compute_P_for_C3D20(
     return P_at_int_points
 
 
-_map_typ_to_P_function['C3D20'] = compute_P_for_C3D20
+map_typ_to_P_function['C3D20'] = compute_P_for_C3D20
 
 
 def compute_CS_for_C3D20_using_dbf(
@@ -2490,7 +2490,7 @@ def compute_CS_for_C3D20_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D20', 'dbf')] = compute_CS_for_C3D20_using_dbf
+map_typ_and_method_to_CS_function[('C3D20', 'dbf')] = compute_CS_for_C3D20_using_dbf
 
 
 def compute_CF_for_C3D20_using_dbf(
@@ -2537,7 +2537,7 @@ def compute_CF_for_C3D20_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D20', 'dbf')] = compute_CF_for_C3D20_using_dbf
+map_typ_and_method_to_CF_function[('C3D20', 'dbf')] = compute_CF_for_C3D20_using_dbf
 
 
 def compute_CS_for_C3D20_using_mbf(
@@ -2584,7 +2584,7 @@ def compute_CS_for_C3D20_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D20', 'mbf')] = compute_CS_for_C3D20_using_mbf
+map_typ_and_method_to_CS_function[('C3D20', 'mbf')] = compute_CS_for_C3D20_using_mbf
 
 
 def compute_CF_for_C3D20_using_mbf(
@@ -2631,7 +2631,7 @@ def compute_CF_for_C3D20_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D20', 'mbf')] = compute_CF_for_C3D20_using_mbf
+map_typ_and_method_to_CF_function[('C3D20', 'mbf')] = compute_CF_for_C3D20_using_mbf
 
 
 def compute_F_for_C3D20R(
@@ -2667,7 +2667,7 @@ def compute_F_for_C3D20R(
     return F_at_int_points
 
 
-_map_typ_to_F_function['C3D20R'] = compute_F_for_C3D20R
+map_typ_to_F_function['C3D20R'] = compute_F_for_C3D20R
 
 
 def compute_P_for_C3D20R(
@@ -2709,7 +2709,7 @@ def compute_P_for_C3D20R(
     return P_at_int_points
 
 
-_map_typ_to_P_function['C3D20R'] = compute_P_for_C3D20R
+map_typ_to_P_function['C3D20R'] = compute_P_for_C3D20R
 
 
 def compute_CS_for_C3D20R_using_dbf(
@@ -2756,7 +2756,7 @@ def compute_CS_for_C3D20R_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D20R', 'dbf')] = compute_CS_for_C3D20R_using_dbf
+map_typ_and_method_to_CS_function[('C3D20R', 'dbf')] = compute_CS_for_C3D20R_using_dbf
 
 
 def compute_CF_for_C3D20R_using_dbf(
@@ -2803,7 +2803,7 @@ def compute_CF_for_C3D20R_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D20R', 'dbf')] = compute_CF_for_C3D20R_using_dbf
+map_typ_and_method_to_CF_function[('C3D20R', 'dbf')] = compute_CF_for_C3D20R_using_dbf
 
 
 def compute_CS_for_C3D20R_using_mbf(
@@ -2850,7 +2850,7 @@ def compute_CS_for_C3D20R_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D20R', 'mbf')] = compute_CS_for_C3D20R_using_mbf
+map_typ_and_method_to_CS_function[('C3D20R', 'mbf')] = compute_CS_for_C3D20R_using_mbf
 
 
 def compute_CF_for_C3D20R_using_mbf(
@@ -2897,7 +2897,7 @@ def compute_CF_for_C3D20R_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D20R', 'mbf')] = compute_CF_for_C3D20R_using_mbf
+map_typ_and_method_to_CF_function[('C3D20R', 'mbf')] = compute_CF_for_C3D20R_using_mbf
 
 
 def compute_F_for_C3D4(
@@ -2933,7 +2933,7 @@ def compute_F_for_C3D4(
     return F_at_int_points
 
 
-_map_typ_to_F_function['C3D4'] = compute_F_for_C3D4
+map_typ_to_F_function['C3D4'] = compute_F_for_C3D4
 
 
 def compute_P_for_C3D4(
@@ -2975,7 +2975,7 @@ def compute_P_for_C3D4(
     return P_at_int_points
 
 
-_map_typ_to_P_function['C3D4'] = compute_P_for_C3D4
+map_typ_to_P_function['C3D4'] = compute_P_for_C3D4
 
 
 def compute_CS_for_C3D4_using_dbf(
@@ -3022,7 +3022,7 @@ def compute_CS_for_C3D4_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D4', 'dbf')] = compute_CS_for_C3D4_using_dbf
+map_typ_and_method_to_CS_function[('C3D4', 'dbf')] = compute_CS_for_C3D4_using_dbf
 
 
 def compute_CF_for_C3D4_using_dbf(
@@ -3069,7 +3069,7 @@ def compute_CF_for_C3D4_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D4', 'dbf')] = compute_CF_for_C3D4_using_dbf
+map_typ_and_method_to_CF_function[('C3D4', 'dbf')] = compute_CF_for_C3D4_using_dbf
 
 
 def compute_CS_for_C3D4_using_mbf(
@@ -3116,7 +3116,7 @@ def compute_CS_for_C3D4_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D4', 'mbf')] = compute_CS_for_C3D4_using_mbf
+map_typ_and_method_to_CS_function[('C3D4', 'mbf')] = compute_CS_for_C3D4_using_mbf
 
 
 def compute_CF_for_C3D4_using_mbf(
@@ -3163,7 +3163,7 @@ def compute_CF_for_C3D4_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D4', 'mbf')] = compute_CF_for_C3D4_using_mbf
+map_typ_and_method_to_CF_function[('C3D4', 'mbf')] = compute_CF_for_C3D4_using_mbf
 
 
 def compute_F_for_C3D10(
@@ -3199,7 +3199,7 @@ def compute_F_for_C3D10(
     return F_at_int_points
 
 
-_map_typ_to_F_function['C3D10'] = compute_F_for_C3D10
+map_typ_to_F_function['C3D10'] = compute_F_for_C3D10
 
 
 def compute_P_for_C3D10(
@@ -3241,7 +3241,7 @@ def compute_P_for_C3D10(
     return P_at_int_points
 
 
-_map_typ_to_P_function['C3D10'] = compute_P_for_C3D10
+map_typ_to_P_function['C3D10'] = compute_P_for_C3D10
 
 
 def compute_CS_for_C3D10_using_dbf(
@@ -3288,7 +3288,7 @@ def compute_CS_for_C3D10_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D10', 'dbf')] = compute_CS_for_C3D10_using_dbf
+map_typ_and_method_to_CS_function[('C3D10', 'dbf')] = compute_CS_for_C3D10_using_dbf
 
 
 def compute_CF_for_C3D10_using_dbf(
@@ -3335,7 +3335,7 @@ def compute_CF_for_C3D10_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D10', 'dbf')] = compute_CF_for_C3D10_using_dbf
+map_typ_and_method_to_CF_function[('C3D10', 'dbf')] = compute_CF_for_C3D10_using_dbf
 
 
 def compute_CS_for_C3D10_using_mbf(
@@ -3382,7 +3382,7 @@ def compute_CS_for_C3D10_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D10', 'mbf')] = compute_CS_for_C3D10_using_mbf
+map_typ_and_method_to_CS_function[('C3D10', 'mbf')] = compute_CS_for_C3D10_using_mbf
 
 
 def compute_CF_for_C3D10_using_mbf(
@@ -3429,7 +3429,7 @@ def compute_CF_for_C3D10_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D10', 'mbf')] = compute_CF_for_C3D10_using_mbf
+map_typ_and_method_to_CF_function[('C3D10', 'mbf')] = compute_CF_for_C3D10_using_mbf
 
 
 def compute_F_for_C3D10R(
@@ -3465,7 +3465,7 @@ def compute_F_for_C3D10R(
     return F_at_int_points
 
 
-_map_typ_to_F_function['C3D10R'] = compute_F_for_C3D10R
+map_typ_to_F_function['C3D10R'] = compute_F_for_C3D10R
 
 
 def compute_P_for_C3D10R(
@@ -3507,7 +3507,7 @@ def compute_P_for_C3D10R(
     return P_at_int_points
 
 
-_map_typ_to_P_function['C3D10R'] = compute_P_for_C3D10R
+map_typ_to_P_function['C3D10R'] = compute_P_for_C3D10R
 
 
 def compute_CS_for_C3D10R_using_dbf(
@@ -3554,7 +3554,7 @@ def compute_CS_for_C3D10R_using_dbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D10R', 'dbf')] = compute_CS_for_C3D10R_using_dbf
+map_typ_and_method_to_CS_function[('C3D10R', 'dbf')] = compute_CS_for_C3D10R_using_dbf
 
 
 def compute_CF_for_C3D10R_using_dbf(
@@ -3601,7 +3601,7 @@ def compute_CF_for_C3D10R_using_dbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D10R', 'dbf')] = compute_CF_for_C3D10R_using_dbf
+map_typ_and_method_to_CF_function[('C3D10R', 'dbf')] = compute_CF_for_C3D10R_using_dbf
 
 
 def compute_CS_for_C3D10R_using_mbf(
@@ -3648,7 +3648,7 @@ def compute_CS_for_C3D10R_using_mbf(
     return CS_at_int_points
 
 
-_map_typ_and_method_to_CS_function[('C3D10R', 'mbf')] = compute_CS_for_C3D10R_using_mbf
+map_typ_and_method_to_CS_function[('C3D10R', 'mbf')] = compute_CS_for_C3D10R_using_mbf
 
 
 def compute_CF_for_C3D10R_using_mbf(
@@ -3695,4 +3695,4 @@ def compute_CF_for_C3D10R_using_mbf(
     return CF_at_nodes
 
 
-_map_typ_and_method_to_CF_function[('C3D10R', 'mbf')] = compute_CF_for_C3D10R_using_mbf
+map_typ_and_method_to_CF_function[('C3D10R', 'mbf')] = compute_CF_for_C3D10R_using_mbf
