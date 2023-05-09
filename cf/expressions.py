@@ -205,6 +205,14 @@ j-th reference space coordinate is
 >>> J[i, j]
 0.500000000000000
 
+.. note::
+
+    In some conventions the determinant of the deformation gradient :math:`det(F)`
+    is called `J` or the Jacobian determinant.
+    However, this is a completly other Jacobian matrix as defined here.
+    This Jacobian referes to the trasformation from the reference space into the real space,
+    whereas the determinant of the deformation gradient considers the transformation from
+    the undeformed real space into the deformed real space.
 
 Derivatives in real space `dH_dX` and `dU_dX`
 ---------------------------------------------
@@ -243,12 +251,26 @@ This is exactly the same as
 
 >>> dU_dX = eval_dU_dX(U_at_nodes, dH_dX)
 
-The derivative is evaluated at the center of element and returns the
-expected strain tensor.
 
->>> np.array(dU_dX.subs({r1: 0., r2: 0.}), dtype=float).round(7)
+The derivative is evaluated at the center of element
+
+>>> dU_dX_at_00 = np.array(dU_dX.subs({r1: 0., r2: 0.}), dtype=float).round(7)
+>>> dU_dX_at_00
 array([[ 0.3,  0. ],
        [-0. , -0.1]])
+
+and the strain tensor is computed.
+
+>>> 0.5 * (dU_dX_at_00 + dU_dX_at_00.T)
+array([[ 0.3,  0. ],
+       [ 0. , -0.1]])
+
+.. note::
+    In the small deformation theory the strain tensor is computed as
+
+    `STRAIN = 0.5 * (dU_dX + dU_dX.T)`
+
+    Note, that if `dU_dX` is symmetric, `dU_dX` equals the strain tensor.
 
 
 Integration in the real space
@@ -287,6 +309,88 @@ the determinat of the jacobian is added.
 
 Deformation gradient `F`
 ------------------------
+
+The deformation gradient
+
+.. math::
+    F = \frac{\partial (X + U)}{\partial X} = I + \frac{\partial U}{\partial X}
+
+is the derivative of the deformed coordinates with respect to the undeformed coordinates.
+
+.. note::
+
+    In the 2D case, a plane strain state is assumed.
+    This implies :math:`F_{zz}=1`.
+
+The deformation gradient of the undeformed state in 2D is
+
+>>> F_undeformed = eval_F(2, sy.ZeroMatrix(2, 2))
+>>> F_undeformed
+Matrix([
+[1, 0],
+[0, 1]])
+
+The determinant of the deformation gradient states the volume change and is
+
+>>> sy.det(F_undeformed)
+1
+
+for the undeformed state. So the volume does not change.
+However, for a deformation of :math:`\varepsilon_{xx}=0.2; \gamma_{xy}=0.1`,
+the deformation gradient is
+
+>>> F_deformed = eval_F(2, sy.Matrix([[0.2, 0.1], [0, 0]]))
+>>> F_deformed
+Matrix([
+[1.2, 0.1],
+[  0,   1]])
+
+and its determinat
+
+>>> float(sy.det(F_deformed))
+1.2
+
+states that the volume increases by a factor of 1.2.
+Note, that only the tensile strain :math:`\varepsilon_{xx}=0.2` results in a volume change.
+The simple shear :math:`\gamma_{xy}=0.1` does not influence the volume.
+
+However, a pure shear deformation of :math:`\gamma_{xy}=0.1` without a tensile strain
+would decrease the volume by a factor of
+
+>>> float(sy.det(eval_F(2, sy.Matrix([[0.0, 0.1], [0.1, 0]]))))
+0.99
+
+The deformation gradient is a linear transformation from the
+undeformed to the deformation state.
+Considering a simple shear deformation,
+
+>>> F = eval_F(2, sy.Matrix([[0.0, 0.1], [0.0, 0]]))
+
+the points of the undeformed unit square can be transformed to
+the deformed state by a vector matrix multiplication
+
+>>> X_unit_square = np.array([
+...     [0, 0],
+...     [0, 1],
+...     [1, 1],
+...     [1, 0],
+... ])
+>>> X_deformed_unit_square = X_unit_square @ F.T
+>>> X_deformed_unit_square
+Matrix([
+[  0, 0],
+[0.1, 1],
+[1.1, 1],
+[  1, 0]])
+
+For the back transformation from the deformed to the undeformed state,
+the inverse of the deformation gradient is used.
+
+>>> np.array(X_deformed_unit_square @ F.inv().T, dtype=float)
+array([[0., 0.],
+       [0., 1.],
+       [1., 1.],
+       [1., 0.]])
 
 .. todo: F
 
