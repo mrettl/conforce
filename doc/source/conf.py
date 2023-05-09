@@ -13,18 +13,18 @@
 import os
 import sys
 import shutil
-import datetime
 
 sys.path.insert(0, os.path.abspath('../..'))
 
+import cf_shared
+
 # -- Project information ------------------------------------------------------
 
-project = 'CF - Configurational Forces Plug-in'
-copyright = '2022, Matthias Rettl'
-author = 'Matthias Rettl'
-
-# The full version, including alpha/beta/rc tags
-release = datetime.date.strftime(datetime.date.today(), "%Y-%m-%d")
+project = cf_shared.project
+project_copyright = cf_shared.project_copyright
+author = cf_shared.author
+version = cf_shared.version
+release = cf_shared.version
 
 # -- General configuration ----------------------------------------------------
 

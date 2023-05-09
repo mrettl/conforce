@@ -1,0 +1,6 @@
+project = 'CF - Configurational Forces Plug-in'
+description = 'Compute Configurational Forces using a fast C-Extension'
+helpUrl = 'https://git.unileoben.ac.at/kkv/cf3d'
+version = '2023-05-09'
+project_copyright = '2023, Matthias Rettl'
+author = 'Matthias Rettl; Markus Tauscher'
