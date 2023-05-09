@@ -1,6 +1,8 @@
 """
 This module requires Abaqus.
 """
+import logging
+
 import odbAccess
 import abaqusConstants as abqConst
 
@@ -12,6 +14,9 @@ from cf_shared.tensor_util import (
     abaqus_notation_from_tensor,
     rotation_matrix_from_quaternion
 )
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class FieldOutputReader(object):
@@ -602,7 +607,10 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
     return new_field_output
 
 
-def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="SENER+PENER"):
+def add_field_outputs(
+        odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="SENER+PENER",
+        logger=LOGGER
+):
     path = odb.path
     is_read_only = odb.isReadOnly
     if is_read_only:
@@ -617,6 +625,12 @@ def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="
 
         for step in odb.steps.values():
             for frame in step.frames:
+                msg = (
+                        "instance=" + str(odb_inst.name)
+                        + "; step=" + str(step.name)
+                        + "; frame=" + str(frame.frameId)
+                )
+
                 # get field outputs and rotate them to the global coordinate system
                 fo = frame.fieldOutputs
 
@@ -624,28 +638,34 @@ def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="
                 fo_e = field_output_expression(fo, e_name)
 
                 # displacements in global coordinate system
-                if "U_GLOBAL_CSYS" in fo.keys():
-                    fo_U = fo["U_GLOBAL_CSYS"]
+                u_global_csys = "U_GLOBAL_CSYS"
+                if u_global_csys in fo.keys():
+                    fo_U = fo[u_global_csys]
 
                 else:
+                    logger.info("create field output %s of (%s)", u_global_csys, msg)
+
                     fo_U = fo["U"]
                     fo_U = rotate_field_output_to_global_coordinate_system(
                         frame,
                         fo_U,
-                        "U_GLOBAL_CSYS",
+                        u_global_csys,
                         "Displacement in global coordinate system"
                     )
 
                 # stresses in global coordinate system
-                if "S_GLOBAL_CSYS" in fo.keys():
-                    fo_S = fo["S_GLOBAL_CSYS"]
+                s_global_csys = "S_GLOBAL_CSYS"
+                if s_global_csys in fo.keys():
+                    fo_S = fo[s_global_csys]
 
                 else:
+                    logger.info("create field output %s (%s)", s_global_csys, msg)
+
                     fo_S = fo["S"]
                     fo_S = rotate_field_output_to_global_coordinate_system(
                         frame,
                         fo_S,
-                        "S_GLOBAL_CSYS",
+                        s_global_csys,
                         "Stresses in global coordinate system"
                     )
 
@@ -658,17 +678,25 @@ def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="
                 d = fo_U.bulkDataBlocks[0].data.shape[1]
                 fo_writers = list()
                 if "F" in fields and "DEF_GRAD_11" not in fo.keys():
+                    logger.info("create field output DEF_GRAD_ij (%s)", msg)
                     fo_writers.append(FFieldOutputWriter(frame, d))
+
                 if "P" in fields and "FIRST_PIOLA_STRESS_11" not in fo.keys():
+                    logger.info("create field output FIRST_PIOLA_STRESS_ij (%s)", msg)
                     fo_writers.append(PFieldOutputWriter(frame, d))
+
                 if "CS" in fields and "CONF_STRESS_11" not in fo.keys():
+                    logger.info("create field output CONF_STRESS_ij (%s)", msg)
                     fo_writers.append(CSFieldOutputWriter(frame, d, method=method))
+
                 if "CF" in fields and "CONF_FORCE" not in fo.keys():
+                    logger.info("create field output CONF_FORCE_ij (%s)", msg)
                     fo_writers.append(CFFieldOutputWriter(frame, d, method=method))
 
                 for element_type in element_types(fo["S"].bulkDataBlocks):
                     if element_type not in cf_c.map_typ_to_P_function.keys():
-                        continue  # TODO: log element type not supported
+                        logger.warning("element type %s not supported", element_type)
+                        continue
 
                     fo_reader.set_element_type(element_type)
 
@@ -678,4 +706,3 @@ def add_field_outputs(odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="
     odb.save()
     odb.close()
     return odbAccess.openOdb(path, readOnly=False)
-
