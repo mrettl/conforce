@@ -6,8 +6,12 @@ import abaqusConstants as abqConst
 
 import numpy as np
 
-from cf import cf_c
-from cf.tensor_util import tensor_from_abaqus_notation, abaqus_notation_from_tensor, rotation_matrix_from_quaternion
+from cf_shared import cf_c
+from cf_shared.tensor_util import (
+    tensor_from_abaqus_notation,
+    abaqus_notation_from_tensor,
+    rotation_matrix_from_quaternion
+)
 
 
 class FieldOutputReader(object):

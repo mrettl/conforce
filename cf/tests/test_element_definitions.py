@@ -44,7 +44,6 @@ class TestElementDefinitions(unittest.TestCase):
                 self.assertEqual((n,), corner_nodes.shape)
                 self.assertEqual((n, n), adjacency_matrix.shape)
 
-
     def test_validation_against_abaqus(self):
         for element_type, data in self.abaqus_data.items():
             with self.subTest(element_type):

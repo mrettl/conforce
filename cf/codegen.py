@@ -19,7 +19,10 @@ def write_code_for_all_element_types(*types):
         types = element_definitions.R_at_nodes_of_element.keys()
 
     # generate and compile c and python code
-    with CPyCodeCompiler("cf_c", compile_at_exit=True, write_header_at_enter=True) as compiler:
+    with CPyCodeCompiler(
+            name="cf_c", folder="cf_shared",
+            compile_at_exit=True, write_header_at_enter=True
+    ) as compiler:
         for element_type in types:
             for is_dbf in [True, False]:
                 print(f"element_type={element_type}, is_dbf={is_dbf}")

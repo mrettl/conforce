@@ -1,8 +1,5 @@
 """
 This module contains methods to work with first-order tensors (vector) and second-order tensors.
-
-.. note::
-    This module is compatible with Python 2.7 and Python 3.*
 """
 
 import numpy as np

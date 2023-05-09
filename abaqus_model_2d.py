@@ -3,9 +3,7 @@ import abaqusConstants as abqConst
 import caeModules as cae
 import regionToolset
 
-import numpy as np
-
-from cf.abaqus_field_output_utils import add_field_outputs
+from cf_abq.field_output_util import add_field_outputs
 
 
 def build():

@@ -114,7 +114,7 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
     """
     Generate and simulate a one element model.
     The input is generated using the method :py:func`generate_abaqus_input`.
-    For the simulation the script `abaqus_one_element_script.py` is executed in Abaqus.
+    For the simulation the script `one_element_script.py` is executed in Abaqus.
     The model is simulated in the given folder.
     After the simulation has completed successfully,
     a result file in the json format is writen into the folder.
@@ -182,7 +182,7 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
             ))
 
         subprocess.call([
-            "abaqus", "cae", r"noGUI=cf\abaqus_one_element_script.py", "--", file
+            "abaqus", "cae", r"noGUI=cf_abq\one_element_script.py", "--", file
         ], shell=True)
 
         for file in {"abaqus.rpy"} | {
