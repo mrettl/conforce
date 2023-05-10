@@ -322,6 +322,9 @@ is the derivative of the deformed coordinates with respect to the undeformed coo
     In the 2D case, a plane strain state is assumed.
     This implies :math:`F_{zz}=1`.
 
+Undeformed
+^^^^^^^^^^
+
 The deformation gradient of the undeformed state in 2D is
 
 >>> F_undeformed = eval_F(2, sy.ZeroMatrix(2, 2))
@@ -336,6 +339,10 @@ The determinant of the deformation gradient states the volume change and is
 1
 
 for the undeformed state. So the volume does not change.
+
+Deformed
+^^^^^^^^
+
 However, for a deformation of :math:`\varepsilon_{xx}=0.2; \gamma_{xy}=0.1`,
 the deformation gradient is
 
@@ -353,6 +360,9 @@ and its determinat
 states that the volume increases by a factor of 1.2.
 Note, that only the tensile strain :math:`\varepsilon_{xx}=0.2` results in a volume change.
 The simple shear :math:`\gamma_{xy}=0.1` does not influence the volume.
+
+Pure shear
+^^^^^^^^^^
 
 However, a pure shear deformation of :math:`\gamma_{xy}=0.1` without a tensile strain
 would decrease the volume by a factor of
@@ -392,12 +402,142 @@ array([[0., 0.],
        [1., 1.],
        [1., 0.]])
 
-.. todo: F
 
 First Piola-Kirchhoff stresses `P`
 ----------------------------------
 
-.. todo: P
+The Cauchy stress `S` considers the deformed state,
+whereas the first Piola-Kirchhoff stress `P` is defined on the undeformed state.
+
+Tensile Test
+^^^^^^^^^^^^
+
+Assuming a tensile load with the reaction force
+
+>>> RF = sy.Matrix([
+...     [10_000.],
+...     [0.]])
+
+acting on the upper surface of a specimen with
+an undeformed area and undeformed length of
+
+>>> width_undeformed = 10.
+>>> length_undeformed = 100.
+
+This load causes a strain of :math:`\varepsilon_{x} = 0.1`
+and :math:`\varepsilon_{y} = -0.03`.
+The deformation gradient is
+
+>>> F = eval_F(2, sy.Matrix([
+...     [0.1, 0.0],
+...     [0.0, -0.03]]))
+
+The traction (force per area with depth=1)
+
+>>> Tx_undeformed = RF / (1 * width_undeformed)
+>>> Tx_undeformed
+Matrix([
+[1000.0],
+[     0]])
+
+acts on the undeformed upper surface with normal vector
+
+>>> Nx_undeformed = sy.Matrix([
+...     [1.],
+...     [0.]])
+
+Furthermore, no force acts on the side of the specimen
+with normal vector
+
+>>> Ny_undeformed = sy.Matrix([
+...     [0.],
+...     [1.]])
+
+and hence the corresponding traction is
+
+>>> Ty_undeformed = sy.Matrix([
+...     [0.],
+...     [0.]
+... ]) / (1*length_undeformed)
+
+The first Piola-Kirchhoff stress is
+
+>>> T_undeformed = sy.Matrix.hstack(Tx_undeformed, Ty_undeformed)
+>>> N_undeformed = sy.Matrix.hstack(Nx_undeformed, Ny_undeformed)
+>>> P = T_undeformed * N_undeformed.inv()
+>>> P
+Matrix([
+[1000.0, 0],
+[     0, 0]])
+
+Compare this to the computation of the true Cauchy stress
+that corresponds to the deformed state with 
+
+>>> (length_deformed,), (width_deformed,) = np.around(np.array(
+...     F @ sy.Matrix([
+...         [length_undeformed],
+...         [width_undeformed]
+... ]), dtype=float), 6)
+>>> length_deformed
+110.0
+>>> width_deformed
+9.7
+
+For pure tension, the normal vectors of the surfaces
+stay the same.
+
+>>> Nx_deformed = Nx_undeformed
+>>> Ny_deformed = Ny_undeformed
+>>> N_deformed = N_undeformed
+
+The tractions of the Cauchy stress are computed with respect to
+the deformed width and length.
+
+>>> Tx_deformed = RF / (1 * width_deformed)
+>>> TY_deformed = sy.Matrix([
+...     [0.],
+...     [0.]
+... ]) / (1*length_deformed)
+>>> T_deformed = sy.Matrix.hstack(Tx_deformed, TY_deformed)
+>>> S = T_deformed * N_deformed.inv()
+>>> np.around(np.array(S, dtype=float), 6)
+array([[1030.927835,    0.      ],
+       [   0.      ,    0.      ]])
+
+The first Piola-Kirchhoff stress can be also computed
+directly with the Cauchy stress and the deformation gradient.
+
+>>> eval_P(F, S)
+Matrix([
+[1000.0, 0],
+[     0, 0]])
+
+
+Simple shear and tension
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Considering a combined load case (:math:`\gamma_{yx} = 0.1; \varepsilon_{xx}=0.2`)
+with a deformation gradient
+
+>>> F = eval_F(2, sy.Matrix([
+...     [0.2, 0.1],
+...     [0.0, 0.0]]))
+
+and a Cauchy stress of
+
+>>> S = sy.Matrix([
+...     [280., 40.],
+...     [40.0, 0.0]])
+
+the corresponding first Piola-Kirchhoff tensor is
+
+>>> eval_P(F, S)
+Matrix([
+[276.0, 48.0],
+[ 40.0,    0]])
+
+not symmetric anymore.
+
 
 Configurational stresses `CS`
 -----------------------------
