@@ -512,6 +512,7 @@ def field_output_expression(field_outputs, expression):
             for multiplication in subtraction.split("*"):
                 fo_division = None
                 for division in multiplication.split("/"):
+                    division = division.strip()
                     try:
                         new_term = float(division)
                     except ValueError:
@@ -608,7 +609,7 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
 
 
 def add_field_outputs(
-        odb, fields=("F", "P", "CS", "CF"), method="mbf", e_name="SENER+PENER",
+        odb, fields=("F", "P", "CS", "CF"), method="mbf", e_expression="SENER+PENER",
         logger=LOGGER
 ):
     path = odb.path
@@ -635,16 +636,20 @@ def add_field_outputs(
                 fo = frame.fieldOutputs
 
                 # energy density
-                fo_e = field_output_expression(fo, e_name)
+                try:
+                    fo_e = field_output_expression(fo, e_expression)
+                except KeyError:
+                    logger.error("invalid expression %s", e_expression)
+                    return None
 
                 # displacements in global coordinate system
                 u_global_csys = "U_GLOBAL_CSYS"
                 if u_global_csys in fo.keys():
+                    logger.info("found field output %s (%s)", u_global_csys, msg)
                     fo_U = fo[u_global_csys]
 
                 else:
-                    logger.info("create field output %s of (%s)", u_global_csys, msg)
-
+                    logger.info("create field output %s (%s)", u_global_csys, msg)
                     fo_U = fo["U"]
                     fo_U = rotate_field_output_to_global_coordinate_system(
                         frame,
@@ -656,6 +661,7 @@ def add_field_outputs(
                 # stresses in global coordinate system
                 s_global_csys = "S_GLOBAL_CSYS"
                 if s_global_csys in fo.keys():
+                    logger.info("found field output %s (%s)", s_global_csys, msg)
                     fo_S = fo[s_global_csys]
 
                 else:
@@ -677,21 +683,30 @@ def add_field_outputs(
                 # write computed fields to odb
                 d = fo_U.bulkDataBlocks[0].data.shape[1]
                 fo_writers = list()
+
                 if "F" in fields and "DEF_GRAD_11" not in fo.keys():
                     logger.info("create field output DEF_GRAD_ij (%s)", msg)
                     fo_writers.append(FFieldOutputWriter(frame, d))
+                elif "F" in fields:
+                    logger.warning("skip field output DEF_GRAD_ij (%s)", msg)
 
                 if "P" in fields and "FIRST_PIOLA_STRESS_11" not in fo.keys():
                     logger.info("create field output FIRST_PIOLA_STRESS_ij (%s)", msg)
                     fo_writers.append(PFieldOutputWriter(frame, d))
+                elif "P" in fields:
+                    logger.warning("skip field output FIRST_PIOLA_STRESS_ij (%s)", msg)
 
                 if "CS" in fields and "CONF_STRESS_11" not in fo.keys():
                     logger.info("create field output CONF_STRESS_ij (%s)", msg)
                     fo_writers.append(CSFieldOutputWriter(frame, d, method=method))
+                elif "CS" in fields:
+                    logger.warning("skip field output CONF_STRESS_ij (%s)", msg)
 
                 if "CF" in fields and "CONF_FORCE" not in fo.keys():
                     logger.info("create field output CONF_FORCE_ij (%s)", msg)
                     fo_writers.append(CFFieldOutputWriter(frame, d, method=method))
+                elif "CF" in fields:
+                    logger.warning("skip field output CONF_FORCE_ij (%s)", msg)
 
                 for element_type in element_types(fo["S"].bulkDataBlocks):
                     if element_type not in cf_c.map_typ_to_P_function.keys():
