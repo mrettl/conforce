@@ -98,14 +98,28 @@ class MyDialog(gui.AFXDataDialog):
         )
         gui.FXCheckButton(
             gb,
-            text='Configurational Stress (CONF_STRESS)',
+            text='Configurational Stress',
             tgt=owner.kw_CS
         )
+        gui.AFXTextField(
+            gb,
+            ncols=30,
+            labelText="name of configurational stress:",
+            tgt=owner.kw_CS_name
+        )
+        owner.kw_CS_name.setValue("CONF_STRESS")
         gui.FXCheckButton(
             gb,
-            text='Configurational Force (CONF_FORCE)',
+            text='Configurational Force',
             tgt=owner.kw_CF
         )
+        gui.AFXTextField(
+            gb,
+            ncols=30,
+            labelText="name of configurational force:",
+            tgt=owner.kw_CF_name
+        )
+        owner.kw_CF_name.setValue("CONF_FORCE")
 
 
 class MyForm(gui.AFXForm):
@@ -121,7 +135,9 @@ class MyForm(gui.AFXForm):
         self.kw_F = gui.AFXBoolKeyword(self.cmd, "request_F", True, isRequired=True)
         self.kw_P = gui.AFXBoolKeyword(self.cmd, "request_P", True, isRequired=True)
         self.kw_CS = gui.AFXBoolKeyword(self.cmd, "request_CS", True, isRequired=True)
+        self.kw_CS_name = gui.AFXStringKeyword(self.cmd, "CS_name", True)
         self.kw_CF = gui.AFXBoolKeyword(self.cmd, "request_CF", True, isRequired=True)
+        self.kw_CF_name = gui.AFXStringKeyword(self.cmd, "CF_name", True)
 
         self.dialog = None
 

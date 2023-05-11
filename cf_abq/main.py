@@ -13,6 +13,8 @@ def main(
         request_P=False,
         request_CS=False,
         request_CF=False,
+        CS_name="CONF_STRESS",
+        CF_name="CONF_FORCE",
         method="mbf",
         e_expression="SENER+PENER"
 ):
@@ -56,6 +58,8 @@ def main(
             fields=fields,
             method=method,
             e_expression=e_expression,
+            CS_name=CS_name,
+            CF_name=CF_name,
             logger=logger
         )
 

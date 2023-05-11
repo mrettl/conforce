@@ -457,8 +457,8 @@ class PFieldOutputWriter(object):
 
 
 class CSFieldOutputWriter(object):
-    def __init__(self, frame, d, method):
-        self.name = "CONF_STRESS"
+    def __init__(self, frame, d, name, method):
+        self.name = str(name)
         self._fo = [
             [
                 frame.FieldOutput(
@@ -502,8 +502,8 @@ class CSFieldOutputWriter(object):
 
 
 class CFFieldOutputWriter(object):
-    def __init__(self, frame, d, method):
-        self.name = "CONF_FORCE"
+    def __init__(self, frame, d, name, method):
+        self.name = str(name)
         self._fo = frame.FieldOutput(
             name=self.name,
             description="configurational forces",
@@ -670,7 +670,12 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
 
 
 def add_field_outputs(
-        odb, fields=("F", "P", "CS", "CF"), method="mbf", e_expression="SENER+PENER",
+        odb, 
+        fields=("F", "P", "CS", "CF"), 
+        method="mbf", 
+        e_expression="SENER+PENER",
+        CS_name="CONF_STRESS",
+        CF_name="CONF_FORCE",
         logger=LOGGER
 ):
     path = odb.path
@@ -758,17 +763,17 @@ def add_field_outputs(
                 elif "P" in fields:
                     logger.warning("skip field output FIRST_PIOLA_STRESS_ij (%s)", msg)
 
-                if "CS" in fields and "CONF_STRESS_11" not in fo_keys:
-                    logger.info("create field output CONF_STRESS_ij (%s)", msg)
-                    fo_writers.append(CSFieldOutputWriter(frame, d, method=method))
+                if "CS" in fields and (CS_name+"_11") not in fo_keys:
+                    logger.info("create field output %s_ij (%s)", CS_name, msg)
+                    fo_writers.append(CSFieldOutputWriter(frame, d, name=CS_name, method=method))
                 elif "CS" in fields:
-                    logger.warning("skip field output CONF_STRESS_ij (%s)", msg)
+                    logger.warning("skip field output %s_ij (%s)", CS_name, msg)
 
-                if "CF" in fields and "CONF_FORCE" not in fo_keys:
-                    logger.info("create field output CONF_FORCE_ij (%s)", msg)
-                    fo_writers.append(CFFieldOutputWriter(frame, d, method=method))
+                if "CF" in fields and CF_name not in fo_keys:
+                    logger.info("create field output %s_ij (%s)", CF_name, msg)
+                    fo_writers.append(CFFieldOutputWriter(frame, d, name=CF_name, method=method))
                 elif "CF" in fields:
-                    logger.warning("skip field output CONF_FORCE_ij (%s)", msg)
+                    logger.warning("skip field output %s_ij (%s)", CF_name, msg)
 
                 # add data for all element types
                 for element_type in element_types(fo["S"].bulkDataBlocks):
