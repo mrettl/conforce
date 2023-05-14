@@ -56,6 +56,10 @@ class TestCodegen(unittest.TestCase):
             F_at_int_point_expected
         )
 
+        self.assertEqual(1, test_codegen.map_typ_to_info["CPE4R"].number_of_integration_points)
+        self.assertEqual(2, test_codegen.map_typ_to_info["CPE4R"].number_of_dimensions)
+        self.assertEqual(4, test_codegen.map_typ_to_info["CPE4R"].number_of_nodes)
+
 
 if __name__ == '__main__':
     unittest.main()

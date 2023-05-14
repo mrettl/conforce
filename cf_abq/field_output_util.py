@@ -20,6 +20,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 class FieldOutputReader(object):
+    map_el_info_to_el_type = {
+        info: type
+        for type, info in cf_c.map_typ_to_info.items()
+    }
+
     def __init__(self):
         # odb inst
         self._odb_inst = None
@@ -154,6 +159,10 @@ class FieldOutputReader(object):
         return self._element_labels_to_node_labels_for_type
 
     @property
+    def element_labels_to_node_labels(self):
+        return self.element_labels_to_node_labels_for_type[self.element_type]
+
+    @property
     def node_label_to_coordinates_mapping(self):
         if self._node_labels_to_coordinates is None:
 
@@ -255,7 +264,7 @@ class FieldOutputReader(object):
     @property
     def S_at_int_points(self):
         if self._S_at_int_points is None:
-            self._update_e_values()
+            self._update_S_values()
 
         return self._S_at_int_points
 
@@ -305,6 +314,42 @@ class FieldOutputReader(object):
 
         return self._S_mask
 
+    @property
+    def number_of_dimensions(self):
+        return self.fo_U.bulkDataBlocks[0].data.shape[1]
+
+    @property
+    def number_of_nodes_per_element(self):
+        return len(next(iter(self.element_labels_to_node_labels.values())))
+
+    @property
+    def number_of_interation_points_per_element(self):
+        _, ips = self.e_at_int_points.shape
+        return ips
+
+    @property
+    def is_supported_element_type(self):
+        return self.element_type in cf_c.map_typ_to_info.keys()
+
+    @property
+    def similar_supported_element_type(self):
+        _computation_element_type = self.element_type
+
+        if self.element_type not in cf_c.map_typ_to_info.keys():
+            element_info = cf_c.ElementInfo(
+                number_of_dimensions=self.number_of_dimensions,
+                number_of_nodes=self.number_of_nodes_per_element,
+                number_of_integration_points=self.number_of_interation_points_per_element
+            )
+
+            if element_info in self.map_el_info_to_el_type:
+                _computation_element_type = self.map_el_info_to_el_type[element_info]
+
+            else:
+                _computation_element_type = None
+
+        return _computation_element_type
+
     @staticmethod
     def create_node_label_to_bulk_data_mapping(bulk_data_blocks):
         data = np.concatenate([block.data for block in bulk_data_blocks])
@@ -320,6 +365,8 @@ class FieldOutputReader(object):
         el_labels = np.concatenate([block.elementLabels for block in bulk_data_blocks])
         int_points = np.concatenate([block.integrationPoints for block in bulk_data_blocks])
         data = np.concatenate([block.data for block in bulk_data_blocks])
+
+        assert 1 <= len({block.baseElementType for block in bulk_data_blocks})
 
         # sort: ascending element labels and integration points
         idx = np.lexsort((int_points, el_labels))
@@ -391,13 +438,12 @@ class FFieldOutputWriter(object):
         ]
         self._d = d
 
-    def add(self, reader):
+    def add(self, reader, supported_element_type):
         # compute deformation gradient
-        el_type = reader.element_type
         f_data = cf_c.compute_F(
             X_at_nodes=reader.X_at_nodes[reader.X_mask, :, :self._d],
             U_at_nodes=reader.U_at_nodes[reader.U_mask, :, :self._d],
-            element_type=el_type,
+            element_type=supported_element_type,
         )
 
         for i in range(self._d):
@@ -431,14 +477,13 @@ class PFieldOutputWriter(object):
         ]
         self._d = d
 
-    def add(self, reader):
+    def add(self, reader, supported_element_type):
         # compute first Piola-Kirchhoff stress tensor
-        el_type = reader.element_type
         p_data = cf_c.compute_P(
             X_at_nodes=reader.X_at_nodes[reader.X_mask, :, :self._d],
             U_at_nodes=reader.U_at_nodes[reader.U_mask, :, :self._d],
             S_at_int_points=reader.S_at_int_points[reader.S_mask, :, :self._d, :self._d],
-            element_type=el_type,
+            element_type=supported_element_type,
         )
 
         for i in range(self._d):
@@ -474,15 +519,14 @@ class CSFieldOutputWriter(object):
         self._d = d
         self._method = method
 
-    def add(self, reader):
+    def add(self, reader, supported_element_type):
         # compute configurational stresses
-        el_type = reader.element_type
         cs_data = cf_c.compute_CS(
             e_at_int_points=reader.e_at_int_points[reader.e_mask],
             X_at_nodes=reader.X_at_nodes[reader.X_mask, :, :self._d],
             U_at_nodes=reader.U_at_nodes[reader.U_mask, :, :self._d],
             S_at_int_points=reader.S_at_int_points[reader.S_mask, :, :self._d, :self._d],
-            element_type=el_type,
+            element_type=supported_element_type,
             method=self._method
         )
 
@@ -517,14 +561,14 @@ class CFFieldOutputWriter(object):
 
         self._CF_at_nodes = dict()
 
-    def add(self, reader):
+    def add(self, reader, supported_element_type):
         # compute configurational forces
         cf_data = cf_c.compute_CF(
             e_at_int_points=reader.e_at_int_points[reader.e_mask],
             X_at_nodes=reader.X_at_nodes[reader.X_mask, :, :self._d],
             U_at_nodes=reader.U_at_nodes[reader.U_mask, :, :self._d],
             S_at_int_points=reader.S_at_int_points[reader.S_mask, :, :self._d, :self._d],
-            element_type=reader.element_type,
+            element_type=supported_element_type,
             method=self._method
         )
 
@@ -711,8 +755,8 @@ def add_field_outputs(
                 # energy density
                 try:
                     fo_e = field_output_expression(fo, e_expression)
-                except KeyError as e:
-                    logger.error("invalid field output %s in %s", *e.args)
+                except KeyError as supported_el_type:
+                    logger.error("invalid field output %s in %s", *supported_el_type.args)
                     break
 
                 # displacements in global coordinate system
@@ -784,14 +828,28 @@ def add_field_outputs(
 
                 # add data for all element types
                 for element_type in element_types(fo["S"].bulkDataBlocks):
-                    if element_type not in cf_c.map_typ_to_P_function.keys():
-                        logger.warning("element type %s not supported", element_type)
-                        continue
-
                     fo_reader.set_element_type(element_type)
 
+                    if fo_reader.is_supported_element_type:
+                        supported_el_type = element_type
+
+                    else:
+                        supported_el_type = fo_reader.similar_supported_element_type
+
+                        if supported_el_type is not None:
+                            logger.warning(
+                                "replace element type %s by %s. (%s is not supported)",
+                                element_type, supported_el_type, element_type)
+
+                        else:
+                            logger.warning(
+                                "skip not supported element type %s (can not be replaced by a similar element type)",
+                                element_type)
+                            continue
+
+                    # add data
                     for fo_writer in fo_writers:
-                        fo_writer.add(fo_reader)
+                        fo_writer.add(fo_reader, supported_el_type)
 
                 # consolidate data of all element types
                 for fo_writer in fo_writers:
@@ -800,7 +858,3 @@ def add_field_outputs(
     odb.save()
     odb.close()
     return odbAccess.openOdb(path, readOnly=False)
-
-
-if __name__ == '__main__':
-    add_field_outputs(odb)

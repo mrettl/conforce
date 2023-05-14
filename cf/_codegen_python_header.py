@@ -84,9 +84,12 @@ array([[ 178.,  -20.],
        [-178.,   20.],
        [ 178.,   20.]])
 """
-import numpy as np
 import ctypes
 import os
+from collections import namedtuple
+
+import numpy as np
+
 
 # load c library
 if os.name == 'nt':
@@ -100,7 +103,14 @@ else:
         __file__, os.path.pardir, 'REPLACE_THIS_BY_LIBRARY_FILE_NAME.so'
     )))
 
+
 # function lookup dictionaries
+ElementInfo = namedtuple("ElementInfo", [
+    "number_of_dimensions",
+    "number_of_nodes",
+    "number_of_integration_points"
+])
+map_typ_to_info = dict()
 map_typ_to_F_function = dict()
 map_typ_to_P_function = dict()
 map_typ_and_method_to_CS_function = dict()
@@ -239,3 +249,4 @@ def compute_CF(
         U_at_nodes,
         S_at_int_points
     )
+

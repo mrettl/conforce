@@ -111,6 +111,14 @@ def write_code_for_element_type(
         point_names=[*int_point_names, *node_names]
     )
 
+    # write element info
+    compiler.write_element_info(
+        element_type=element_type,
+        d=d_,
+        n=n_,
+        ips=ips_
+    )
+
     # F
     if write_F:
         assignments = term_collector.collect_assignments(
@@ -260,6 +268,21 @@ class CPyCodeCompiler(object):
                          "THIS IS JUST A TEMPLATE USED BY THE CODE GENERATION!\n", "")
             )
 
+    def write_element_info(
+            self,
+            element_type: str,
+            d: int,
+            n: int,
+            ips: int
+    ):
+        self._py_file_handle.write(f'''
+map_typ_to_info['{element_type}'] = ElementInfo(
+    number_of_dimensions={d},
+    number_of_nodes={n},
+    number_of_integration_points={ips}
+)
+''')
+
     def write_function_for_F(
             self,
             assignments: List[ast.Assignment],
@@ -339,7 +362,7 @@ def {function_name_n_elements}(
     """
     Computes the deformation gradients for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
-    
+
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
     :param {U_at_nodes}: Array of shape (num_elem, n, {d_}) containing the displacements at n nodes of num_elem elements.
     :return: {F_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) containing the deformation gradients 
@@ -366,7 +389,7 @@ def {function_name_n_elements}(
     return {F_at_int_points}
 
 
-_map_typ_to_F_function['{element_typ}'] = {function_name_n_elements}
+map_typ_to_F_function['{element_typ}'] = {function_name_n_elements}
 ''')
 
     def write_function_for_P(
@@ -488,7 +511,7 @@ def {function_name_n_elements}(
     return {P_at_int_points}
 
 
-_map_typ_to_P_function['{element_typ}'] = {function_name_n_elements}
+map_typ_to_P_function['{element_typ}'] = {function_name_n_elements}
 ''')
 
     def write_function_for_CS(
@@ -626,7 +649,7 @@ def {function_name_n_elements}(
     return {CS_at_int_points}
 
 
-_map_typ_and_method_to_CS_function[('{element_typ}', '{method}')] = {function_name_n_elements}
+map_typ_and_method_to_CS_function[('{element_typ}', '{method}')] = {function_name_n_elements}
 ''')
 
     def write_function_for_CF(
@@ -737,7 +760,7 @@ def {function_name_n_elements}(
     :return: {CF_at_nodes}: Array of shape (num_elem, n, {d_}) containing the configurational forces
         evaluated on n nodes for num_elem element.
     """
-    
+
     {e} = np.ascontiguousarray({e}, dtype=np.float64)
     {X_at_nodes} = np.ascontiguousarray({X_at_nodes}, dtype=np.float64)
     {U_at_nodes} = np.ascontiguousarray({U_at_nodes}, dtype=np.float64)
@@ -764,10 +787,10 @@ def {function_name_n_elements}(
     return {CF_at_nodes}
 
 
-_map_typ_and_method_to_CF_function[('{element_typ}', '{method}')] = {function_name_n_elements}
+map_typ_and_method_to_CF_function[('{element_typ}', '{method}')] = {function_name_n_elements}
 ''')
 
 
 if __name__ == '__main__':
-    # write_code_for_all_element_types()
+    write_code_for_all_element_types()
     print("ok")
