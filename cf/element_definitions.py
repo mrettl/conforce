@@ -342,7 +342,7 @@ def _read_integration_data_file():
     if not os.path.exists(integration_data_file_path):
         _write_integration_data_file(integration_data_file_path)
 
-    with open(integration_data_file_path, "r") as fh:
+    with open(integration_data_file_path, "r", encoding="utf-8") as fh:
         data = json.load(fh)
         int_points = data["X_at_integration_points_for_element"]
         int_points = {
@@ -399,7 +399,7 @@ def _write_integration_data_file(integration_data_file_path):
         int_weights_for_element_type = np.around(int_weights_for_element_type, 15)
         integration_weights[element_type] = int_weights_for_element_type.tolist()
 
-    with open(integration_data_file_path, "w") as fh:
+    with open(integration_data_file_path, "w", encoding="utf-8") as fh:
         json.dump(
             dict(
                 README="COMPUTER GENERATED FILE. DO NOT MODIFY! "

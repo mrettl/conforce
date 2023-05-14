@@ -172,7 +172,7 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
 
     result_file_path = f"{folder}/{job_name}_result.json"
     if not os.path.exists(result_file_path):
-        with open(file, "w") as f:
+        with open(file, "w", encoding="utf-8") as f:
             f.write(generate_abaqus_input(
                 element_type=element_type,
                 X_at_nodes=X_at_nodes,
@@ -193,5 +193,5 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
             if os.path.exists(file):
                 os.remove(file)
 
-    with open(result_file_path, "r") as fh:
+    with open(result_file_path, "r", encoding="utf-8") as fh:
         return json.load(fh)

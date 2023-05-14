@@ -2,7 +2,7 @@
 
 The following is a set of guidelines and conventions.
 
-### Packages
+## Packages
     
  - The package
    - `cf` contains modules that require Python 3.* and do not run in Abaqus Python
@@ -48,3 +48,8 @@ The docstrings are written in the reStructuredText format
 and should not raise warnings or worse in Sphinx.
 Delete the folder `doc/source/generated` before running sphinx.
 
+
+## Linter
+
+Use `pylint -d C -d R` for a static code analysis.
+The code should be ranked above 9.

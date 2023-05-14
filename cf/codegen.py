@@ -217,8 +217,8 @@ class CPyCodeCompiler(object):
         self._c_file_handle = None  # type: Optional[TextIO]
 
     def __enter__(self):
-        self._py_file_handle = open(os.path.join(self._folder, self._name + ".py"), "w")
-        self._c_file_handle = open(os.path.join(self._folder, self._name + ".c"), "w")
+        self._py_file_handle = open(os.path.join(self._folder, self._name + ".py"), "w", encoding="utf-8")
+        self._c_file_handle = open(os.path.join(self._folder, self._name + ".c"), "w", encoding="utf-8")
 
         if self._write_header_at_entry:
             self.write_headers()
@@ -256,11 +256,11 @@ class CPyCodeCompiler(object):
 
     def write_headers(self):
         c_header_file_name = os.path.join(__file__, os.pardir, "_codegen_c_header.c")
-        with open(c_header_file_name, "r") as fh:
+        with open(c_header_file_name, "r", encoding="utf-8") as fh:
             self._c_file_handle.write(fh.read())
 
         python_header_file_name = os.path.join(__file__, os.pardir, "_codegen_python_header.py")
-        with open(python_header_file_name, "r") as fh:
+        with open(python_header_file_name, "r", encoding="utf-8") as fh:
             self._py_file_handle.write(
                 fh.read()
                 .replace("REPLACE_THIS_BY_LIBRARY_FILE_NAME", self._name)

@@ -24,7 +24,7 @@ class TestElementDefinitions(unittest.TestCase):
         }
 
     def test_check_shapes(self):
-        for element_type, data in self.abaqus_data.items():
+        for element_type, _ in self.abaqus_data.items():
             with self.subTest(element_type):
                 R_at_nodes = R_at_nodes_of_element[element_type]
                 R_at_int_points = R_at_integration_points_of_element[element_type]
@@ -59,7 +59,7 @@ class TestElementDefinitions(unittest.TestCase):
                 vol_abaqus = data["element"]["EVOL"]
 
                 # computation
-                n, d = X_at_nodes_abaqus.shape
+                _, d = X_at_nodes_abaqus.shape
                 R = sy.Matrix(R_3d[:d])
                 H = eval_H(R, R_at_nodes_current, exponents)
                 X = X_at_nodes_abaqus.T @ H

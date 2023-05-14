@@ -580,6 +580,7 @@ def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
     num_powers_ = exponents_.shape[0]
     assert num_points_ == num_powers_
 
+    # symbolic powers of shape functions
     POWERS_ = sy.Matrix([
         sy.Mul(*[
             sy.Pow(rst, power)
@@ -587,8 +588,8 @@ def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
         ]).nsimplify()
         for powers in exponents_
     ])
-    """symbolic powers of shape functions"""
 
+    # A_[i, j] = i-th shape power evaluated at j-th point
     A_ = sy.Matrix([
         POWERS_.T.subs({
             rst: xyz
@@ -597,16 +598,13 @@ def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
         })
         for point in R_at_nodes_
     ]).T
-    """A_[i, j] = i-th shape power evaluated at j-th point"""
 
+    # coefficients solve the system COEFFICIENTS_ * A_ = I,
+    # such that every shape function is one at exactly one point and zero at the other points
     COEFFICIENTS_ = A_.inv()
-    """
-    coefficients solve the system COEFFICIENTS_ * A_ = I,
-    such that every shape function is one at exactly one point and zero at the other points
-    """
 
+    # shape functions are the combination of coefficients and shapes powers
     H_ = COEFFICIENTS_ * POWERS_
-    """shape functions are the combination of coefficients and shapes powers"""
 
     return H_
 

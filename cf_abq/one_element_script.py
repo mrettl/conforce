@@ -53,7 +53,7 @@ def main():
         }
     }
 
-    with open(job_name + "_result.json", "w") as fh:
+    with open(job_name + "_result.json", "w", encoding="utf-8") as fh:
         json.dump(result, fh, indent=4)
 
 
