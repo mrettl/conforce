@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import abaqusGui as gui
+import kernelAccess as ka
 
 
 class MyDialog(gui.AFXDataDialog):
@@ -8,9 +9,8 @@ class MyDialog(gui.AFXDataDialog):
         gui.AFXDataDialog.__init__(
             self,
             owner,
-            title="CF",
+            title="Configurational Force Computation",
             actionButtonIds=self.APPLY | self.CANCEL
-            # opts=gui.DECOR_RESIZE
         )
 
         self.label = gui.FXLabel(self, "")
@@ -29,7 +29,7 @@ class MyDialog(gui.AFXDataDialog):
             text="select odb:",
             tgt=owner.kw_odb_name
         )
-        odb_names = gui.session.odbs.keys()
+        odb_names = ka.session.odbs.keys()
         if len(odb_names) == 0:
             self.label.setText("No odb found. Open an odb file. " + self.label.getText())
         else:
@@ -113,6 +113,7 @@ class MyDialog(gui.AFXDataDialog):
             text='Configurational Force',
             tgt=owner.kw_CF
         )
+        owner.kw_CF.setValue(True)
         gui.AFXTextField(
             gb,
             ncols=30,
@@ -149,6 +150,6 @@ class MyForm(gui.AFXForm):
 toolset = gui.getAFXApp().getAFXMainWindow().getPluginToolset()
 toolset.registerGuiMenuButton(
     object=MyForm(toolset),
-    buttonText='Conforce',
+    buttonText='Conf. Force',
     kernelInitString='from cf_abq import main as cf_abq_main'
 )
