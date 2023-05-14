@@ -19,12 +19,15 @@ def main(
         e_expression="SENER+PENER"
 ):
     log = StringIO()
-    handler = logging.StreamHandler(log)
-    handler.setFormatter(logging.Formatter(fmt=u'%(levelname)s: %(message)s'))
+    handler_log = logging.StreamHandler(log)
+    handler_log.setFormatter(logging.Formatter(fmt=u'%(levelname)s: %(message)s'))
+
+    handler_stdout = logging.StreamHandler(sys.stdout)
+    handler_stdout.setFormatter(logging.Formatter(fmt=u'%(levelname)s: %(message)s'))
 
     logger = logging.Logger("cf_plugin")
-    logger.addHandler(handler)
-    logger.addHandler(logging.StreamHandler(sys.stdout))
+    logger.addHandler(handler_log)
+    logger.addHandler(handler_stdout)
 
     session = abq.session
     if odb_name is None:
@@ -67,7 +70,7 @@ def main(
         logger.error("No odb found. Open a odb in the current viewport.")
 
     # Summary
-    print("\n\n")
+    print(" ")
     print("CF - log summary")
     print("----------------")
 
@@ -81,4 +84,4 @@ def main(
     for level, msgs in level_msgs.items():
         print("{0:3d} x {1:s}".format(len(msgs), level))
 
-    print("\n")
+    print("----------------\n ")

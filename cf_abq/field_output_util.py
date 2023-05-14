@@ -602,7 +602,7 @@ def field_output_expression(field_outputs, expression):
     return fo
 
 
-def rotate_field_output_to_global_coordinate_system(frame, field_output, name, description):
+def rotate_field_output_to_global_coordinate_system(frame, field_output, name, description, logger=LOGGER):
     if field_output.type == abqConst.SCALAR:
         return field_output
 
@@ -659,12 +659,16 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
             data = abaqus_notation_from_tensor(global_tensors, local_vectors.shape[-1])
 
         # add data
-        new_field_output.addData(
-            position=block.position,
-            instance=block.instance,
-            labels=np.ascontiguousarray(labels),
-            data=np.ascontiguousarray(data)
-        )
+        if block.instance is not None:
+            new_field_output.addData(
+                position=block.position,
+                instance=block.instance,
+                labels=np.ascontiguousarray(labels),
+                data=np.ascontiguousarray(data)
+            )
+
+        else:
+            logger.warning("skip in field output %s labels %s", name, labels[:10])
 
     return new_field_output
 
@@ -681,14 +685,17 @@ def add_field_outputs(
     path = odb.path
     is_read_only = odb.isReadOnly
     if is_read_only:
-        odb.save()
-        odb.close()
-        odb = odbAccess.openOdb(path, readOnly=False)
+        logger.error("Odb is read-only. Reopen the odb and assure the Read-only checkbox is not checked.")
+        return None
 
     fo_reader = FieldOutputReader()
 
     for odb_inst in odb.rootAssembly.instances.values():
         fo_reader.set_odb_inst(odb_inst)
+
+        if len(fo_reader.element_labels_to_node_labels_for_type) == 0:
+            logger.info("skip instance %s (contains no elements)", odb_inst.name)
+            continue
 
         for step in odb.steps.values():
             for frame in step.frames:
@@ -793,3 +800,7 @@ def add_field_outputs(
     odb.save()
     odb.close()
     return odbAccess.openOdb(path, readOnly=False)
+
+
+if __name__ == '__main__':
+    add_field_outputs(odb)
