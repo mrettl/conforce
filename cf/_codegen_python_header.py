@@ -110,11 +110,11 @@ ElementInfo = namedtuple("ElementInfo", [
     "number_of_nodes",
     "number_of_integration_points"
 ])
-map_typ_to_info = dict()
-map_typ_to_F_function = dict()
-map_typ_to_P_function = dict()
-map_typ_and_method_to_CS_function = dict()
-map_typ_and_method_to_CF_function = dict()
+map_type_to_info = dict()
+map_type_to_F_function = dict()
+map_type_to_P_function = dict()
+map_type_and_method_to_CS_function = dict()
+map_type_and_method_to_CF_function = dict()
 
 
 def compute_F(
@@ -136,7 +136,7 @@ def compute_F(
     :return: F_at_int_points: Array of shape (num_elem, ips, d, d) containing the deformation gradients
         evaluated on ips integration points for num_elem element.
     """
-    fun = map_typ_to_F_function[str(element_type)]
+    fun = map_type_to_F_function[str(element_type)]
     return fun(
         X_at_nodes,
         U_at_nodes
@@ -165,7 +165,7 @@ def compute_P(
     :return: P_at_int_points: Array of shape (num_elem, ips, d, d) containing the 1. Piola-Kirchhoff stress tensors
         evaluated on ips integration points for num_elem element.
     """
-    fun = map_typ_to_P_function[str(element_type)]
+    fun = map_type_to_P_function[str(element_type)]
     return fun(
         X_at_nodes,
         U_at_nodes,
@@ -203,7 +203,7 @@ def compute_CS(
     :return: CS_at_int_points: Array of shape (num_elem, ips, d, d) containing the configurational stresses
         evaluated on ips integration points for num_elem element.
     """
-    fun = map_typ_and_method_to_CS_function[(str(element_type), str(method))]
+    fun = map_type_and_method_to_CS_function[(str(element_type), str(method))]
     return fun(
         e_at_int_points,
         X_at_nodes,
@@ -242,7 +242,7 @@ def compute_CF(
     :return: CF_at_nodes: Array of shape (num_elem, n, d) containing the configurational forces
         evaluated on n nodes for num_elem element.
     """
-    fun = map_typ_and_method_to_CF_function[(str(element_type), str(method))]
+    fun = map_type_and_method_to_CF_function[(str(element_type), str(method))]
     return fun(
         e_at_int_points,
         X_at_nodes,

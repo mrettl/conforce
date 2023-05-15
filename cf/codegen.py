@@ -276,7 +276,7 @@ class CPyCodeCompiler(object):
             ips: int
     ):
         self._py_file_handle.write(f'''
-map_typ_to_info['{element_type}'] = ElementInfo(
+map_type_to_info['{element_type}'] = ElementInfo(
     number_of_dimensions={d},
     number_of_nodes={n},
     number_of_integration_points={ips}
@@ -389,7 +389,7 @@ def {function_name_n_elements}(
     return {F_at_int_points}
 
 
-map_typ_to_F_function['{element_typ}'] = {function_name_n_elements}
+map_type_to_F_function['{element_typ}'] = {function_name_n_elements}
 ''')
 
     def write_function_for_P(
@@ -511,7 +511,7 @@ def {function_name_n_elements}(
     return {P_at_int_points}
 
 
-map_typ_to_P_function['{element_typ}'] = {function_name_n_elements}
+map_type_to_P_function['{element_typ}'] = {function_name_n_elements}
 ''')
 
     def write_function_for_CS(
@@ -649,7 +649,7 @@ def {function_name_n_elements}(
     return {CS_at_int_points}
 
 
-map_typ_and_method_to_CS_function[('{element_typ}', '{method}')] = {function_name_n_elements}
+map_type_and_method_to_CS_function[('{element_typ}', '{method}')] = {function_name_n_elements}
 ''')
 
     def write_function_for_CF(
@@ -787,7 +787,7 @@ def {function_name_n_elements}(
     return {CF_at_nodes}
 
 
-map_typ_and_method_to_CF_function[('{element_typ}', '{method}')] = {function_name_n_elements}
+map_type_and_method_to_CF_function[('{element_typ}', '{method}')] = {function_name_n_elements}
 ''')
 
 
