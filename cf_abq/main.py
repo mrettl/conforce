@@ -61,8 +61,8 @@ def main(
             fields=fields,
             method=method,
             e_expression=e_expression,
-            CS_name=CS_name,
-            CF_name=CF_name,
+            name_CS=CS_name,
+            name_CF=CF_name,
             logger=logger
         )
 

@@ -1,8 +1,6 @@
 """
 This module requires Abaqus.
 """
-import logging
-
 import odbAccess
 import abaqusConstants as abqConst
 
@@ -14,9 +12,11 @@ from cf_shared.tensor_util import (
     abaqus_notation_from_tensor,
     rotation_matrix_from_quaternion
 )
+from cf_shared.element_type_mapping import map_abaqus_element_type_to_supported_element_type
+import cf_abq
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = cf_abq.LOGGER.getChild(__name__)
 
 
 class FieldOutputReader(object):
@@ -314,42 +314,6 @@ class FieldOutputReader(object):
 
         return self._S_mask
 
-    @property
-    def number_of_dimensions(self):
-        return self.fo_U.bulkDataBlocks[0].data.shape[1]
-
-    @property
-    def number_of_nodes_per_element(self):
-        return len(next(iter(self.element_labels_to_node_labels.values())))
-
-    @property
-    def number_of_interation_points_per_element(self):
-        _, ips = self.e_at_int_points.shape
-        return ips
-
-    @property
-    def is_supported_element_type(self):
-        return self.element_type in cf_c.map_typ_to_info.keys()
-
-    @property
-    def similar_supported_element_type(self):
-        _computation_element_type = self.element_type
-
-        if self.element_type not in cf_c.map_typ_to_info.keys():
-            element_info = cf_c.ElementInfo(
-                number_of_dimensions=self.number_of_dimensions,
-                number_of_nodes=self.number_of_nodes_per_element,
-                number_of_integration_points=self.number_of_interation_points_per_element
-            )
-
-            if element_info in self.map_el_info_to_el_type:
-                _computation_element_type = self.map_el_info_to_el_type[element_info]
-
-            else:
-                _computation_element_type = None
-
-        return _computation_element_type
-
     @staticmethod
     def create_node_label_to_bulk_data_mapping(bulk_data_blocks):
         data = np.concatenate([block.data for block in bulk_data_blocks])
@@ -423,8 +387,8 @@ class FieldOutputReader(object):
 
 
 class FFieldOutputWriter(object):
-    def __init__(self, frame, d):
-        self.name = "DEF_GRAD"
+    def __init__(self, frame, d, name):
+        self.name = str(name)
         self._fo = [
             [
                 frame.FieldOutput(
@@ -462,8 +426,8 @@ class FFieldOutputWriter(object):
 
 
 class PFieldOutputWriter(object):
-    def __init__(self, frame, d):
-        self.name = "FIRST_PIOLA_STRESS"
+    def __init__(self, frame, d, name):
+        self.name = str(name)
         self._fo = [
             [
                 frame.FieldOutput(
@@ -712,7 +676,7 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
             )
 
         else:
-            logger.warning("skip in field output %s labels %s", name, labels[:10])
+            logger.warning("skip in field output %s labels %s (not associated with an instance)", name, labels[:10])
 
     return new_field_output
 
@@ -722,8 +686,13 @@ def add_field_outputs(
         fields=("F", "P", "CS", "CF"), 
         method="mbf", 
         e_expression="SENER+PENER",
-        CS_name="CONF_STRESS",
-        CF_name="CONF_FORCE",
+        name_U_global_csys="U_GLOBAL_CSYS",
+        name_S_global_csys="S_GLOBAL_CSYS",
+        name_F="DEF_GRAD",
+        name_P="FIRST_PIOLA_STRESS",
+        name_CS="CONF_STRESS",
+        name_CF="CONF_FORCE",
+        el_type_mapping=map_abaqus_element_type_to_supported_element_type,
         logger=LOGGER
 ):
     path = odb.path
@@ -760,36 +729,36 @@ def add_field_outputs(
                     break
 
                 # displacements in global coordinate system
-                u_global_csys = "U_GLOBAL_CSYS"
-                if u_global_csys in fo.keys():
-                    logger.info("found field output %s (%s)", u_global_csys, msg)
-                    fo_U = fo[u_global_csys]
+                if name_U_global_csys in fo.keys():
+                    logger.info("found field output %s (%s)", name_U_global_csys, msg)
+                    fo_U = fo[name_U_global_csys]
 
                 else:
-                    logger.info("create field output %s (%s)", u_global_csys, msg)
+                    logger.info("create field output %s (%s)", name_U_global_csys, msg)
                     fo_U = fo["U"]
                     fo_U = rotate_field_output_to_global_coordinate_system(
                         frame,
                         fo_U,
-                        u_global_csys,
-                        "Displacement in global coordinate system"
+                        name_U_global_csys,
+                        "Displacement in global coordinate system",
+                        logger=logger
                     )
 
                 # stresses in global coordinate system
-                s_global_csys = "S_GLOBAL_CSYS"
-                if s_global_csys in fo.keys():
-                    logger.info("found field output %s (%s)", s_global_csys, msg)
-                    fo_S = fo[s_global_csys]
+                if name_S_global_csys in fo.keys():
+                    logger.info("found field output %s (%s)", name_S_global_csys, msg)
+                    fo_S = fo[name_S_global_csys]
 
                 else:
-                    logger.info("create field output %s (%s)", s_global_csys, msg)
+                    logger.info("create field output %s (%s)", name_S_global_csys, msg)
 
                     fo_S = fo["S"]
                     fo_S = rotate_field_output_to_global_coordinate_system(
                         frame,
                         fo_S,
-                        s_global_csys,
-                        "Stresses in global coordinate system"
+                        name_S_global_csys,
+                        "Stresses in global coordinate system",
+                        logger=logger
                     )
 
                 # read odb output
@@ -802,50 +771,48 @@ def add_field_outputs(
                 fo_writers = list()
                 fo_keys = set(fo.keys())
 
-                if "F" in fields and "DEF_GRAD_11" not in fo_keys:
-                    logger.info("create field output DEF_GRAD_ij (%s)", msg)
-                    fo_writers.append(FFieldOutputWriter(frame, d))
+                if "F" in fields and (name_F + "_11") not in fo_keys:
+                    logger.info("create field output %s_ij (%s)", name_F, msg)
+                    fo_writers.append(FFieldOutputWriter(frame, d, name_F))
                 elif "F" in fields:
-                    logger.warning("skip field output DEF_GRAD_ij (%s)", msg)
+                    logger.warning("skip field output %s_ij (%s)", name_F, msg)
 
-                if "P" in fields and "FIRST_PIOLA_STRESS_11" not in fo_keys:
-                    logger.info("create field output FIRST_PIOLA_STRESS_ij (%s)", msg)
-                    fo_writers.append(PFieldOutputWriter(frame, d))
+                if "P" in fields and (name_P + "_11") not in fo_keys:
+                    logger.info("create field output %s_ij (%s)", name_P, msg)
+                    fo_writers.append(PFieldOutputWriter(frame, d, name_P))
                 elif "P" in fields:
-                    logger.warning("skip field output FIRST_PIOLA_STRESS_ij (%s)", msg)
+                    logger.warning("skip field output %s_ij (%s)", name_P, msg)
 
-                if "CS" in fields and (CS_name+"_11") not in fo_keys:
-                    logger.info("create field output %s_ij (%s)", CS_name, msg)
-                    fo_writers.append(CSFieldOutputWriter(frame, d, name=CS_name, method=method))
+                if "CS" in fields and (name_CS + "_11") not in fo_keys:
+                    logger.info("create field output %s_ij (%s)", name_CS, msg)
+                    fo_writers.append(CSFieldOutputWriter(frame, d, name=name_CS, method=method))
                 elif "CS" in fields:
-                    logger.warning("skip field output %s_ij (%s)", CS_name, msg)
+                    logger.warning("skip field output %s_ij (%s)", name_CS, msg)
 
-                if "CF" in fields and CF_name not in fo_keys:
-                    logger.info("create field output %s_ij (%s)", CF_name, msg)
-                    fo_writers.append(CFFieldOutputWriter(frame, d, name=CF_name, method=method))
+                if "CF" in fields and name_CF not in fo_keys:
+                    logger.info("create field output %s_ij (%s)", name_CF, msg)
+                    fo_writers.append(CFFieldOutputWriter(frame, d, name=name_CF, method=method))
                 elif "CF" in fields:
-                    logger.warning("skip field output %s_ij (%s)", CF_name, msg)
+                    logger.warning("skip field output %s_ij (%s)", name_CF, msg)
 
                 # add data for all element types
                 for element_type in element_types(fo["S"].bulkDataBlocks):
                     fo_reader.set_element_type(element_type)
 
-                    if fo_reader.is_supported_element_type:
-                        supported_el_type = element_type
+                    # get supported element type (CF, ... is implemented for the element type)
+                    if element_type in el_type_mapping:
+                        supported_el_type = el_type_mapping[element_type]
 
-                    else:
-                        supported_el_type = fo_reader.similar_supported_element_type
-
-                        if supported_el_type is not None:
+                        if supported_el_type != element_type:
                             logger.warning(
-                                "replace element type %s by %s. (%s is not supported)",
+                                "compute element type %s as if it were %s. (%s is not supported)",
                                 element_type, supported_el_type, element_type)
 
-                        else:
-                            logger.warning(
-                                "skip not supported element type %s (can not be replaced by a similar element type)",
-                                element_type)
-                            continue
+                    else:
+                        logger.warning(
+                            "skip not supported element type %s (can not be replaced by a similar element type)",
+                            element_type)
+                        continue
 
                     # add data
                     for fo_writer in fo_writers:
