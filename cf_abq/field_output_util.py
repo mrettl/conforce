@@ -538,7 +538,7 @@ class CFFieldOutputWriter(object):
 
         # create datastructure abaqus understands
         el_to_n_label = reader.element_labels_to_node_labels_for_type[reader.element_type]
-        self._CF_at_nodes = CF_at_nodes = dict()
+        CF_at_nodes = self._CF_at_nodes
         for CF_el_data, el_label in zip(cf_data, reader.el_labels):
             for CF_el_node_data, node_label in zip(CF_el_data, el_to_n_label[el_label]):
                 if node_label not in CF_at_nodes:
