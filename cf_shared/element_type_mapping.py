@@ -1,0 +1,77 @@
+"""
+This module provides a map from element types to supported element types.
+"""
+
+map_abaqus_element_type_to_supported_element_type = dict()
+"""
+mapping of abaqus element types to supported element types.
+The element types must have:
+ - the same shape,
+ - the same dimension (2D or 3D),
+ - the same number of nodes,
+ - the same number of integration points
+"""
+
+map_abaqus_element_type_to_supported_element_type.update({
+    "CPE3": "CPE3",
+    "CPE3H": "CPE3",
+    "CPE4": "CPE4",
+    "CPE4H": "CPE4",
+    "CPE4I": "CPE4",
+    "CPE4IH": "CPE4",
+    "CPE4R": "CPE4R",
+    "CPE4RH": "CPE4R",
+    "CPE6": "CPE6",
+    "CPE6H": "CPE6",
+    "CPE6M": "CPE6",
+    "CPE6MH": "CPE6",
+    "CPE8": "CPE8",
+    "CPE8H": "CPE8",
+    "CPE8R": "CPE8R",
+    "CPE8RH": "CPE8R",
+    "CPS3": "CPE3",
+    "CPS4": "CPE4",
+    "CPS4I": "CPE4",
+    "CPS4R": "CPE4R",
+    "CPS6": "CPE6",
+    "CPS6M": "CPE6",
+    "CPS8": "CPE8",
+    "CPS8R": "CPE8R",
+    "CPEG3": "CPE3",
+    "CPEG3H": "CPE3",
+    "CPEG4": "CPE4",
+    "CPEG4H": "CPE4",
+    "CPEG4I": "CPE4",
+    "CPEG4IH": "CPE4",
+    "CPEG4R": "CPE4R",
+    "CPEG4RH": "CPE4R",
+    "CPEG6": "CPE6",
+    "CPEG6H": "CPE6",
+    "CPEG6M": "CPE6",
+    "CPEG6MH": "CPE6",
+    "CPEG8": "CPE8",
+    "CPEG8H": "CPE8",
+    "CPEG8R": "CPE8R",
+    "CPEG8RH": "CPE8R",
+    "C3D4": "C3D4",
+    "C3D4H": "C3D4",
+    "C3D6": "C3D6",
+    "C3D6H": "C3D6",
+    "C3D8": "C3D8",
+    "C3D8H": "C3D8",
+    "C3D8I": "C3D8",
+    "C3D8IH": "C3D8",
+    "C3D8R": "C3D8R",
+    "C3D8RH": "C3D8R",
+    "C3D10": "C3D10",
+    "C3D10H": "C3D10",
+    "C3D10I": "C3D10",
+    "C3D10M": "C3D10",
+    "C3D10MH": "C3D10",
+    "C3D15": "C3D15",
+    "C3D15H": "C3D15",
+    "C3D20": "C3D20",
+    "C3D20H": "C3D20",
+    "C3D20R": "C3D20R",
+    "C3D20RH": "C3D20R"
+})
