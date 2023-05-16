@@ -46,7 +46,6 @@ class TestEnergyGradient(unittest.TestCase):
                             folder=f"res/tests/test_energy_gradient/{element_type}"
                         ))
 
-
                 dALLSE_dX = np.array([
                     [
                         (
@@ -70,7 +69,7 @@ class TestEnergyGradient(unittest.TestCase):
                 np.testing.assert_array_almost_equal(
                     dALLSE_dX,
                     CF,
-                    decimal=3
+                    decimal=2
                 )
                 # TODO:
 

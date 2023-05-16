@@ -21,7 +21,7 @@ def write_code_for_all_element_types(*types):
     # generate and compile c and python code
     with CPyCodeCompiler(
             name="cf_c", folder="cf_shared",
-            compile_at_exit=True, write_header_at_enter=True
+            compile_at_exit=False, write_header_at_enter=True
     ) as compiler:
         for element_type in types:
             for is_dbf in [True, False]:
@@ -236,7 +236,12 @@ class CPyCodeCompiler(object):
         working_directory = os.path.abspath(".")
         try:
             os.chdir(self._folder)
-            command = f"gcc -shared -O3 -o {self._name}.dll {self._name}.c"
+
+            if os.name == 'nt':
+                command = f"gcc -shared -O3 -fPIC -std=c99 -o {self._name}.dll {self._name}.c"
+            else:
+                command = f"gcc -shared -O3 -fPIC -std=c99 -o {self._name}.so {self._name}.c"
+
             print(f"{self._folder}>{command}")
             subprocess.call(command, shell=True)
         finally:
@@ -569,7 +574,7 @@ void {function_name_one_element}(
  * The computation is {method_name}.
  * 
  * @param[in] num_elem number of elements
- * @param[in] {e} Array of shape (num_elem) containing the internal energy densities
+ * @param[in] {e} Array of shape (num_elem, ips) containing the internal energy densities
  * @param[in] {X_at_nodes} Array of shape (num_elem, n, {d_}) 
  *            containing the coordinates at n nodes of num_elem elements.
  * @param[in] {U_at_nodes} Array of shape (num_elem, n, {d_}) 
@@ -614,7 +619,7 @@ def {function_name_n_elements}(
     Computes the configurational stresses for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
     
-    :param {e}: Array of shape (num_elem, ) containing the internal energy densities of num_elem elements.
+    :param {e}: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
     :param {U_at_nodes}: Array of shape (num_elem, n, {d_}) containing the displacements at n nodes of num_elem elements.
     :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) 
@@ -707,7 +712,7 @@ void {function_name_one_element}(
  * The computation is {method_name}.
  * 
  * @param[in] num_elem number of elements
- * @param[in] {e} Array of shape (num_elem) containing the internal energy densities
+ * @param[in] {e} Array of shape (num_elem, ips) containing the internal energy densities
  * @param[in] {X_at_nodes} Array of shape (num_elem, n, {d_}) 
  *            containing the coordinates at n nodes of num_elem elements.
  * @param[in] {U_at_nodes} Array of shape (num_elem, n, {d_}) 
@@ -752,7 +757,7 @@ def {function_name_n_elements}(
     Computes the configurational forces for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
     
-    :param {e}: Array of shape (num_elem, ) containing the internal energy densities of num_elem elements.
+    :param {e}: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
     :param {U_at_nodes}: Array of shape (num_elem, n, {d_}) containing the displacements at n nodes of num_elem elements.
     :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) 
