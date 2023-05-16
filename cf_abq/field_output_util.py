@@ -22,7 +22,7 @@ LOGGER = cf_abq.LOGGER.getChild(__name__)
 class FieldOutputReader(object):
     map_el_info_to_el_type = {
         info: type
-        for type, info in cf_c.map_typ_to_info.items()
+        for type, info in cf_c.map_type_to_info.items()
     }
 
     def __init__(self):
@@ -724,8 +724,8 @@ def add_field_outputs(
                 # energy density
                 try:
                     fo_e = field_output_expression(fo, e_expression)
-                except KeyError as supported_el_type:
-                    logger.error("invalid field output %s in %s", *supported_el_type.args)
+                except KeyError as error:
+                    logger.error("invalid field output %s in expression %s (%s)", error.args[0], error.args[1], msg)
                     break
 
                 # displacements in global coordinate system
