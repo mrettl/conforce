@@ -534,7 +534,7 @@ map_type_to_P_function['{element_typ}'] = {function_name_n_elements}
         n_, d_ = X_at_nodes.shape
         ips_ = S_at_int_points.shape[0]
         method = 'dbf' if is_dbf else 'mbf'
-        method_name = f"{'displacement' if is_dbf else 'motion'} based"
+        method_name = f"{'deformation' if is_dbf else 'motion'} based"
 
         function_name_one_element = f"compute_CS_for_one_element_of_type_{element_typ}_using_{method}"
         function_name_n_elements = f"compute_CS_for_{element_typ}_using_{method}"
@@ -672,7 +672,7 @@ map_type_and_method_to_CS_function[('{element_typ}', '{method}')] = {function_na
         n_, d_ = X_at_nodes.shape
         ips_ = S_at_int_points.shape[0]
         method = 'dbf' if is_dbf else 'mbf'
-        method_name = f"{'displacement' if is_dbf else 'motion'} based"
+        method_name = f"{'deformation' if is_dbf else 'motion'} based"
 
         function_name_one_element = f"compute_CF_for_one_element_of_type_{element_typ}_using_{method}"
         function_name_n_elements = f"compute_CF_for_{element_typ}_using_{method}"

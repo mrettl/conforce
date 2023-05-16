@@ -4,7 +4,7 @@ from io import StringIO
 
 import abaqus as abq
 
-from field_output_util import add_field_outputs
+from cf_abq.field_output_util import add_field_outputs
 
 
 def main(

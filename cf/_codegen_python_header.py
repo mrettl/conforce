@@ -110,11 +110,21 @@ ElementInfo = namedtuple("ElementInfo", [
     "number_of_nodes",
     "number_of_integration_points"
 ])
+
 map_type_to_info = dict()
+"""mapping of element type name to :py:class:`ElementInfo`"""
+
 map_type_to_F_function = dict()
+"""mapping of element type name to the function that computes the deformation gradient"""
+
 map_type_to_P_function = dict()
+"""mapping of element type name to the function that computes the first Piola-Kirchhoff stresses"""
+
 map_type_and_method_to_CS_function = dict()
+"""mapping of element type name to the function that computes the configurational stresses"""
+
 map_type_and_method_to_CF_function = dict()
+"""mapping of element type name to the function that computes the configurational forces"""
 
 
 def compute_F(

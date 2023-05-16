@@ -1,8 +1,6 @@
 """
 This module requires Abaqus (including Abaqus cae).
 """
-from __future__ import print_function
-
 import sys
 import os
 import json
@@ -16,11 +14,11 @@ INP_FILE_PATH = os.path.abspath(sys.argv[-1])
 WORKING_DIRECTORY = os.path.abspath(os.path.join(INP_FILE_PATH, os.pardir))
 HOME_DIRECTORY = os.path.abspath(".")
 
-# reset model database
-abq.Mdb()
-
 
 def main():
+    """
+    simulate an input file # TODO:
+    """
     job_name = os.path.basename(INP_FILE_PATH).split(".")[0]
     job = abq.mdb.JobFromInputFile(
         name=job_name,
@@ -58,6 +56,9 @@ def main():
 
 
 if __name__ == '__main__':
+    # reset model database
+    abq.Mdb()
+
     os.chdir(WORKING_DIRECTORY)
     try:
         main()

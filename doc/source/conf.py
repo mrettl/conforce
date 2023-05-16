@@ -15,6 +15,9 @@ import sys
 import shutil
 
 sys.path.insert(0, os.path.abspath('../..'))
+sys.path.append(os.path.abspath("./dummy_packages"))
+
+print(sys.path[-1])
 
 import cf_shared
 
@@ -109,7 +112,7 @@ if not os.path.exists(static_dir_path):
 
 # -- Copy files for root directory --------------------------------------------
 
-for file_name in ["README.md", "CONTRIBUTING.md", "LICENSE.txt", "CHANGELOG.md"]:
+for file_name in ["README.md", "CONTRIBUTING.md", "LICENSE.txt"]:
     source_readme = os.path.abspath(os.path.join(__file__, f"../../../{file_name}"))
     destination_readme = os.path.abspath(os.path.join(__file__, f"../{file_name}"))
 

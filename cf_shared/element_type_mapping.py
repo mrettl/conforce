@@ -6,6 +6,7 @@ map_abaqus_element_type_to_supported_element_type = dict()
 """
 mapping of abaqus element types to supported element types.
 The element types must have:
+
  - the same shape,
  - the same dimension (2D or 3D),
  - the same number of nodes,

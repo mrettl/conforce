@@ -24,7 +24,7 @@ Abbreviations
     - `CS`: (d, d)-Matrix of configurational stresses. Implemented formulations:
 
         - `mbf`: motion based formulation (original formulation)
-        - `dbf`: displacement based formulation
+        - `dbf`: deformation based formulation
 
     - `CF`: (d, n)-Matrix of configurational forces
 
