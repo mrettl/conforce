@@ -15,7 +15,8 @@ Abbreviations
     - `dH_dR`: (n, d)-Matrix: :math:`dh\_dr_{ik} = \partial h_{i} / \partial r_{k}`
     - `dH_dX`: (n, d)-Matrix: :math:`dh\_dx_{ik} = \partial h_{i} / \partial x_{k}`
     - `J`: (d, d)-Jacobian matrix: :math:`j_{ik}= \partial x_{i} / \partial r_{k}`
-    - `U`: (n, d)-Matrix of displacements in the real space
+    - `U`: (d,)-Matrix of displacements in the real space
+    - `U_at_nodes`: (n, d)-Matrix of displacements in the real space at the nodes
     - `dU_dX`: (d, d)-Matrix: :math:`du\_dx_{ik} = \partial u_{i} / \partial x_{k}`
     - `S`: (d, d)-Cauchy stress tensor
     - `F`: (d, d)-Deformation gradient
@@ -26,7 +27,8 @@ Abbreviations
         - `mbf`: motion based formulation (original formulation)
         - `dbf`: deformation based formulation
 
-    - `CF`: (d, n)-Matrix of configurational forces
+    - `CF`: (d,)-Matrix of a configurational force in the real space
+    - `CF_at_nodes`: (n, d)-Matrix of configurational forces in the real space at the nodes
 
 
 Define an element
@@ -583,8 +585,8 @@ def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
     # symbolic powers of shape functions
     POWERS_ = sy.Matrix([
         sy.Mul(*[
-            sy.Pow(rst, power)
-            for rst, power in zip(R.T.tolist()[0], powers)
+            sy.Pow(ri, power)
+            for ri, power in zip(R.T.tolist()[0], powers)
         ]).nsimplify()
         for powers in exponents_
     ])
@@ -592,8 +594,8 @@ def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
     # A_[i, j] = i-th shape power evaluated at j-th point
     A_ = sy.Matrix([
         POWERS_.T.subs({
-            rst: xyz
-            for rst, xyz
+            ri: xi
+            for ri, xi
             in zip(R.T.tolist()[0], point)
         })
         for point in R_at_nodes_
@@ -649,7 +651,7 @@ def eval_CS_dbf(d_: int, e: sy.Expr, dU_dX: sy.MatrixBase, P: sy.MatrixBase):
     return e * sy.eye(d_) - dU_dX.T * P
 
 
-def eval_CF(
+def eval_CF_at_nodes(
         dH_dX: sy.MatrixBase,
         CS: sy.MatrixBase,
         J: sy.MatrixBase,
@@ -777,7 +779,7 @@ class Computation(object):
 
         #
         CF_at_nodes = sy.MatrixSymbol("CF_at_nodes", n_, d_)
-        CF_at_nodes_ = eval_CF(
+        CF_at_nodes_ = eval_CF_at_nodes(
             dH_dX,
             CS,
             J,

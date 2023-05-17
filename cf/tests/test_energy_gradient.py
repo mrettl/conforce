@@ -57,7 +57,7 @@ class TestEnergyGradient(unittest.TestCase):
                     for increment in increments
                 ])
 
-                CF = cf_c.compute_CF(
+                CF_at_nodes = cf_c.compute_CF(
                     e_at_int_points=np.array(origin["integration_points"]["SENER"]).reshape((1, -1)),
                     X_at_nodes=[X_at_nodes],
                     U_at_nodes=[X_at_nodes @ STRAIN[:d, :d]],
@@ -68,7 +68,7 @@ class TestEnergyGradient(unittest.TestCase):
 
                 np.testing.assert_array_almost_equal(
                     dALLSE_dX,
-                    CF,
+                    CF_at_nodes,
                     decimal=2
                 )
                 # TODO:

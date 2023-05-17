@@ -1,6 +1,8 @@
 """
 This module provides methods to read and create field outputs.
 """
+import logging
+
 import odbAccess
 import abaqusConstants as abqConst
 
@@ -17,6 +19,7 @@ import cf_abq
 
 
 LOGGER = cf_abq.LOGGER.getChild(__name__)
+"""default logger in this module"""
 
 
 class FieldOutputReader(object):
@@ -638,7 +641,6 @@ class FFieldOutputWriter(_FieldOutputWriter):
         self._d = d
 
     def add(self, reader, supported_element_type):
-        # compute deformation gradient
         f_data = cf_c.compute_F(
             X_at_nodes=reader.X_at_nodes[reader.X_mask, :, :self._d],
             U_at_nodes=reader.U_at_nodes[reader.U_mask, :, :self._d],
@@ -686,7 +688,6 @@ class PFieldOutputWriter(_FieldOutputWriter):
         self._d = d
 
     def add(self, reader, supported_element_type):
-        # compute first Piola-Kirchhoff stress tensor
         p_data = cf_c.compute_P(
             X_at_nodes=reader.X_at_nodes[reader.X_mask, :, :self._d],
             U_at_nodes=reader.U_at_nodes[reader.U_mask, :, :self._d],
@@ -901,7 +902,7 @@ def eval_field_output_expression(field_outputs, expression):
     return fo
 
 
-def rotate_field_output_to_global_coordinate_system(frame, field_output, name, description, logger=LOGGER):
+def rotate_field_output_to_global_coordinate_system(frame, field_output, name, description, logger=None):
     """
     Create a new field output with the given name and description
     and saves the new field output into `frame.fieldOutputs`.
@@ -918,9 +919,12 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
     :param field_output: The existing field output whose values should be rotated
     :param name: The name of the new field output
     :param description: The description of the new field output
-    :param logger: Logging instance
+    :param logger: Logging instance, default uses :py:attr:`LOGGER`
     :return: A new field output with data rotated to the global coordinate system
     """
+    if logger is None:
+        logger = LOGGER
+
     if field_output.type == abqConst.SCALAR:
         return field_output
 
@@ -1002,9 +1006,79 @@ def add_field_outputs(
         name_P="FIRST_PIOLA_STRESS",
         name_CS="CONF_STRESS",
         name_CF="CONF_FORCE",
-        el_type_mapping=map_abaqus_element_type_to_supported_element_type,
-        logger=LOGGER
+        el_type_mapping=None,
+        logger=None
 ):
+    """
+    Add field outputs to each OdbInstance, OdbStep and OdbFrame in the given `odb`.
+    The `fields` parameter defines which fields are computed.
+    Supported are:
+
+    - "F": Deformation gradient (see :py:class:`FFieldOutputWriter`)
+    - "P": First Piola-Kirchhoff stress (see :py:class:`PFieldOutputWriter`)
+    - "CS": Configurational stresses (see :py:class:`CSFieldOutputWriter`)
+    - "CF": Configurational forces (see :py:class:`CFFieldOutputWriter`)
+
+    The newly created field outputs are named according to the parameters
+    `name_F`, `name_P`, `name_CS`, and `name_CF`.
+
+    For the configurational stresses and forces, an energy density is required.
+    Use the parameter `e_expression` to define how the energy density is computed.
+    `e_expression` can refer to any scalar field output.
+    Assure, that the field output exists in the odb by requesting e.g. `ENER` for all steps.
+    Furthermore, the configurational stresses and forces can be computed with
+    various `methods`.
+
+    Two field outputs called as defined in `name_U_global_csys` and `name_S_global_csys` are created.
+    These two field outputs contain the displacements and stresses in the global coordinate system,
+    regardless whether a transformation has been applied or not.
+
+    Not supported element types can be replaced by supported element types.
+    See :py:attr:`cf_shared.cf_c.map_type_to_info` for a list of supported element types.
+    The parameter `el_type_mapping` maps element types to supported element types.
+    The default mapping of `el_type_mapping` is
+    :py:attr:`cf_shared.element_type_mapping.map_abaqus_element_type_to_supported_element_type`.
+
+    :param odb: Odb into which the FieldOutput objects are written.
+    :type odb: Odb
+    :param fields: The fields to compute.
+    :type fields: Sequence[str]
+    :param method: see :py:func:`cf_shared.cf_c.compute_CS`
+    :type method: str
+    :param e_expression: see :py:func:`eval_field_output_expression`
+    :type e_expression: str
+    :param name_U_global_csys: name of the newly generated field output containing displacements
+        in the global coordinate system
+    :type name_U_global_csys: str
+    :param name_S_global_csys: name of the newly generated field output containing stresses
+        in the global coordinate system
+    :type name_S_global_csys: str
+    :param name_F: name of the field outputs that contain the deformation gradient.
+        These field outputs are only generated if "F" is in `fields`.
+    :type name_F: str
+    :param name_P: name of the field outputs that contain the first Piola-Kirchhoff stresses.
+        These field outputs are only generated if "P" is in `fields`.
+    :type name_P: str
+    :param name_CS: name of the field outputs that contain the configurational stresses.
+        These field outputs are only generated if "CS" is in `fields`.
+    :type name_CS: str
+    :param name_CF: name of the field output that contains the configurational forces.
+        This field outputs is only generated if "CF" is in `fields`.
+    :type name_CF: str
+    :param el_type_mapping: Maps element types to supported element types.
+    :type el_type_mapping: Dict[str, str]
+    :param logger: Print logging messages, default uses :py:attr:`LOGGER`
+    :type logger: logging.Logger
+    :return: modified Odb or None if Odb was read-only
+    :rtype: Odb
+    """
+
+    if el_type_mapping is None:
+        el_type_mapping = map_abaqus_element_type_to_supported_element_type
+
+    if logger is None:
+        logger = LOGGER
+
     path = odb.path
     is_read_only = odb.isReadOnly
     if is_read_only:

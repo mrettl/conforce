@@ -416,7 +416,7 @@ void {function_name_one_element}(
         # c code for multiple elements
         self._c_file_handle.write(f'''
 /**
- * Computes the deformation gradients for num_elem elements of typ {element_typ}.
+ * Compute the deformation gradients for num_elem elements of typ {element_typ}.
  * Each element has n={n_} nodes and ips={ips_} integration points.
  * 
  * @param[in] num_elem number of elements
@@ -452,7 +452,7 @@ def {function_name_n_elements}(
         {X_at_nodes},
         {U_at_nodes}):
     """
-    Computes the deformation gradients for num_elem elements of typ {element_typ}.
+    Compute the deformation gradients for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
 
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
@@ -516,7 +516,7 @@ map_type_to_F_function['{element_typ}'] = {function_name_n_elements}
         # c code for one element
         self._c_file_handle.write(f'''
 /**
- * Computes the first Piola-Kirchhoff stress tensors for one element of typ {element_typ}.
+ * Compute the first Piola-Kirchhoff stress tensors for one element of typ {element_typ}.
  * The element has n={n_} nodes and ips={ips_} integration points.
  * 
  * @param[in] {X_at_nodes} Coordinates at n nodes of the element.
@@ -541,7 +541,7 @@ void {function_name_one_element}(
         # c code for multiple elements
         self._c_file_handle.write(f'''
 /**
- * Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ {element_typ}.
+ * Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ {element_typ}.
  * Each element has n={n_} nodes and ips={ips_} integration points.
  * 
  * @param[in] num_elem number of elements
@@ -583,7 +583,7 @@ def {function_name_n_elements}(
         {U_at_nodes},
         {S_at_int_points}):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ {element_typ}.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
     
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
@@ -658,7 +658,7 @@ map_type_to_P_function['{element_typ}'] = {function_name_n_elements}
         # c code for one element
         self._c_file_handle.write(f'''
 /**
- * Computes the configurational stresses for one element of typ {element_typ}.
+ * Compute the configurational stresses for one element of typ {element_typ}.
  * The element has n={n_} nodes and ips={ips_} integration points.
  * The computation is {method_name}.
  * 
@@ -685,7 +685,7 @@ void {function_name_one_element}(
         # c code for multiple elements
         self._c_file_handle.write(f'''
 /**
- * Computes the configurational stresses for num_elem elements of typ {element_typ}.
+ * Compute the configurational stresses for num_elem elements of typ {element_typ}.
  * Each element has n={n_} nodes and ips={ips_} integration points.
  * The computation is {method_name}.
  * 
@@ -732,7 +732,7 @@ def {function_name_n_elements}(
         {U_at_nodes},
         {S_at_int_points}):
     """
-    Computes the configurational stresses for num_elem elements of typ {element_typ}.
+    Compute the configurational stresses for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
     
     :param {e}: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -811,7 +811,7 @@ map_type_and_method_to_CS_function[('{element_typ}', '{method}')] = {function_na
         # c code for one element
         self._c_file_handle.write(f'''
 /**
- * Computes the configurational forces for one element of typ {element_typ}.
+ * Compute the configurational forces for one element of typ {element_typ}.
  * The element has n={n_} nodes and ips={ips_} integration points.
  * The computation is {method_name}.
  * 
@@ -838,7 +838,7 @@ void {function_name_one_element}(
         # c code for multiple elements
         self._c_file_handle.write(f'''
 /**
- * Computes the configurational forces for num_elem elements of typ {element_typ}.
+ * Compute the configurational forces for num_elem elements of typ {element_typ}.
  * Each element has n={n_} nodes and ips={ips_} integration points.
  * The computation is {method_name}.
  * 
@@ -885,7 +885,7 @@ def {function_name_n_elements}(
         {U_at_nodes},
         {S_at_int_points}):
     """
-    Computes the configurational forces for num_elem elements of typ {element_typ}.
+    Compute the configurational forces for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
     
     :param {e}: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.

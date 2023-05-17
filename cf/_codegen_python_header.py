@@ -121,10 +121,10 @@ map_type_to_P_function = dict()
 """mapping of element type name to the function that computes the first Piola-Kirchhoff stresses"""
 
 map_type_and_method_to_CS_function = dict()
-"""mapping of element type name to the function that computes the configurational stresses"""
+"""mapping of element type name and method to the function that computes the configurational stresses"""
 
 map_type_and_method_to_CF_function = dict()
-"""mapping of element type name to the function that computes the configurational forces"""
+"""mapping of element type name and method  to the function that computes the configurational forces"""
 
 
 def compute_F(
@@ -133,7 +133,7 @@ def compute_F(
         element_type
 ):
     """
-    Computes the deformation gradients for num_elem elements of the given element type.
+    Compute the deformation gradients for num_elem elements of the given element type.
     This element type has n nodes and ips integration points.
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
@@ -160,7 +160,7 @@ def compute_P(
         element_type
 ):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of the given element type.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of the given element type.
     This element type has n nodes and ips integration points.
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
@@ -192,7 +192,7 @@ def compute_CS(
         method
 ):
     """
-    Computes the configurational stresses for num_elem elements of the given element type.
+    Compute the configurational stresses for num_elem elements of the given element type.
     This element type has n nodes and ips integration points.
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
@@ -232,7 +232,7 @@ def compute_CF(
         method
 ):
     """
-    Computes the configurational forces for num_elem elements of the given element type.
+    Compute the configurational forces for num_elem elements of the given element type.
     This element type has n nodes and ips integration points.
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 

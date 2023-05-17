@@ -109,11 +109,21 @@ ElementInfo = namedtuple("ElementInfo", [
     "number_of_nodes",
     "number_of_integration_points"
 ])
+
 map_type_to_info = dict()
+"""mapping of element type name to :py:class:`ElementInfo`"""
+
 map_type_to_F_function = dict()
+"""mapping of element type name to the function that computes the deformation gradient"""
+
 map_type_to_P_function = dict()
+"""mapping of element type name to the function that computes the first Piola-Kirchhoff stresses"""
+
 map_type_and_method_to_CS_function = dict()
+"""mapping of element type name and method to the function that computes the configurational stresses"""
+
 map_type_and_method_to_CF_function = dict()
+"""mapping of element type name and method  to the function that computes the configurational forces"""
 
 
 def compute_F(
@@ -122,7 +132,7 @@ def compute_F(
         element_type
 ):
     """
-    Computes the deformation gradients for num_elem elements of the given element type.
+    Compute the deformation gradients for num_elem elements of the given element type.
     This element type has n nodes and ips integration points.
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
@@ -149,7 +159,7 @@ def compute_P(
         element_type
 ):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of the given element type.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of the given element type.
     This element type has n nodes and ips integration points.
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
@@ -181,7 +191,7 @@ def compute_CS(
         method
 ):
     """
-    Computes the configurational stresses for num_elem elements of the given element type.
+    Compute the configurational stresses for num_elem elements of the given element type.
     This element type has n nodes and ips integration points.
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
@@ -221,7 +231,7 @@ def compute_CF(
         method
 ):
     """
-    Computes the configurational forces for num_elem elements of the given element type.
+    Compute the configurational forces for num_elem elements of the given element type.
     This element type has n nodes and ips integration points.
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
@@ -263,7 +273,7 @@ def compute_F_for_C3D20(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ C3D20.
+    Compute the deformation gradients for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -300,7 +310,7 @@ def compute_P_for_C3D20(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D20.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -343,7 +353,7 @@ def compute_CS_for_C3D20_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D20.
+    Compute the configurational stresses for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -390,7 +400,7 @@ def compute_CF_for_C3D20_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D20.
+    Compute the configurational forces for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -443,7 +453,7 @@ def compute_CS_for_C3D20_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D20.
+    Compute the configurational stresses for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -490,7 +500,7 @@ def compute_CF_for_C3D20_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D20.
+    Compute the configurational forces for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -541,7 +551,7 @@ def compute_F_for_C3D20R(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ C3D20R.
+    Compute the deformation gradients for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -578,7 +588,7 @@ def compute_P_for_C3D20R(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D20R.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -621,7 +631,7 @@ def compute_CS_for_C3D20R_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D20R.
+    Compute the configurational stresses for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -668,7 +678,7 @@ def compute_CF_for_C3D20R_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D20R.
+    Compute the configurational forces for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -721,7 +731,7 @@ def compute_CS_for_C3D20R_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D20R.
+    Compute the configurational stresses for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -768,7 +778,7 @@ def compute_CF_for_C3D20R_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D20R.
+    Compute the configurational forces for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -819,7 +829,7 @@ def compute_F_for_CPE8(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ CPE8.
+    Compute the deformation gradients for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -856,7 +866,7 @@ def compute_P_for_CPE8(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE8.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -899,7 +909,7 @@ def compute_CS_for_CPE8_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE8.
+    Compute the configurational stresses for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -946,7 +956,7 @@ def compute_CF_for_CPE8_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE8.
+    Compute the configurational forces for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -999,7 +1009,7 @@ def compute_CS_for_CPE8_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE8.
+    Compute the configurational stresses for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1046,7 +1056,7 @@ def compute_CF_for_CPE8_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE8.
+    Compute the configurational forces for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1097,7 +1107,7 @@ def compute_F_for_CPE8R(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ CPE8R.
+    Compute the deformation gradients for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -1134,7 +1144,7 @@ def compute_P_for_CPE8R(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE8R.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -1177,7 +1187,7 @@ def compute_CS_for_CPE8R_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE8R.
+    Compute the configurational stresses for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1224,7 +1234,7 @@ def compute_CF_for_CPE8R_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE8R.
+    Compute the configurational forces for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1277,7 +1287,7 @@ def compute_CS_for_CPE8R_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE8R.
+    Compute the configurational stresses for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1324,7 +1334,7 @@ def compute_CF_for_CPE8R_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE8R.
+    Compute the configurational forces for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1375,7 +1385,7 @@ def compute_F_for_C3D8(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ C3D8.
+    Compute the deformation gradients for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -1412,7 +1422,7 @@ def compute_P_for_C3D8(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D8.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -1455,7 +1465,7 @@ def compute_CS_for_C3D8_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D8.
+    Compute the configurational stresses for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1502,7 +1512,7 @@ def compute_CF_for_C3D8_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D8.
+    Compute the configurational forces for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1555,7 +1565,7 @@ def compute_CS_for_C3D8_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D8.
+    Compute the configurational stresses for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1602,7 +1612,7 @@ def compute_CF_for_C3D8_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D8.
+    Compute the configurational forces for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1653,7 +1663,7 @@ def compute_F_for_C3D8R(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ C3D8R.
+    Compute the deformation gradients for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -1690,7 +1700,7 @@ def compute_P_for_C3D8R(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D8R.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -1733,7 +1743,7 @@ def compute_CS_for_C3D8R_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D8R.
+    Compute the configurational stresses for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1780,7 +1790,7 @@ def compute_CF_for_C3D8R_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D8R.
+    Compute the configurational forces for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1833,7 +1843,7 @@ def compute_CS_for_C3D8R_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D8R.
+    Compute the configurational stresses for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1880,7 +1890,7 @@ def compute_CF_for_C3D8R_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D8R.
+    Compute the configurational forces for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -1931,7 +1941,7 @@ def compute_F_for_CPE4(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ CPE4.
+    Compute the deformation gradients for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -1968,7 +1978,7 @@ def compute_P_for_CPE4(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE4.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -2011,7 +2021,7 @@ def compute_CS_for_CPE4_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE4.
+    Compute the configurational stresses for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2058,7 +2068,7 @@ def compute_CF_for_CPE4_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE4.
+    Compute the configurational forces for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2111,7 +2121,7 @@ def compute_CS_for_CPE4_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE4.
+    Compute the configurational stresses for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2158,7 +2168,7 @@ def compute_CF_for_CPE4_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE4.
+    Compute the configurational forces for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2209,7 +2219,7 @@ def compute_F_for_CPE4R(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ CPE4R.
+    Compute the deformation gradients for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -2246,7 +2256,7 @@ def compute_P_for_CPE4R(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE4R.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -2289,7 +2299,7 @@ def compute_CS_for_CPE4R_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE4R.
+    Compute the configurational stresses for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2336,7 +2346,7 @@ def compute_CF_for_CPE4R_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE4R.
+    Compute the configurational forces for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2389,7 +2399,7 @@ def compute_CS_for_CPE4R_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE4R.
+    Compute the configurational stresses for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2436,7 +2446,7 @@ def compute_CF_for_CPE4R_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE4R.
+    Compute the configurational forces for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2487,7 +2497,7 @@ def compute_F_for_C3D10(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ C3D10.
+    Compute the deformation gradients for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -2524,7 +2534,7 @@ def compute_P_for_C3D10(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D10.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -2567,7 +2577,7 @@ def compute_CS_for_C3D10_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D10.
+    Compute the configurational stresses for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2614,7 +2624,7 @@ def compute_CF_for_C3D10_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D10.
+    Compute the configurational forces for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2667,7 +2677,7 @@ def compute_CS_for_C3D10_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D10.
+    Compute the configurational stresses for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2714,7 +2724,7 @@ def compute_CF_for_C3D10_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D10.
+    Compute the configurational forces for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2765,7 +2775,7 @@ def compute_F_for_C3D4(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ C3D4.
+    Compute the deformation gradients for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -2802,7 +2812,7 @@ def compute_P_for_C3D4(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D4.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -2845,7 +2855,7 @@ def compute_CS_for_C3D4_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D4.
+    Compute the configurational stresses for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2892,7 +2902,7 @@ def compute_CF_for_C3D4_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D4.
+    Compute the configurational forces for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2945,7 +2955,7 @@ def compute_CS_for_C3D4_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D4.
+    Compute the configurational stresses for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -2992,7 +3002,7 @@ def compute_CF_for_C3D4_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D4.
+    Compute the configurational forces for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3043,7 +3053,7 @@ def compute_F_for_C3D15(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ C3D15.
+    Compute the deformation gradients for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -3080,7 +3090,7 @@ def compute_P_for_C3D15(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D15.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -3123,7 +3133,7 @@ def compute_CS_for_C3D15_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D15.
+    Compute the configurational stresses for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3170,7 +3180,7 @@ def compute_CF_for_C3D15_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D15.
+    Compute the configurational forces for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3223,7 +3233,7 @@ def compute_CS_for_C3D15_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D15.
+    Compute the configurational stresses for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3270,7 +3280,7 @@ def compute_CF_for_C3D15_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D15.
+    Compute the configurational forces for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3321,7 +3331,7 @@ def compute_F_for_CPE6(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ CPE6.
+    Compute the deformation gradients for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -3358,7 +3368,7 @@ def compute_P_for_CPE6(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE6.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -3401,7 +3411,7 @@ def compute_CS_for_CPE6_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE6.
+    Compute the configurational stresses for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3448,7 +3458,7 @@ def compute_CF_for_CPE6_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE6.
+    Compute the configurational forces for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3501,7 +3511,7 @@ def compute_CS_for_CPE6_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE6.
+    Compute the configurational stresses for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3548,7 +3558,7 @@ def compute_CF_for_CPE6_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE6.
+    Compute the configurational forces for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3599,7 +3609,7 @@ def compute_F_for_C3D6(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ C3D6.
+    Compute the deformation gradients for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -3636,7 +3646,7 @@ def compute_P_for_C3D6(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D6.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
@@ -3679,7 +3689,7 @@ def compute_CS_for_C3D6_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D6.
+    Compute the configurational stresses for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3726,7 +3736,7 @@ def compute_CF_for_C3D6_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D6.
+    Compute the configurational forces for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3779,7 +3789,7 @@ def compute_CS_for_C3D6_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ C3D6.
+    Compute the configurational stresses for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3826,7 +3836,7 @@ def compute_CF_for_C3D6_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ C3D6.
+    Compute the configurational forces for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -3877,7 +3887,7 @@ def compute_F_for_CPE3(
         X_at_nodes,
         U_at_nodes):
     """
-    Computes the deformation gradients for num_elem elements of typ CPE3.
+    Compute the deformation gradients for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
 
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -3914,7 +3924,7 @@ def compute_P_for_CPE3(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE3.
+    Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
     
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
@@ -3957,7 +3967,7 @@ def compute_CS_for_CPE3_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE3.
+    Compute the configurational stresses for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -4004,7 +4014,7 @@ def compute_CF_for_CPE3_using_dbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE3.
+    Compute the configurational forces for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -4057,7 +4067,7 @@ def compute_CS_for_CPE3_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational stresses for num_elem elements of typ CPE3.
+    Compute the configurational stresses for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
@@ -4104,7 +4114,7 @@ def compute_CF_for_CPE3_using_mbf(
         U_at_nodes,
         S_at_int_points):
     """
-    Computes the configurational forces for num_elem elements of typ CPE3.
+    Compute the configurational forces for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
     
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
