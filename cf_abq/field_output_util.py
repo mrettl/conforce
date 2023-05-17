@@ -603,7 +603,6 @@ class _FieldOutputWriter(object):
         :param supported_element_type: str, a supported element type
             as described in :py:attr:`cf_shared.cf_c.map_type_to_info`
         """
-        pass
 
     def flush(self, odb_inst):
         """
@@ -612,7 +611,6 @@ class _FieldOutputWriter(object):
 
         :param odb_inst: OdbInstance
         """
-        pass
 
 
 class FFieldOutputWriter(_FieldOutputWriter):
@@ -952,7 +950,7 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
             ROT = rotation_matrix_from_quaternion(block.localCoordSystem)
 
             d = block.data.shape[1]
-            assert d == 3 or d == 2
+            assert d in (3, 2)
             if d == 3:
                 local_vectors = block.data
 
@@ -965,7 +963,7 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
 
         else:  # TENSOR
             d_quaternion = block.localCoordSystem.shape[1]
-            assert d_quaternion == 4 or d_quaternion == 2
+            assert d_quaternion in (4, 2)
             if d_quaternion == 4:
                 Q = block.localCoordSystem
             else:

@@ -457,7 +457,7 @@ def {function_name_n_elements}(
 
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
     :param {U_at_nodes}: Array of shape (num_elem, n, {d_}) containing the displacements at n nodes of num_elem elements.
-    :return: {F_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) containing the deformation gradients 
+    :return: {F_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) containing the deformation gradients
         evaluated on ips integration points for num_elem element.
     """
 
@@ -585,10 +585,10 @@ def {function_name_n_elements}(
     """
     Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
-    
+
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
     :param {U_at_nodes}: Array of shape (num_elem, n, {d_}) containing the displacements at n nodes of num_elem elements.
-    :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) 
+    :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_})
         containing the symmetric stress tensors at ips integration points for num_elem elements.
     :return: {P_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) containing the 1. Piola-Kirchhoff stress tensors
         evaluated on ips integration points for num_elem element.
@@ -691,11 +691,11 @@ void {function_name_one_element}(
  * 
  * @param[in] num_elem number of elements
  * @param[in] {e} Array of shape (num_elem, ips) containing the internal energy densities
- * @param[in] {X_at_nodes} Array of shape (num_elem, n, {d_}) 
+ * @param[in] {X_at_nodes} Array of shape (num_elem, n, {d_})
  *            containing the coordinates at n nodes of num_elem elements.
- * @param[in] {U_at_nodes} Array of shape (num_elem, n, {d_}) 
+ * @param[in] {U_at_nodes} Array of shape (num_elem, n, {d_})
  *            containing the displacements at n nodes of num_elem elements.
- * @param[in] {S_at_int_points} Array of shape (num_elem, ips, {d_}, {d_}) 
+ * @param[in] {S_at_int_points} Array of shape (num_elem, ips, {d_}, {d_})
  *            containing the symmetric stress tensors at ips integration points for num_elem elements.
  * @param[out] {CS_at_int_points} Empty array of shape (num_elem, ips, {d_}, {d_}).
  *             The function writes the configurational stresses into this array.
@@ -734,11 +734,11 @@ def {function_name_n_elements}(
     """
     Compute the configurational stresses for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
-    
+
     :param {e}: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
     :param {U_at_nodes}: Array of shape (num_elem, n, {d_}) containing the displacements at n nodes of num_elem elements.
-    :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) 
+    :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_})
         containing the symmetric stress tensors at ips integration points for num_elem elements.
     :return: {CS_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) containing the configurational stresses
         evaluated on ips integration points for num_elem element.
@@ -887,11 +887,11 @@ def {function_name_n_elements}(
     """
     Compute the configurational forces for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
-    
+
     :param {e}: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
     :param {U_at_nodes}: Array of shape (num_elem, n, {d_}) containing the displacements at n nodes of num_elem elements.
-    :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_}) 
+    :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_})
         containing the symmetric stress tensors at ips integration points for num_elem elements.
     :return: {CF_at_nodes}: Array of shape (num_elem, n, {d_}) containing the configurational forces
         evaluated on n nodes for num_elem element.

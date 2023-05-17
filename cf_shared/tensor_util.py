@@ -95,7 +95,7 @@ def abaqus_notation_from_tensor(tensor, dim_vector):
         vector[..., 2] = tensor[..., 2, 2]
         vector[..., 3] = tensor[..., 0, 1]
         vector[..., 3] = tensor[..., 1, 0]
-    
+
     elif dim_vector == 6:
         vector[..., 0] = tensor[..., 0, 0]
         vector[..., 1] = tensor[..., 1, 1]

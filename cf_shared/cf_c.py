@@ -278,7 +278,7 @@ def compute_F_for_C3D20(
 
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
-    :return: F_at_int_points: Array of shape (num_elem, ips, 3, 3) containing the deformation gradients 
+    :return: F_at_int_points: Array of shape (num_elem, ips, 3, 3) containing the deformation gradients
         evaluated on ips integration points for num_elem element.
     """
 
@@ -312,10 +312,10 @@ def compute_P_for_C3D20(
     """
     Compute the first Piola-Kirchhoff stress tensors for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
-    
+
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
-    :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
+    :param S_at_int_points: Array of shape (num_elem, ips, 3, 3)
         containing the symmetric stress tensors at ips integration points for num_elem elements.
     :return: P_at_int_points: Array of shape (num_elem, ips, 3, 3) containing the 1. Piola-Kirchhoff stress tensors
         evaluated on ips integration points for num_elem element.
@@ -355,7 +355,7 @@ def compute_CS_for_C3D20_using_dbf(
     """
     Compute the configurational stresses for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
-    
+
     :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
