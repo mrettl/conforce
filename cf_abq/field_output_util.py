@@ -997,30 +997,28 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
 
 def add_field_outputs(
         odb, 
-        fields=("F", "P", "CS", "CF"), 
-        method="mbf", 
+        method="mbf",
         e_expression="SENER+PENER",
         name_U_global_csys="U_GLOBAL_CSYS",
         name_S_global_csys="S_GLOBAL_CSYS",
+        request_F=True,
         name_F="DEF_GRAD",
+        request_P=True,
         name_P="FIRST_PIOLA_STRESS",
+        request_CS=True,
         name_CS="CONF_STRESS",
+        request_CF=True,
         name_CF="CONF_FORCE",
         el_type_mapping=None,
         logger=None
 ):
     """
     Add field outputs to each OdbInstance, OdbStep and OdbFrame in the given `odb`.
-    The `fields` parameter defines which fields are computed.
-    Supported are:
-
-    - "F": Deformation gradient (see :py:class:`FFieldOutputWriter`)
-    - "P": First Piola-Kirchhoff stress (see :py:class:`PFieldOutputWriter`)
-    - "CS": Configurational stresses (see :py:class:`CSFieldOutputWriter`)
-    - "CF": Configurational forces (see :py:class:`CFFieldOutputWriter`)
-
     The newly created field outputs are named according to the parameters
     `name_F`, `name_P`, `name_CS`, and `name_CF`.
+    The field outputs are only computed and saved to the `odb`,
+    if they are requested by setting the corresponding parameters
+    `request_F`, `request_P`, `request_CS`, and `request_CF` to True.
 
     For the configurational stresses and forces, an energy density is required.
     Use the parameter `e_expression` to define how the energy density is computed.
@@ -1029,7 +1027,7 @@ def add_field_outputs(
     Furthermore, the configurational stresses and forces can be computed with
     various `methods`.
 
-    Two field outputs called as defined in `name_U_global_csys` and `name_S_global_csys` are created.
+    Two field outputs named as defined in `name_U_global_csys` and `name_S_global_csys` are created.
     These two field outputs contain the displacements and stresses in the global coordinate system,
     regardless whether a transformation has been applied or not.
 
@@ -1039,10 +1037,14 @@ def add_field_outputs(
     The default mapping of `el_type_mapping` is
     :py:attr:`cf_shared.element_type_mapping.map_abaqus_element_type_to_supported_element_type`.
 
+    .. note::
+
+        The odb is closed and reopened.
+        Consequently, the input `odb` object is not the same at the resulting `odb` object.
+        After this function call the input `odb` is invalidated and must not be used anymore.
+
     :param odb: Odb into which the FieldOutput objects are written.
     :type odb: Odb
-    :param fields: The fields to compute.
-    :type fields: Sequence[str]
     :param method: see :py:func:`cf_shared.cf_c.compute_CS`
     :type method: str
     :param e_expression: see :py:func:`eval_field_output_expression`
@@ -1053,15 +1055,23 @@ def add_field_outputs(
     :param name_S_global_csys: name of the newly generated field output containing stresses
         in the global coordinate system
     :type name_S_global_csys: str
+    :param request_F: True to create field outputs for the deformation gradients.
+    :type request_F: bool
     :param name_F: name of the field outputs that contain the deformation gradient.
         These field outputs are only generated if "F" is in `fields`.
     :type name_F: str
+    :param request_P: True to create field outputs for the first Piola-Kirchhoff stresses.
+    :type request_P: bool
     :param name_P: name of the field outputs that contain the first Piola-Kirchhoff stresses.
         These field outputs are only generated if "P" is in `fields`.
     :type name_P: str
+    :param request_CS: True to create field outputs for the configurational stresses.
+    :type request_CS: bool
     :param name_CS: name of the field outputs that contain the configurational stresses.
         These field outputs are only generated if "CS" is in `fields`.
     :type name_CS: str
+    :param request_CF: True to create field outputs for the configurational forces.
+    :type request_CF: bool
     :param name_CF: name of the field output that contains the configurational forces.
         This field outputs is only generated if "CF" is in `fields`.
     :type name_CF: str
@@ -1155,28 +1165,28 @@ def add_field_outputs(
                 fo_writers = list()
                 fo_keys = set(fo.keys())
 
-                if "F" in fields and (name_F + "_11") not in fo_keys:
+                if request_F and (name_F + "_11") not in fo_keys:
                     logger.info("create field output %s_ij (%s)", name_F, msg)
                     fo_writers.append(FFieldOutputWriter(frame, d, name_F))
-                elif "F" in fields:
+                elif request_F:
                     logger.warning("skip field output %s_ij (%s)", name_F, msg)
 
-                if "P" in fields and (name_P + "_11") not in fo_keys:
+                if request_P and (name_P + "_11") not in fo_keys:
                     logger.info("create field output %s_ij (%s)", name_P, msg)
                     fo_writers.append(PFieldOutputWriter(frame, d, name_P))
-                elif "P" in fields:
+                elif request_P:
                     logger.warning("skip field output %s_ij (%s)", name_P, msg)
 
-                if "CS" in fields and (name_CS + "_11") not in fo_keys:
+                if request_CS and (name_CS + "_11") not in fo_keys:
                     logger.info("create field output %s_ij (%s)", name_CS, msg)
                     fo_writers.append(CSFieldOutputWriter(frame, d, name=name_CS, method=method))
-                elif "CS" in fields:
+                elif request_CS:
                     logger.warning("skip field output %s_ij (%s)", name_CS, msg)
 
-                if "CF" in fields and name_CF not in fo_keys:
+                if request_CF and name_CF not in fo_keys:
                     logger.info("create field output %s_ij (%s)", name_CF, msg)
                     fo_writers.append(CFFieldOutputWriter(frame, d, name=name_CF, method=method))
-                elif "CF" in fields:
+                elif request_CF:
                     logger.warning("skip field output %s_ij (%s)", name_CF, msg)
 
                 # add data for all element types

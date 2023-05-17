@@ -8,7 +8,7 @@ from cf_abq.field_output_util import add_field_outputs
 
 
 def main(
-        odb_name=None,
+        odb_or_odb_name=None,
         request_F=False,
         request_P=False,
         request_CS=False,
@@ -30,39 +30,39 @@ def main(
     logger.addHandler(handler_stdout)
 
     session = abq.session
-    if odb_name is None:
-        odb_name = session.currentViewportName
-        vp = session.viewports[odb_name]
+    if odb_or_odb_name is None:
+        # use current odb
+        odb_or_odb_name = session.currentViewportName
+        vp = session.viewports[odb_or_odb_name]
         odb = vp.displayedObject
 
+    elif odb_or_odb_name in session.odbs.keys():
+        # lookup odb_name
+        odb = session.odbs[odb_or_odb_name]
+
     else:
-        odb = session.odbs[odb_name]
+        # this has to be an odb
+        odb = odb_or_odb_name
 
-    fields = [
-        field
-        for field, request in zip(
-            ["F", "P", "CS", "CF"],
-            [request_F, request_P, request_CS, request_CF]
-        )
-        if bool(request)
-    ]
+    if odb is not None and odb.__class__.__name__ == "Odb":
+        method_map = {
+            "mbf": "mbf",
+            "motion based formulation": "mbf",
+            "dbf": "dbf",
+            "deformation based formulation": "dbf"
+        }
+        method = method_map[method]
 
-    method_map = {
-        "mbf": "mbf",
-        "motion based formulation": "mbf",
-        "dbf": "dbf",
-        "deformation based formulation": "dbf"
-    }
-    method = method_map[method]
-
-    if odb is not None:
-        add_field_outputs(
+        odb = add_field_outputs(
             odb=odb,
-            fields=fields,
-            method=method,
-            e_expression=e_expression,
+            request_F=request_F,
+            request_P=request_P,
+            request_CS=request_CS,
             name_CS=CS_name,
+            request_CF=request_CF,
             name_CF=CF_name,
+            e_expression=e_expression,
+            method=method,
             logger=logger
         )
 
@@ -85,3 +85,5 @@ def main(
         print("{0:3d} x {1:s}".format(len(msgs), level))
 
     print("----------------\n ")
+
+    return odb
