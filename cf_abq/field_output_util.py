@@ -562,7 +562,14 @@ class CFFieldOutputWriter(object):
         self._CF_at_nodes = dict()
 
 
-def element_types(bulk_data_blocks):
+def get_present_element_types_in(bulk_data_blocks):
+    """
+    Return all element types that occur in at least one bulk data block.
+    A bulk data block contains data and is associated to one element type.
+
+    :param bulk_data_blocks: A sequence of bulk data blocks
+    :return: a set of strings defining the element types
+    """
     return {
         block.baseElementType
         for block in bulk_data_blocks
@@ -796,7 +803,7 @@ def add_field_outputs(
                     logger.warning("skip field output %s_ij (%s)", name_CF, msg)
 
                 # add data for all element types
-                for element_type in element_types(fo["S"].bulkDataBlocks):
+                for element_type in get_present_element_types_in(fo["S"].bulkDataBlocks):
                     fo_reader.set_element_type(element_type)
 
                     # get supported element type (CF, ... is implemented for the element type)

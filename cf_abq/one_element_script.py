@@ -1,5 +1,13 @@
 """
-This module requires Abaqus (including Abaqus cae).
+This Abaqus script simulates an input file and writes results to a json file.
+
+Call this script using :py:func:`cf.one_element_runner.simulate_one_element`.
+Or call this script directly using a shell with:
+
+    ``abaqus cae noGUI="{path to this script file}" -- {path to the abaqus input file}``
+
+After the successful simulation a json file named "{inp_name}_result.json" is placed
+in the same folder as the Abaqus input file.
 """
 import sys
 import os
@@ -9,20 +17,18 @@ import abaqus as abq
 import abaqusConstants as abqConst
 
 
-# global constants
-INP_FILE_PATH = os.path.abspath(sys.argv[-1])
-WORKING_DIRECTORY = os.path.abspath(os.path.join(INP_FILE_PATH, os.pardir))
-HOME_DIRECTORY = os.path.abspath(".")
-
-
-def main():
+def main(inp_file_path):
     """
-    simulate an input file # TODO:
+    Simulate the given Abaqus input
+    and write a json file named "{inp_name}_result.json" containing the results of the simulation.
+    Ths json file is placed into the current working directory.
+
+    :param inp_file_path: path to an Abaqus input file
     """
-    job_name = os.path.basename(INP_FILE_PATH).split(".")[0]
+    job_name = os.path.basename(inp_file_path).split(".")[0]
     job = abq.mdb.JobFromInputFile(
         name=job_name,
-        inputFileName=INP_FILE_PATH,
+        inputFileName=inp_file_path,
         nodalOutputPrecision=abqConst.FULL
     )
     job.submit()
@@ -56,12 +62,17 @@ def main():
 
 
 if __name__ == '__main__':
+    # global constants
+    INP_FILE_PATH = os.path.abspath(sys.argv[-1])
+    WORKING_DIRECTORY = os.path.abspath(os.path.join(INP_FILE_PATH, os.pardir))
+    HOME_DIRECTORY = os.path.abspath(".")
+
     # reset model database
     abq.Mdb()
 
     os.chdir(WORKING_DIRECTORY)
     try:
-        main()
+        main(INP_FILE_PATH)
 
     finally:
         os.chdir(HOME_DIRECTORY)

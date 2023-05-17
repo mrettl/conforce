@@ -17,8 +17,6 @@ import shutil
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.append(os.path.abspath("./dummy_packages"))
 
-print(sys.path[-1])
-
 import cf_shared
 
 # -- Project information ------------------------------------------------------

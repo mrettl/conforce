@@ -1,3 +1,7 @@
+"""
+This is an Abaqus plugin
+# TODO:
+"""
 from __future__ import print_function
 
 import abaqusGui as gui

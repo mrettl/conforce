@@ -1,3 +1,7 @@
+"""
+This module contains methods to generate and compile C-code.
+"""
+
 from __future__ import annotations
 from typing import List, TextIO, Optional
 import subprocess
@@ -14,9 +18,12 @@ from cf.expressions import Computation
 from cf.symbolic_util import TermCollector, expand_matrices_in_symbols_to_expressions, apply_replacement_rules
 
 
-def write_code_for_all_element_types(*types):
-    if len(types) == 0:
-        types = element_definitions.R_at_nodes_of_element.keys()
+def write_code_for_all_element_types():
+    """
+    Generate and compile C- and Python-code for all element types defined in :py:mod:`cf.element_definitions`.
+    Places the generated code to :py:mod:`cf_shared.cf_c`.
+    """
+    types = element_definitions.R_at_nodes_of_element.keys()
 
     # generate and compile c and python code
     with CPyCodeCompiler(
@@ -46,6 +53,17 @@ def write_code_for_element_type(
         write_CF: bool,
         compiler: CPyCodeCompiler
 ):
+    """
+    Generate Code for an element type defined in :py:mod:`cf.element_definitions`.
+
+    :param element_type: Name of the element type
+    :param is_dbf: Deformation based or motion based formulation
+    :param write_F: use compiler to generate code for the deformation gradient
+    :param write_P: use compiler to generate code for the first Piola-Kirchhoff stress tensor
+    :param write_CS: use compiler to generate code for the configurational stress tensor
+    :param write_CF: use compiler to generate code for the configurational forces
+    :param compiler: provides methods to generate code
+    """
     R_at_nodes_ = element_definitions.R_at_nodes_of_element[element_type]
     exponents_ = element_definitions.exponents_of_shape_functions_of_element[element_type]
     R_at_int_points_ = element_definitions.R_at_integration_points_of_element[element_type]
@@ -132,7 +150,7 @@ def write_code_for_element_type(
             element_typ=element_type,
             X_at_nodes=X_at_nodes,
             U_at_nodes=U_at_nodes,
-            number_of_integration_points=ips_,
+            ips=ips_,
             F_at_int_points=F_at_int_points
         )
 
@@ -202,6 +220,45 @@ class CCodePrinter(C99CodePrinter):
 
 class CPyCodeCompiler(object):
     def __init__(self, name: str, compile_at_exit: bool, write_header_at_enter: bool, folder: str = None):
+        """
+        Generate the following files:
+
+         - Python file containing a binding to the generated library
+         - C-file containing the source code for the library
+         - The Library is the compiled C-file with the file extension \\*.dll on Windows or \\*.so on Linux
+
+        **Examples**
+
+        The following code generates
+
+         - test_library.py,
+         - test_library.c,
+         - test_library.dll or test_library.so
+
+        in the folder `res/tests/codegen` and writes an element information
+        for the element type `CPE4`
+
+        >>> os.makedirs("res/tests/codegen", exist_ok=True)
+        >>> with CPyCodeCompiler(
+        ...         "test_library",
+        ...         compile_at_exit=True,
+        ...         write_header_at_enter=True,
+        ...         folder="res/tests/codegen"
+        ... ) as compiler:
+        ...     compiler.write_element_info("CPE4", 2, 4, 4)  # doctest:+SKIP
+
+        The generated package can be imported.
+
+        >>> from res.tests.codegen import test_library
+        >>> test_library.map_type_to_info["CPE4"]
+        ElementInfo(number_of_dimensions=2, number_of_nodes=4, number_of_integration_points=4)
+
+        :param name: File name (without extension) of the generated files
+        :param compile_at_exit: Compile C-code to a library after the end of the with statement
+        :param write_header_at_enter: Import and declare all necessary packages and attributes at the
+            top of the Python and C-file.
+        :param folder: Folder in which the generated code and the compiled library is located
+        """
         self._name = str(name)
         self._compile_at_exit = bool(compile_at_exit)
         self._write_header_at_entry = bool(write_header_at_enter)
@@ -260,6 +317,15 @@ class CPyCodeCompiler(object):
                 self._c_file_handle.write(f"    double {lhs_code} = {rhs_code};\n")
 
     def write_headers(self):
+        """
+        Write all necessary declarations and import statements
+        into the C- and Python-file.
+
+        .. note::
+
+            This function must not be called more than once.
+
+        """
         c_header_file_name = os.path.join(__file__, os.pardir, "_codegen_c_header.c")
         with open(c_header_file_name, "r", encoding="utf-8") as fh:
             self._c_file_handle.write(fh.read())
@@ -280,6 +346,14 @@ class CPyCodeCompiler(object):
             n: int,
             ips: int
     ):
+        """
+        Put information about an element into a dictionary in the generated Python file.
+
+        :param element_type: name of the element type
+        :param d: number of dimensions
+        :param n: number of nodes
+        :param ips: number of integration points
+        """
         self._py_file_handle.write(f'''
 map_type_to_info['{element_type}'] = ElementInfo(
     number_of_dimensions={d},
@@ -294,11 +368,24 @@ map_type_to_info['{element_type}'] = ElementInfo(
             element_typ: str,
             X_at_nodes: sy.IndexedBase,
             U_at_nodes: sy.IndexedBase,
-            number_of_integration_points: int,
+            ips: int,
             F_at_int_points: sy.IndexedBase
     ):
+        """
+        Write a C-function that computes the deformation gradient
+        and write a Python-function that binds to the C-function.
+
+        :param assignments: list of assignments.
+            Components of X_at_nodes, U_at_nodes may only occur on the right hand side.
+            Each component of F_at_int_points must occur on the left hand side of one assignment.
+        :param element_typ: name of the element type
+        :param X_at_nodes: name of the matrix that contains coordinates at nodes
+        :param U_at_nodes: name of the matrix that contains displacements at nodes
+        :param ips: number of integration points
+        :param F_at_int_points: name of the matrix that contains the deformation gradient at the integration points
+        """
         n_, d_ = X_at_nodes.shape
-        ips_ = int(number_of_integration_points)
+        ips_ = int(ips)
 
         function_name_one_element = f"compute_F_for_one_element_of_type_{element_typ}"
         function_name_n_elements = f"compute_F_for_{element_typ}"
@@ -406,6 +493,20 @@ map_type_to_F_function['{element_typ}'] = {function_name_n_elements}
             S_at_int_points: sy.IndexedBase,
             P_at_int_points: sy.IndexedBase
     ):
+        """
+        Write a C-function that computes the first Piola-Kirchhoff stress tensor
+        and write a Python-function that binds to the C-function.
+
+        :param assignments: list of assignments.
+            Components of X_at_nodes, U_at_nodes, S_at_int_points may only occur on the right hand side.
+            Each component of P_at_int_points must occur on the left hand side of one assignment.
+        :param element_typ: name of the element type
+        :param X_at_nodes: name of the matrix that contains coordinates at nodes
+        :param U_at_nodes: name of the matrix that contains displacements at nodes
+        :param S_at_int_points: name of the matrix that contains stress tensors at the integration points
+        :param P_at_int_points: name of the matrix that contains the
+            first Piola-Kirchhoff stress tensors at the integration points
+        """
         n_, d_ = X_at_nodes.shape
         ips_ = S_at_int_points.shape[0]
 
@@ -530,7 +631,22 @@ map_type_to_P_function['{element_typ}'] = {function_name_n_elements}
             CS_at_int_points: sy.IndexedBase,
             is_dbf: bool
     ):
+        """
+        Write a C-function that computes the configurational stresses
+        and write a Python-function that binds to the C-function.
 
+        :param assignments: list of assignments.
+            Components of e, X_at_nodes, U_at_nodes, S_at_int_points may only occur on the right hand side.
+            Each component of CS_at_int_points must occur on the left hand side of one assignment.
+        :param element_typ: name of the element type
+        :param e: name of the energy density
+        :param X_at_nodes: name of the matrix that contains coordinates at nodes
+        :param U_at_nodes: name of the matrix that contains displacements at nodes
+        :param S_at_int_points: name of the matrix that contains stress tensors at the integration points
+        :param CS_at_int_points: name of the matrix that contains the
+            configurational stress tensors at the integration points
+        :param is_dbf: deformation based of motion based formulation
+        """
         n_, d_ = X_at_nodes.shape
         ips_ = S_at_int_points.shape[0]
         method = 'dbf' if is_dbf else 'mbf'
@@ -668,7 +784,22 @@ map_type_and_method_to_CS_function[('{element_typ}', '{method}')] = {function_na
             CF_at_nodes: sy.IndexedBase,
             is_dbf: bool
     ):
+        """
+        Write a C-function that computes the configurational forces
+        and write a Python-function that binds to the C-function.
 
+        :param assignments: list of assignments.
+            Components of e, X_at_nodes, U_at_nodes, S_at_int_points may only occur on the right hand side.
+            Each component of CF_at_nodes must occur on the left hand side of one assignment.
+        :param element_typ: name of the element type
+        :param e: name of the energy density
+        :param X_at_nodes: name of the matrix that contains coordinates at nodes
+        :param U_at_nodes: name of the matrix that contains displacements at nodes
+        :param S_at_int_points: name of the matrix that contains stress tensors at the integration points
+        :param CF_at_nodes: name of the matrix that contains the
+            configurational forces at the element nodes
+        :param is_dbf: deformation based of motion based formulation
+        """
         n_, d_ = X_at_nodes.shape
         ips_ = S_at_int_points.shape[0]
         method = 'dbf' if is_dbf else 'mbf'
@@ -798,4 +929,3 @@ map_type_and_method_to_CF_function[('{element_typ}', '{method}')] = {function_na
 
 if __name__ == '__main__':
     write_code_for_all_element_types()
-    print("ok")
