@@ -77,6 +77,13 @@ html_sidebars = {
 }
 
 # -- Extension configuration --------------------------------------------------
+autoclass_content = "init"
+
+# -- Options for autodoc extension ----------------------------------------
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'sympy': ('https://docs.sympy.org/latest', None)
+}
 
 # -- Options for intersphinx extension ----------------------------------------
 intersphinx_mapping = {

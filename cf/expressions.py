@@ -13,7 +13,7 @@ Abbreviations
 
     - `H`: (n, 1)-Matrix of shape functions
     - `dH_dR`: (n, d)-Matrix: :math:`dh\_dr_{ik} = \partial h_{i} / \partial r_{k}`
-    - `dH_dX`: (n, d)-Matrix: :math:`dh\_dr_{ik} = \partial h_{i} / \partial x_{k}`
+    - `dH_dX`: (n, d)-Matrix: :math:`dh\_dx_{ik} = \partial h_{i} / \partial x_{k}`
     - `J`: (d, d)-Jacobian matrix: :math:`j_{ik}= \partial x_{i} / \partial r_{k}`
     - `U`: (n, d)-Matrix of displacements in the real space
     - `dU_dX`: (d, d)-Matrix: :math:`du\_dx_{ik} = \partial u_{i} / \partial x_{k}`

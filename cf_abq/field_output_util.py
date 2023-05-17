@@ -1,5 +1,5 @@
 """
-This module requires Abaqus.
+This module provides methods to read and create field outputs.
 """
 import odbAccess
 import abaqusConstants as abqConst
@@ -20,12 +20,11 @@ LOGGER = cf_abq.LOGGER.getChild(__name__)
 
 
 class FieldOutputReader(object):
-    map_el_info_to_el_type = {
-        info: type
-        for type, info in cf_c.map_type_to_info.items()
-    }
-
     def __init__(self):
+        """
+        Reads field outputs and prepares
+        data for the latter computation
+        """
         # odb inst
         self._odb_inst = None
         self._element_labels_to_node_labels_for_type = None
@@ -59,6 +58,11 @@ class FieldOutputReader(object):
         self._S_mask = None
 
     def set_odb_inst(self, odb_inst):
+        """
+        Set the odb instance
+
+        :param odb_inst: OdbInstance
+        """
         self._odb_inst = odb_inst
         self._element_labels_to_node_labels_for_type = None
         self._node_labels_to_coordinates = None
@@ -74,6 +78,11 @@ class FieldOutputReader(object):
         self._reset_masks()
 
     def set_element_type(self, element_type):
+        """
+        Define the element type
+
+        :param element_type: str
+        """
         self._element_type = element_type
 
         self._S_el_labels = None
@@ -83,18 +92,33 @@ class FieldOutputReader(object):
         self._reset_masks()
 
     def set_fo_U(self, fo_U):
+        """
+        Set the displacement field output
+
+        :param fo_U: FieldOutput
+        """
         self._fo_U = fo_U
         self._U_el_labels_for_type = None
         self._U_at_nodes_for_type = None
         self._reset_masks()
 
     def set_fo_S(self, fo_S):
+        """
+        Set the stress field output
+
+        :param fo_S: FieldOutput
+        """
         self._fo_S = fo_S
         self._S_el_labels = None
         self._S_at_int_points = None
         self._reset_masks()
 
     def set_fo_e(self, fo_e):
+        """
+        Set the energy density field output
+
+        :param fo_e: FieldOutput
+        """
         self._fo_e = fo_e
         self._e_el_labels = None
         self._e_at_int_points = None
@@ -109,14 +133,29 @@ class FieldOutputReader(object):
 
     @property
     def odb_inst(self):
+        """
+        Get the odb instance
+
+        :return: OdbInstance
+        """
         return self._odb_inst
 
     @property
     def element_type(self):
+        """
+        Get the defined element type
+
+        :return: str
+        """
         return self._element_type
 
     @property
     def fo_U(self):
+        """
+        Get the displacement field output at nodes of the defined instance
+
+        :return: FieldOutput
+        """
         return self._fo_U.getSubset(
             position=abqConst.NODAL,
             region=self._odb_inst
@@ -124,6 +163,12 @@ class FieldOutputReader(object):
 
     @property
     def fo_S(self):
+        """
+        Get the stress field output at integration points of
+        the defined instance and element type
+
+        :return: FieldOutput
+        """
         return self._fo_S.getSubset(
             position=abqConst.INTEGRATION_POINT,
             region=self._odb_inst,
@@ -132,6 +177,12 @@ class FieldOutputReader(object):
 
     @property
     def fo_e(self):
+        """
+        Get the energy density field output at integration points of
+        the defined instance and element type
+
+        :return: FieldOutput
+        """
         return self._fo_e.getSubset(
             position=abqConst.INTEGRATION_POINT,
             region=self._odb_inst,
@@ -140,6 +191,12 @@ class FieldOutputReader(object):
 
     @property
     def element_labels_to_node_labels_for_type(self):
+        """
+        Dictionary mapping the element type to a dictionary
+        that maps element labels to the node labels of the element
+
+        :return: dict
+        """
         if self._element_labels_to_node_labels_for_type is None:
             odb_elements = self._odb_inst.elements
 
@@ -160,10 +217,21 @@ class FieldOutputReader(object):
 
     @property
     def element_labels_to_node_labels(self):
+        """
+        Dictionary that maps element labels to the node labels of the element.
+        Works only for the defined element type.
+
+        :return: dict
+        """
         return self.element_labels_to_node_labels_for_type[self.element_type]
 
     @property
     def node_label_to_coordinates_mapping(self):
+        """
+        Dictionary mapping node labels to coordinates of the nodes
+
+        :return: dict
+        """
         if self._node_labels_to_coordinates is None:
 
             odb_nodes = self._odb_inst.nodes
@@ -181,6 +249,13 @@ class FieldOutputReader(object):
 
     @property
     def X_el_labels_for_type(self):
+        """
+        Dictionary mapping the element type to an array of shape
+        (num_elem,) containing the element labels.
+        Element labels are in the same order as in :py:attr:`X_at_nodes_for_type`.
+
+        :return: dict
+        """
         if self._X_el_labels_for_type is None:
             self._update_X_values()
 
@@ -188,10 +263,24 @@ class FieldOutputReader(object):
 
     @property
     def X_el_labels(self):
+        """
+        Array of shape (num_elem,) containing the element labels
+        of the defined element type
+        Element labels are in the same order as in :py:attr:`X_at_nodes`.
+
+        :return: np.ndarray
+        """
         return self.X_el_labels_for_type[self.element_type]
 
     @property
     def X_at_nodes_for_type(self):
+        """
+        Dictionary mapping the element type to an array of shape
+        (num_elem, n, 3/2) containing the coordinates.
+        The number of nodes per element is n.
+
+        :return: dict
+        """
         if self._X_at_nodes_for_type is None:
             self._update_X_values()
 
@@ -199,6 +288,13 @@ class FieldOutputReader(object):
 
     @property
     def X_at_nodes(self):
+        """
+        Array of shape (num_elem, n, 3/2) containing the coordinates
+        of the defined element type.
+        The number of nodes per element is n.
+
+        :return: np.ndarray
+        """
         return self.X_at_nodes_for_type[self.element_type]
 
     def _update_U_values(self):
@@ -208,6 +304,13 @@ class FieldOutputReader(object):
 
     @property
     def U_el_labels_for_type(self):
+        """
+        Array of shape (num_elem,) containing the element labels
+        of the defined element type.
+        Element labels are in the same order as in :py:attr:`U_at_nodes_for_type`.
+
+        :return: np.ndarray
+        """
         if self._U_el_labels_for_type is None:
             self._update_U_values()
 
@@ -215,10 +318,24 @@ class FieldOutputReader(object):
 
     @property
     def U_el_labels(self):
+        """
+        Array of shape (num_elem,) containing the element labels
+        of the defined element type.
+        Element labels are in the same order as in :py:attr:`U_at_nodes`.
+
+        :return: np.ndarray
+        """
         return self.U_el_labels_for_type[self.element_type]
 
     @property
     def U_at_nodes_for_type(self):
+        """
+        Dictionary mapping the element type to an array of shape
+        (num_elem, n, 3/2) containing the displacements.
+        The number of nodes per element is n.
+
+        :return: dict
+        """
         if self._U_at_nodes_for_type is None:
             self._update_U_values()
 
@@ -226,6 +343,13 @@ class FieldOutputReader(object):
 
     @property
     def U_at_nodes(self):
+        """
+        Array of shape (num_elem, n, 3/2) containing the displacements
+        of the defined element type.
+        The number of nodes per element is n.
+
+        :return: np.ndarray
+        """
         return self.U_at_nodes_for_type[self.element_type]
 
     def _update_e_values(self):
@@ -236,6 +360,13 @@ class FieldOutputReader(object):
 
     @property
     def e_el_labels(self):
+        """
+        Array of shape (num_elem,) containing the element labels
+        of the defined element type.
+        Element labels are in the same order as in :py:attr:`e_at_int_points`.
+
+        :return: np.ndarray
+        """
         if self._e_el_labels is None:
             self._update_e_values()
 
@@ -243,6 +374,12 @@ class FieldOutputReader(object):
 
     @property
     def e_at_int_points(self):
+        """
+        Array of shape (num_elem, ips) containing the energy densities
+        at ips integration point for the defined element type.
+
+        :return: np.ndarray
+        """
         if self._e_at_int_points is None:
             self._update_e_values()
 
@@ -256,6 +393,13 @@ class FieldOutputReader(object):
 
     @property
     def S_el_labels(self):
+        """
+        Array of shape (num_elem,) containing the element labels
+        of the defined element type.
+        Element labels are in the same order as in :py:attr:`S_at_int_points`.
+
+        :return: np.ndarray
+        """
         if self._S_el_labels is None:
             self._update_S_values()
 
@@ -263,6 +407,12 @@ class FieldOutputReader(object):
 
     @property
     def S_at_int_points(self):
+        """
+        Array of shape (num_elem, ips, 2/3, 2/3) containing the
+        stress tensors at ips integration point for the defined element type.
+
+        :return: np.ndarray
+        """
         if self._S_at_int_points is None:
             self._update_S_values()
 
@@ -281,6 +431,11 @@ class FieldOutputReader(object):
 
     @property
     def el_labels(self):
+        """
+        Labels of elements for which all data are present
+
+        :return: np.ndarray
+        """
         if self._el_labels is None:
             self._update_masks()
 
@@ -288,6 +443,12 @@ class FieldOutputReader(object):
 
     @property
     def X_mask(self):
+        """
+        Mask for :py:attr:`X_el_labels` and :py:attr:`X_at_nodes`
+        such that the masked data correspond to :py:attr:`el_labels`
+
+        :return: np.ndarray
+        """
         if self._X_mask is None:
             self._update_masks()
 
@@ -295,6 +456,12 @@ class FieldOutputReader(object):
 
     @property
     def U_mask(self):
+        """
+        Mask for :py:attr:`U_el_labels` and :py:attr:`U_at_nodes`
+        such that the masked data correspond to :py:attr:`el_labels`
+
+        :return: np.ndarray
+        """
         if self._U_mask is None:
             self._update_masks()
 
@@ -302,6 +469,12 @@ class FieldOutputReader(object):
 
     @property
     def e_mask(self):
+        """
+        Mask for :py:attr:`e_el_labels` and :py:attr:`e_at_int_points`
+        such that the masked data correspond to :py:attr:`el_labels`
+
+        :return: np.ndarray
+        """
         if self._e_mask is None:
             self._update_masks()
 
@@ -309,6 +482,12 @@ class FieldOutputReader(object):
 
     @property
     def S_mask(self):
+        """
+        Mask for :py:attr:`S_el_labels` and :py:attr:`S_at_int_points`
+        such that the masked data correspond to :py:attr:`el_labels`
+
+        :return: np.ndarray
+        """
         if self._S_mask is None:
             self._update_masks()
 
@@ -316,6 +495,12 @@ class FieldOutputReader(object):
 
     @staticmethod
     def create_node_label_to_bulk_data_mapping(bulk_data_blocks):
+        """
+        Create a dictionary mapping node labels to data
+
+        :param bulk_data_blocks: sequence of bulk data objects
+        :return: dict
+        """
         data = np.concatenate([block.data for block in bulk_data_blocks])
         node_labels = np.concatenate([block.nodeLabels for block in bulk_data_blocks])
 
@@ -326,6 +511,15 @@ class FieldOutputReader(object):
 
     @staticmethod
     def extract_integration_points_values(bulk_data_blocks):
+        """
+        Read integration point values and put them into:
+
+        - `el_labels_unique`: array of shape (num_elements,)
+        - `reshaped_data`: array of shape (num_elements, ips, ?) in the same order as `el_labels_unique`
+
+        :param bulk_data_blocks: sequence of bulk data objects
+        :return: `el_labels_unique`, `reshaped_data`
+        """
         el_labels = np.concatenate([block.elementLabels for block in bulk_data_blocks])
         int_points = np.concatenate([block.integrationPoints for block in bulk_data_blocks])
         data = np.concatenate([block.data for block in bulk_data_blocks])
@@ -356,6 +550,17 @@ class FieldOutputReader(object):
         return el_labels_unique, reshaped_data
 
     def map_nodes_to_element_nodal(self, node_label_to_data_mapping):
+        """
+        Map data given at nodes to element nodes.
+        This implies that data is duplicated if more elements share one node.
+
+        - `element_labels_for_type`: Dictionary mapping the element type to element labels
+        - `element_nodal_data_for_type`: Dictionary mapping the element type to an array of shape
+          (num_elements, n, ?) in the same order as in `element_labels_for_type`
+
+        :param node_label_to_data_mapping: Dictionary mapping a node label to data
+        :return: `element_labels_for_type`, `element_nodal_data_for_type`
+        """
         el_to_n_label_for_type = self.element_labels_to_node_labels_for_type
         element_labels_for_type = dict()
         element_nodal_data_for_type = dict()
@@ -386,8 +591,38 @@ class FieldOutputReader(object):
         return element_labels_for_type, element_nodal_data_for_type
 
 
-class FFieldOutputWriter(object):
+class _FieldOutputWriter(object):
+    def add(self, reader, supported_element_type):
+        """
+        Add data for an element type to the FieldOutput
+
+        :param reader: FieldOutputReader
+        :param supported_element_type: str, a supported element type
+            as described in :py:attr:`cf_shared.cf_c.map_type_to_info`
+        """
+        pass
+
+    def flush(self, odb_inst):
+        """
+        Call this after all data are added for all element types.
+        This adds data to the FieldOutput that considers multiple element types.
+
+        :param odb_inst: OdbInstance
+        """
+        pass
+
+
+class FFieldOutputWriter(_FieldOutputWriter):
     def __init__(self, frame, d, name):
+        """
+        Create new FieldOutputs for each
+        component of the deformation gradient.
+
+        :param frame: OdbFrame to which FieldOutputs are added
+        :param d: int, number of dimensions
+        :param name: str, name of new FieldOutputs
+        """
+        _FieldOutputWriter.__init__(self)
         self.name = str(name)
         self._fo = [
             [
@@ -425,8 +660,17 @@ class FFieldOutputWriter(object):
         pass
 
 
-class PFieldOutputWriter(object):
+class PFieldOutputWriter(_FieldOutputWriter):
     def __init__(self, frame, d, name):
+        """
+        Create new FieldOutputs for each
+        component of the first Piola-Kirchhoff stress.
+
+        :param frame: OdbFrame to which FieldOutputs are added
+        :param d: int, number of dimensions
+        :param name: str, name of new FieldOutputs
+        """
+        _FieldOutputWriter.__init__(self)
         self.name = str(name)
         self._fo = [
             [
@@ -461,12 +705,19 @@ class PFieldOutputWriter(object):
                     )
                 )
 
-    def flush(self, odb_inst):
-        pass
 
-
-class CSFieldOutputWriter(object):
+class CSFieldOutputWriter(_FieldOutputWriter):
     def __init__(self, frame, d, name, method):
+        """
+        Create new FieldOutputs for each
+        component of the first Piola-Kirchhoff stress.
+
+        :param frame: OdbFrame to which FieldOutputs are added
+        :param d: int, number of dimensions
+        :param name: str, name of new FieldOutputs
+        :param method: Method as described in :py:func:`cf_shared.cf_c.compute_CS`
+        """
+        _FieldOutputWriter.__init__(self)
         self.name = str(name)
         self._fo = [
             [
@@ -505,12 +756,18 @@ class CSFieldOutputWriter(object):
                     )
                 )
 
-    def flush(self, odb_inst):
-        pass
 
-
-class CFFieldOutputWriter(object):
+class CFFieldOutputWriter(_FieldOutputWriter):
     def __init__(self, frame, d, name, method):
+        """
+        Create one FieldOutput for the configurational forces.
+
+        :param frame: OdbFrame to which the FieldOutput is added
+        :param d: int, number of dimensions
+        :param name: str, name of the new FieldOutput
+        :param method: Method as described in :py:func:`cf_shared.cf_c.compute_CS`
+        """
+        _FieldOutputWriter.__init__(self)
         self.name = str(name)
         self._fo = frame.FieldOutput(
             name=self.name,
@@ -576,7 +833,34 @@ def get_present_element_types_in(bulk_data_blocks):
     }
 
 
-def field_output_expression(field_outputs, expression):
+def eval_field_output_expression(field_outputs, expression):
+    """
+    Create a new temporary anonymous field output that
+    is computed out of the existing field outputs as described by the expression.
+
+    The expression may contain:
+
+    - values:
+
+        - floating point or integer values
+        - names of existing field outputs
+
+    - operators: +,-,*,/
+
+    .. note:
+
+        A requirement for the expression is, that all used field outputs have:
+
+            - the same type (Scalar, Vector, Tensor)
+            - are evaluated on the same position (Integration point, Nodes, Elements)
+
+    :param field_outputs: a dictionary like object mapping field output names to field outputs
+    :param expression: str, an expression how to compute the new field output
+    :return: new temporary anonymous field output
+
+    :raises KeyError: If a value in the expressions is neither a scalar value
+        nor a name of an existing field output
+    """
     fo = None
     for addition in expression.split("+"):
         fo_subtract = None
@@ -618,6 +902,25 @@ def field_output_expression(field_outputs, expression):
 
 
 def rotate_field_output_to_global_coordinate_system(frame, field_output, name, description, logger=LOGGER):
+    """
+    Create a new field output with the given name and description
+    and saves the new field output into `frame.fieldOutputs`.
+    The new field output contains data of the given `field_output`
+    that are rotated to the global coordinate system.
+
+    Supported data types are:
+
+    - Scalar values,
+    - Vectors with 2 and 3 components
+    - Tensors supported by :py:func:`cf_shared.tensor_util.tensor_from_abaqus_notation`
+
+    :param frame: The new field output is saved to this frame's fieldOutputs
+    :param field_output: The existing field output whose values should be rotated
+    :param name: The name of the new field output
+    :param description: The description of the new field output
+    :param logger: Logging instance
+    :return: A new field output with data rotated to the global coordinate system
+    """
     if field_output.type == abqConst.SCALAR:
         return field_output
 
@@ -730,7 +1033,7 @@ def add_field_outputs(
 
                 # energy density
                 try:
-                    fo_e = field_output_expression(fo, e_expression)
+                    fo_e = eval_field_output_expression(fo, e_expression)
                 except KeyError as error:
                     logger.error("invalid field output %s in expression %s (%s)", error.args[0], error.args[1], msg)
                     break

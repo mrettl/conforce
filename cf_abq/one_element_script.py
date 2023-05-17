@@ -17,7 +17,7 @@ import abaqus as abq
 import abaqusConstants as abqConst
 
 
-def main(inp_file_path):
+def simulate(inp_file_path):
     """
     Simulate the given Abaqus input
     and write a json file named "{inp_name}_result.json" containing the results of the simulation.
@@ -72,7 +72,8 @@ if __name__ == '__main__':
 
     os.chdir(WORKING_DIRECTORY)
     try:
-        main(INP_FILE_PATH)
+        simulate(INP_FILE_PATH)
 
     finally:
         os.chdir(HOME_DIRECTORY)
+
