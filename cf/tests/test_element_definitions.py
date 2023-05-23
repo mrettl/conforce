@@ -4,7 +4,7 @@ import sympy as sy
 
 from cf.element_definitions import *
 from cf.one_element_runner import simulate_one_element
-from cf.expressions import eval_H, eval_dH_dR, eval_J, R_3d
+from cf.expressions import eval_R, eval_H, eval_dH_dR, eval_J, R_3d
 from cf.symbolic_util import create_replacement_rules, apply_replacement_rules
 
 
@@ -43,6 +43,23 @@ class TestElementDefinitions(unittest.TestCase):
                 self.assertEqual((n, d), exponents.shape)
                 self.assertEqual((n,), corner_nodes.shape)
                 self.assertEqual((n, n), adjacency_matrix.shape)
+
+    def test_sum_of_shape_functions(self):
+        for element_type in R_at_nodes_of_element.keys():
+            with self.subTest(element_type):
+                R_at_nodes = R_at_nodes_of_element[element_type]
+                exponents = exponents_of_shape_functions_of_element[element_type]
+
+                # computation
+                _, d = R_at_nodes.shape
+                R = eval_R(d)
+                H = eval_H(R, R_at_nodes, exponents)
+
+                # test
+                self.assertAlmostEqual(
+                    1.,
+                    sum(H)
+                )
 
     def test_validation_against_abaqus(self):
         for element_type, data in self.abaqus_data.items():
