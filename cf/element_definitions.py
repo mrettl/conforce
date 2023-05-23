@@ -250,7 +250,7 @@ adjacent_nodes_of_element[C3D10] = np.array([
     [1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
     [0, 0, 1, 1, 0, 0, 0, 0, 0, 0]
-])
+], dtype=bool)
 corner_nodes_of_element[C3D10] = np.sum(adjacent_nodes_of_element[C3D10].astype(int), axis=1) == 3
 
 C3D4 = "C3D4"

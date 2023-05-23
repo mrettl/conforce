@@ -52,7 +52,7 @@ Reference space `R`
 
 For a 2D element the reference space has 2 variables:
 
->>> R = eval_R(2)
+>>> R = eval_R(d)
 >>> r1, r2 = R
 
 Shape functions in reference space `H`
@@ -113,11 +113,11 @@ Shape functions are used to interpolate quantities inside the element.
 Values for a quantity are provided at the element nodes.
 E.g. The coordinates are provided at the element nodes.
 
->>> quantity = sy.Matrix(R_at_nodes)
+>>> quantity_at_nodes = sy.Matrix(R_at_nodes)
 
 The interpolation is done by a matrix multiplication with the shape functions.
 
->>> interpolation = quantity.T * H
+>>> interpolation = quantity_at_nodes.T * H
 >>> interpolation
 Matrix([
 [1.0*r0],
@@ -139,7 +139,7 @@ The derivative of the quantities with respect to
 the reference space coordinates is again a
 matrix multiplication.
 
->>> dQ_dR = quantity.T * dH_dR
+>>> dQ_dR = quantity_at_nodes.T * dH_dR
 
 E.g. the i-th quantity derived by the j-th reference space coordinate is
 
