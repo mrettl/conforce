@@ -72,3 +72,6 @@ However, there are a few exceptions.
 
  - Function names are lower case except they refer to a mathematical symbol that is written upper case 
     (e.g. `eval_J` refers to `J` the Jacobian matrix)
+
+## Versioning
+Use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).

@@ -2,10 +2,19 @@ import os
 import zipfile
 import datetime
 
-version = datetime.datetime.today().strftime('%Y-%m-%d')
+
+from cf_shared.__version__ import version
 
 with open("cf_shared/__version__.py", "w") as fh:
+    (version_id, *modifiers) = version.split("-")
+    (major, minor, patch) = version_id.split(".")
+    new_patch = int(patch) + 1
+
+    new_version_id = f"{major}.{minor}.{new_patch}"
+    version = "-".join([new_version_id] + modifiers)
+
     fh.write(f"version = '{version}'\n")
+    fh.write(f"build_date = '{datetime.datetime.utcnow().strftime('%Y.%m.%d %H:%M:%S')}'\n")
 
 os.makedirs("release", exist_ok=True)
 
