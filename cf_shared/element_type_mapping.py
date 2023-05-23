@@ -14,6 +14,22 @@ The element types must have:
 """
 
 map_abaqus_element_type_to_supported_element_type.update({
+    "CAX3": "CPE3",
+    "CAX3H": "CPE3",
+    "CAX4": "CPE4",
+    "CAX4H": "CPE4",
+    "CAX4I": "CPE4",
+    "CAX4IH": "CPE4",
+    "CAX4R": "CPE4",
+    "CAX4RH": "CPE4",
+    "CAX6": "CPE6",
+    "CAX6H": "CPE6",
+    "CAX6M": "CPE6",
+    "CAX6MH": "CPE6",
+    "CAX8": "CPE6",
+    "CAX8H": "CPE6",
+    "CAX8R": "CPE6",
+    "CAX8RH": "CPE6",
     "CPE3": "CPE3",
     "CPE3H": "CPE3",
     "CPE4": "CPE4",
