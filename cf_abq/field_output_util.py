@@ -938,8 +938,8 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
             labels = block.nodeLabels
         elif block.position == abqConst.INTEGRATION_POINT:
             labels = block.elementLabels
-            repeat_labels = np.unique(labels, return_counts=True)[1][0]
-            labels = labels[::repeat_labels]
+            labels, indices = np.unique(labels, return_index=True)
+            labels = labels[np.argsort(indices)]
         else:
             raise NotImplementedError("not supported position " + str(block.position))
 
