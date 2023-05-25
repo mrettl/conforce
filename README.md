@@ -97,7 +97,7 @@ The installed package contains:
     ````
 4. To uninstall the package, type:
     ````shell
-    pip uninstall ConfForce
+    pip uninstall conforce
     ````
 
 ### Usage
