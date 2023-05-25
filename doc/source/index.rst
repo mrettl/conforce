@@ -34,6 +34,8 @@ Table of Contents
 	
     README.md
     CONTRIBUTING.md
+
+    examples
     reference
     reference_abq
 

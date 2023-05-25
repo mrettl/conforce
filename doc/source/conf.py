@@ -79,18 +79,11 @@ html_sidebars = {
 # -- Extension configuration --------------------------------------------------
 autoclass_content = "init"
 
-# -- Options for autodoc extension ----------------------------------------
-intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'sympy': ('https://docs.sympy.org/latest', None)
-}
-
 # -- Options for intersphinx extension ----------------------------------------
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'sympy': ('https://docs.sympy.org/latest', None)
 }
-
 
 # -- Options for to do extension ----------------------------------------------
 todo_include_todos = True
@@ -115,24 +108,47 @@ if not os.path.exists(static_dir_path):
     print('make directory ' + static_dir_path)
     os.mkdir(static_dir_path)
 
+# -- Delete generated toc -----------------------------------------------------
+generated_toc_path = os.path.abspath(os.path.join(__file__, "generated"))
+if os.path.exists(generated_toc_path):
+    shutil.rmtree(generated_toc_path)
+
 # -- Copy files for root directory --------------------------------------------
 
-for file_name in ["README.md", "CONTRIBUTING.md", "LICENSE.txt"]:
-    source_readme = os.path.abspath(os.path.join(__file__, f"../../../{file_name}"))
-    destination_readme = os.path.abspath(os.path.join(__file__, f"../{file_name}"))
+for src, dest in [
+    ("../../../README.md", "../README.md"),
+    ("../../../CONTRIBUTING.md", "../CONTRIBUTING.md"),
+    ("../../../LICENSE.txt", "../LICENSE.txt"),
+    ("../../../examples/Example_1_Two-phase_bar/README.rst", "../example_1.rst"),
+    ("../../../examples/Example_1_Two-phase_bar/example_1_images", "../example_1_images"),
+]:
+    source = os.path.abspath(os.path.join(__file__, src))
+    destination = os.path.abspath(os.path.join(__file__, dest))
 
-    if os.path.exists(destination_readme):
-        source_time = os.path.getmtime(source_readme)
-        destination_time = os.path.getmtime(destination_readme)
+    mode = ""
 
-        if source_time > destination_time:
-            print(f'update {file_name}')
-            shutil.copyfile(
-                src=source_readme,
-                dst=destination_readme)
+    if not os.path.exists(destination):
+        mode = "add"
 
     else:
-        print(f'add {file_name}')
-        shutil.copyfile(
-            src=source_readme,
-            dst=destination_readme)
+        source_time = os.path.getmtime(source)
+        destination_time = os.path.getmtime(destination)
+
+        if source_time > destination_time:
+            mode = "update"
+
+    if mode != "":
+        print(f'{mode} {dest}')
+        if os.path.isdir(source):
+            if os.path.exists(destination):
+                shutil.rmtree(destination)
+            shutil.copytree(
+                src=source,
+                dst=destination,
+                dirs_exist_ok=False
+            )
+        else:
+            shutil.copyfile(
+                src=source,
+                dst=destination
+            )
