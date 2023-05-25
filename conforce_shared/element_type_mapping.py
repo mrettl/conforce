@@ -1,5 +1,13 @@
 """
 This module provides a map from element types to supported element types.
+
+.. note::
+    The mapping might make assumptions and simplifications.
+
+    One simplification is, that the out-of-plane strain of plane stress elements is negligible,
+    because Abaqus does not compute the out-of-plane strain.
+    Consequently, a correct implementation for plane stress elements is not possible
+    and the plane stress elements are instead treated as plane strain elements.
 """
 
 map_abaqus_element_type_to_supported_element_type = dict()
@@ -9,8 +17,9 @@ The element types must have:
 
  - the same shape,
  - the same dimension (2D or 3D),
- - the same number of nodes,
- - the same number of integration points
+ - the same number of nodes at the same positions,
+ - the same number of integration points at the same positions
+ - the same integration weights
 """
 
 map_abaqus_element_type_to_supported_element_type.update({
