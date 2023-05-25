@@ -12,13 +12,13 @@ Abbreviations
     - `X`: (d, 1)-Matrix of real space coordinates
 
     - `H`: (n, 1)-Matrix of shape functions
-    - `dH_dR`: (n, d)-Matrix: :math:`dh\_dr_{ik} = \partial h_{i} / \partial r_{k}`
-    - `dH_dX`: (n, d)-Matrix: :math:`dh\_dx_{ik} = \partial h_{i} / \partial x_{k}`
-    - `J`: (d, d)-Jacobian matrix: :math:`j_{ik}= \partial x_{i} / \partial r_{k}`
+    - `dH_dR`: (n, d)-Jacobian matrix of H with respect to R: :math:`dh\_dr_{ik} = \partial h_{i} / \partial r_{k}`
+    - `dX_dR`: (d, d)-Jacobian matrix of X with respect to R: :math:`dx\_dr_{ik}= \partial x_{i} / \partial r_{k}`
+    - `dH_dX`: (n, d)-Jacobian matrix of H with respect to X: :math:`dh\_dx_{ik} = \partial h_{i} / \partial x_{k}`
     - `U`: (d,)-Matrix of displacements in the real space
     - `U_at_nodes`: (n, d)-Matrix of displacements in the real space at the nodes
-    - `dU_dX`: (d, d)-Matrix: :math:`du\_dx_{ik} = \partial u_{i} / \partial x_{k}`
-    - `S`: (d, d)-Cauchy stress tensor
+    - `dU_dX`: (d, d)-Jacobian matrix of U with respect to X: :math:`du\_dx_{ik} = \partial u_{i} / \partial x_{k}`
+    - `S`: (d, d)-symmetric Cauchy stress tensor
     - `F`: (d, d)-Deformation gradient
     - `P`: (d, d)-First Piola-Kirchhoff stress tensor
     - `e`: internal energy density
@@ -196,7 +196,7 @@ Jacobian matrix `J`
 
 For the space transformation the jacobian is computed.
 
->>> J = eval_J(X_at_nodes, dH_dR)
+>>> dX_dR = eval_dX_dR(X_at_nodes, dH_dR)
 
 The jacobian derives the real space coordinates
 with respect to the reference space coordinates.
@@ -204,7 +204,7 @@ The i-th real space coordinate derived by the
 j-th reference space coordinate is
 
 >>> i, j = (1, 0)
->>> J[i, j]
+>>> dX_dR[i, j]
 0.500000000000000
 
 .. note::
@@ -242,7 +242,7 @@ respect to the reference space.
 To derive an interpolation like `U` with respect to the
 real space, the jacobian is used to transfer `dH_dR` to
 
->>> dH_dX = eval_dH_dX(dH_dR, J)
+>>> dH_dX = eval_dH_dX(dH_dR, dX_dR)
 
 Now the displacements can be derived with respect to the
 real space.
@@ -303,7 +303,7 @@ the determinat of the jacobian is added.
 ...     integral += (
 ...         int_weight
 ...         * e
-...         * float(J.det().xreplace(dict(zip([r1, r2], R_at_int_point))))
+...         * float(dX_dR.det().xreplace(dict(zip([r1, r2], R_at_int_point))))
 ...     )
 >>> integral
 234.0
@@ -623,12 +623,12 @@ def eval_dH_dR(H: sy.MatrixBase, R: sy.MatrixBase):
     return dH_dR_
 
 
-def eval_J(X_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dR: sy.MatrixBase):
+def eval_dX_dR(X_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dR: sy.MatrixBase):
     return X_at_nodes.T * dH_dR
 
 
-def eval_dH_dX(dH_dR: sy.MatrixBase, J: sy.MatrixBase):
-    return dH_dR * inverse(J)
+def eval_dH_dX(dH_dR: sy.MatrixBase, dX_dR: sy.MatrixBase):
+    return dH_dR * inverse(dX_dR)
 
 
 def eval_dU_dX(U_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dX: sy.MatrixBase):
@@ -654,13 +654,13 @@ def eval_CS_dbf(d_: int, e: sy.Expr, dU_dX: sy.MatrixBase, P: sy.MatrixBase):
 def eval_CF_at_nodes(
         dH_dX: sy.MatrixBase,
         CS: sy.MatrixBase,
-        J: sy.MatrixBase,
+        dX_dR: sy.MatrixBase,
         int_weights: np.ndarray,
         int_points_replacements: List[Dict[sy.Expr, Any]]):
 
     CF_contributions = list()
     for w, int_point_replacement in zip(int_weights, int_points_replacements):
-        expr_ = dH_dX * (CS.T * J.det() * w)
+        expr_ = dH_dX * (CS.T * dX_dR.det() * w)
 
         expr_ = expr_.xreplace(int_point_replacement)
         CF_contributions.append(expr_)
@@ -748,12 +748,12 @@ class Computation(object):
         dH_dR_ = eval_dH_dR(H_, R).doit()
         symbols_to_expressions[dH_dR] = dH_dR_
 
-        J = create_symbolic_matrix("J{row}{col}", dim_x, dim_r, *R)
-        J_ = eval_J(X_at_nodes, dH_dR_).doit()
-        symbols_to_expressions[J] = J_
+        dX_dR = create_symbolic_matrix("d{row}_d{col}", dim_x, dim_r, *R)
+        dX_dR_ = eval_dX_dR(X_at_nodes, dH_dR_).doit()
+        symbols_to_expressions[dX_dR] = dX_dR_
 
         dH_dX = create_symbolic_matrix("dH{row}_d{col}", dim_n, dim_x, *R)
-        dH_dX_ = eval_dH_dX(dH_dR_, J).doit()
+        dH_dX_ = eval_dH_dX(dH_dR_, dX_dR).doit()
         symbols_to_expressions[dH_dX] = dH_dX_
 
         dU_dX = create_symbolic_matrix("dU{row}_d{col}", dim_x, dim_x, *R)
@@ -782,7 +782,7 @@ class Computation(object):
         CF_at_nodes_ = eval_CF_at_nodes(
             dH_dX,
             CS,
-            J,
+            dX_dR,
             int_weights_,
             replacements_by_int_points
         ).doit()

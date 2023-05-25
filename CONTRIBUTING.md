@@ -64,14 +64,15 @@ However, there are a few exceptions.
    - Matrix components are scalars and thus are lower case. The index is written without an underscore. 
      E.g. `X = [x0, x1, x2]`
    - If (sympy) symbols and concrete values are used simultaneously, the variable for the concrete value ends with an underscore. E.g.:
-     `J` (symbolic Jacobian matrix) and `J_` (numpy array of the Jacobian matrix)
+     `U` (symbolic displacements) and `U_` (numpy array of displacements)
    - Variables referring to specific points are named according to `{variable_name}_at_{point_name}`.
    - The derivative of `H` with respect to `R` is written as `dH_dR`.
 
 #### Functions
 
  - Function names are lower case except they refer to a mathematical symbol that is written upper case 
-    (e.g. `eval_J` refers to `J` the Jacobian matrix)
+    (e.g. `eval_H` refers to `H` the matrix of shape functions)
 
 ## Versioning
-Use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Use [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `{major}.{minor}.{patch}[-{modifier}]`
+The modifier is optional.

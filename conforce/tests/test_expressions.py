@@ -61,8 +61,8 @@ class TestExpressions(unittest.TestCase):
                 U_at_nodes = X_at_nodes @ F_expected.T - X_at_nodes
                 H = eval_H(R, R_at_nodes, exponents)
                 dH_dR = eval_dH_dR(H, R)
-                J = eval_J(X_at_nodes, dH_dR)
-                dH_dX = eval_dH_dX(dH_dR, J)
+                dX_dR = eval_dX_dR(X_at_nodes, dH_dR)
+                dH_dX = eval_dH_dX(dH_dR, dX_dR)
                 dU_dX = eval_dU_dX(U_at_nodes, dH_dX)
                 F = eval_F(d, dU_dX)
 

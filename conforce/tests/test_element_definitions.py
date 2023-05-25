@@ -4,7 +4,7 @@ import sympy as sy
 
 from conforce.element_definitions import *
 from conforce.one_element_runner import simulate_one_element
-from conforce.expressions import eval_R, eval_H, eval_dH_dR, eval_J, R_3d
+from conforce.expressions import eval_R, eval_H, eval_dH_dR, eval_dX_dR, R_3d
 from conforce.symbolic_util import create_replacement_rules, apply_replacement_rules
 
 
@@ -81,8 +81,8 @@ class TestElementDefinitions(unittest.TestCase):
                 H = eval_H(R, R_at_nodes_current, exponents)
                 X = X_at_nodes_abaqus.T @ H
                 dH_dR = eval_dH_dR(H, R)
-                J = eval_J(X_at_nodes_abaqus, dH_dR)
-                detJ = J.det()
+                dX_dR = eval_dX_dR(X_at_nodes_abaqus, dH_dR)
+                detJ = dX_dR.det()
 
                 int_repl_rules = create_replacement_rules(R, *R_at_int_points_current)
 
