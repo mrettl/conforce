@@ -133,7 +133,7 @@ class MyForm(gui.AFXForm):
         gui.AFXForm.__init__(self, owner)
         self.owner = owner
 
-        self.cmd = gui.AFXGuiCommand(self, "main", "cf_abq_main")
+        self.cmd = gui.AFXGuiCommand(self, "apply", "cf_abq_main")
         self.kw_odb_name = gui.AFXStringKeyword(self.cmd, "odb_or_odb_name", True)
         self.kw_method = gui.AFXStringKeyword(self.cmd, "method", True)
         self.kw_e_expression = gui.AFXStringKeyword(self.cmd, "e_expression", True)

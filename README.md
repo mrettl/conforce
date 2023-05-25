@@ -89,11 +89,11 @@ The installed package contains:
 1. Clone the repository into a folder
 2. Open a shell in this folder where the setup.py file is located. Activate your environment, if you are using conda.
 3. Type:
-    ````commandline
+    ````shell
     pip install .
     ````
 4. To uninstall the package, type:
-    ````commandline
+    ````shell
     pip uninstall ConfForce
     ````
 

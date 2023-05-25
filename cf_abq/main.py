@@ -1,3 +1,6 @@
+"""
+This module contains a function the configurational force computation to an odb.
+"""
 import logging
 import sys
 from io import StringIO
@@ -7,7 +10,7 @@ import abaqus as abq
 from cf_abq.field_output_util import add_field_outputs
 
 
-def main(
+def apply(
         odb_or_odb_name=None,
         request_F=False,
         request_P=False,
@@ -18,6 +21,37 @@ def main(
         method="mbf",
         e_expression="SENER+PENER"
 ):
+    """
+    Apply the configurational force computation to an odb.
+    Additionally, this function prints a log summary after the computation.
+
+    .. seealso::
+        The computation is done by :py:func:`cf_abq.field_output_util.add_field_outputs`
+
+
+    :param odb_or_odb_name: If None, use current odb.
+                            If a string, lookup the name of the odb in the list of opened odb and use this odb.
+                            If an Odb, use the given Odb object
+    :type odb_or_odb_name: Union[None, str, Odb]
+    :param request_F: True, to create a FieldOutput for the deformation gradient
+    :type request_F: bool
+    :param request_P: True, to create a FieldOutput for the First Piola-Kirchhoff stresses
+    :type request_P: bool
+    :param request_CS: True, to create a FieldOutput for the configurational stresses
+    :type request_CS: bool
+    :param request_CF: True, to create a FieldOutput for the configurational forces
+    :type request_CF: bool
+    :param CS_name: name-prefix of the configurational stress FieldOutput (only considered if `request_CS == True`)
+    :type CS_name: str
+    :param CF_name: name of the configurational force FieldOutput (only considered if `request_CF == True`)
+    :type CF_name: str
+    :param method: see :py:func:`cf_shared.cf_c.compute_CS`
+    :type method: str
+    :param e_expression: see :py:func:`cf_abq.field_output_util.eval_field_output_expression`
+    :type e_expression: str
+    :return: Odb with new requested FieldOutputs
+    :rtype: Odb
+    """
     log = StringIO()
     handler_log = logging.StreamHandler(log)
     handler_log.setFormatter(logging.Formatter(fmt=u'%(levelname)s: %(message)s'))

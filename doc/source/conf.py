@@ -117,6 +117,7 @@ if os.path.exists(generated_toc_path):
 
 for src, dest in [
     ("../../../README.md", "../README.md"),
+    ("../../../plugin_gui.png", "../plugin_gui.png"),
     ("../../../CONTRIBUTING.md", "../CONTRIBUTING.md"),
     ("../../../LICENSE.txt", "../LICENSE.txt"),
     ("../../../examples/Example_1_Two-phase_bar/README.rst", "../example_1.rst"),
