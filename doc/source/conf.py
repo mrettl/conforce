@@ -17,15 +17,15 @@ import shutil
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.append(os.path.abspath("./dummy_packages"))
 
-import cf_shared
+import conforce_shared
 
 # -- Project information ------------------------------------------------------
 
-project = cf_shared.project
-project_copyright = cf_shared.project_copyright
-author = cf_shared.author
-version = cf_shared.version
-release = cf_shared.version
+project = conforce_shared.project
+project_copyright = conforce_shared.project_copyright
+author = conforce_shared.author
+version = conforce_shared.version
+release = conforce_shared.version
 
 # -- General configuration ----------------------------------------------------
 
@@ -73,7 +73,7 @@ html_static_path = ['_static']
 
 # add table of content to sidebar
 html_sidebars = {
-    '**': ['searchbox.html', 'relations.html', 'sourcelink.html', 'globaltoc.html']
+    '**': ['searchbox.html', 'relations.html', 'sourcelink.html', 'globaltoc.html', 'localtoc.html']
 }
 
 # -- Extension configuration --------------------------------------------------

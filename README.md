@@ -28,16 +28,16 @@ The Abaqus Plug-in contains:
 
 ### Installation
 
-Download the zip file called `cf_plugin_{version}.zip`.
+Download the zip file called `conforce_plugin_{version}.zip`.
 The zip file has the following structure:
 
-- `cf_plugin_{version}.zip`
-  - `cf`
-    - `cf_abq`
+- `conforce_plugin_{version}.zip`
+  - `conforce`
+    - `conforce_abq`
       - ...
-    - `cf_shared`
+    - `conforce_shared`
       - ...
-    - `cf_abq_plugin.py`
+    - `conforce_abq_plugin.py`
     - ...
 
 To install the Abaqus Plug-in, unzip the file in one of the following valid `plugin-folder`:
@@ -53,12 +53,12 @@ To install the Abaqus Plug-in, unzip the file in one of the following valid `plu
 The folder tree should look like:
 
 - `plugin-folder`
-  - `cf`
-    - `cf_abq`
+  - `conforce`
+    - `conforce_abq`
       - ...
-    - `cf_shared`
+    - `conforce_shared`
       - ...
-    - `cf_abq_plugin.py`
+    - `conforce_abq_plugin.py`
     - ...
 
 Start Abaqus and navigate in the toolbar to `Plug-ins -> Conf. Force`.
@@ -105,7 +105,8 @@ the displacement `U` and the symmetric Cauchy stress tensor `S`
 are passed to the `compute_CF` function alongside the element type and the computation method.
 
 ````python
-from cf_shared import cf_c
+from conforce_shared import cf_c
+
 cf_c.compute_CF(
     e_at_int_points=[[10.]],
     X_at_nodes=[[

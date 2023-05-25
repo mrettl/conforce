@@ -1,18 +1,18 @@
 from setuptools import setup
 
-from cf_shared import version
+import conforce_shared
 
 setup(
-    name='ConfForce',
-    version=version,
-    description='This packages provides methods to compute configurational forces.',
-    url='https://github.com/mrettl/ConfigurationalForcesPlugin',
+    name=conforce_shared.project,
+    version=conforce_shared.version,
+    description=conforce_shared.description,
+    url=conforce_shared.helpUrl,
     license_files=["LICENSE.txt"],
-    author='Matthias Rettl, Markus Tauscher, Sigfried Frankl, Martin Pletz',
+    author=conforce_shared.author,
     author_email='matthias.rettl@unileoben.ac.at',
-    packages=['cf', 'cf_shared'],
+    packages=['conforce', 'conforce_shared'],
     package_dir={'.': ''},
-    package_data={'cf_shared': ['*.dll', '*.so']},
+    package_data={'conforce_shared': ['*.dll', '*.so']},
     install_requires=[
         "numpy~=1.21.5",
         "sympy~=1.10.1",

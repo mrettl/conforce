@@ -1,5 +1,5 @@
-CF - Configurational Forces Plug-in
-===================================
+conforce - Configurational Forces Plug-in
+=========================================
 
 ======== =========
 release: |release|
@@ -20,11 +20,6 @@ The documentation of classes and methods is in the reference chapter.
 The examples chapter shows some cells with the code for the cell generation.
 
 The changelog chapter lists changes for each version of this package.
-
-TODO
-----
-
-.. todolist::
 
 Table of Contents
 -----------------

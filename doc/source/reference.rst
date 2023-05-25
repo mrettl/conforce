@@ -4,11 +4,11 @@ Reference
 .. autosummary::
 	:toctree: generated
 
-	cf.element_definitions
-	cf.codegen
-	cf.expressions
-	cf.one_element_runner
-	cf.symbolic_util
-	cf_shared.cf_c
-	cf_shared.element_type_mapping
-	cf_shared.tensor_util
+	conforce.element_definitions
+	conforce.codegen
+	conforce.expressions
+	conforce.one_element_runner
+	conforce.symbolic_util
+	conforce_shared.cf_c
+	conforce_shared.element_type_mapping
+	conforce_shared.tensor_util

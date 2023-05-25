@@ -6,7 +6,7 @@ If you want to use this package, we refer to the README file.
 ## Getting started
 
 Clone or download this repository to your disk.
-Make sure all dependencies declared in `requirements.txt` are installed.
+Make sure all dependencies declared in `setup.py` are installed.
 
 Only for Windows users:
 Download and install `gcc`.
@@ -14,8 +14,8 @@ Binaries for `gcc` are included in [w64devkit](https://github.com/skeeto/w64devk
 Create a system or user environment variable called `PATH` 
 and append the path `w64devkit\bin` where `gcc.exe` is located.
 
-Try to run all tests located in the modules `cf` and `cf_shared`.
-Additionally, an Abaqus installation is required to execute code located in `cf_abq`.
+Try to run all tests located in the modules `conforce` and `conforce_shared`.
+Additionally, an Abaqus installation is required to execute code located in `conforce_abq`.
 
 ## Test Code
 
@@ -46,9 +46,9 @@ The following is a set of guidelines and conventions.
 ### Packages
     
  - The package
-   - `cf` contains modules that require Python 3.* and do not run in Abaqus Python
-   - `cf_abq` contains modules that require Abaqus Python and do not run in Python 3.*
-   - `cf_shared` contains modules that run in both, Abaqus Python and Python 3.*
+   - `conforce` contains modules that require Python 3.* and do not run in Abaqus Python
+   - `conforce_abq` contains modules that require Abaqus Python and do not run in Python 3.*
+   - `conforce_shared` contains modules that run in both, Abaqus Python and Python 3.*
 
 ### Naming Conventions
 
