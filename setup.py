@@ -12,6 +12,7 @@ setup(
     author_email='matthias.rettl@unileoben.ac.at',
     packages=['cf', 'cf_shared'],
     package_dir={'.': ''},
+    package_data={'cf_shared': ['*.dll', '*.so']},
     install_requires=[
         "numpy~=1.21.5",
         "sympy~=1.10.1",
