@@ -1,4 +1,7 @@
-# Configurational Forces Computation
+Readme
+======
+
+![logo](conforce_logo_icon.png)
 
 This package provides:
 

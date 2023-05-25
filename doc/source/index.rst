@@ -1,5 +1,6 @@
-conforce - Configurational Forces Plug-in
-=========================================
+.. image:: conforce_logo_icon.png
+    :alt: conforce logo
+
 
 ======== =========
 release: |release|

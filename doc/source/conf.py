@@ -76,6 +76,9 @@ html_sidebars = {
     '**': ['searchbox.html', 'relations.html', 'sourcelink.html', 'globaltoc.html', 'localtoc.html']
 }
 
+# add logo
+html_logo = "_static/conforce_logo_icon_small.png"
+
 # -- Extension configuration --------------------------------------------------
 autoclass_content = "init"
 
@@ -117,6 +120,7 @@ if os.path.exists(generated_toc_path):
 
 for src, dest in [
     ("../../../README.md", "../README.md"),
+    ("../../../conforce_logo_icon.png", "../conforce_logo_icon.png"),
     ("../../../plugin_gui.png", "../plugin_gui.png"),
     ("../../../CONTRIBUTING.md", "../CONTRIBUTING.md"),
     ("../../../LICENSE.txt", "../LICENSE.txt"),

@@ -1,5 +1,5 @@
 """
-This module contains a function the configurational force computation to an odb.
+This module contains a function for the configurational force computation in an odb.
 """
 import logging
 import sys

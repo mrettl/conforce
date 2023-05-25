@@ -284,7 +284,7 @@ class TermCollector:
         **Examples**
 
         The matrix `M` is expressed in terms of matrix `T`.
-        For each matrix component an :py:class`ast.Assignment` is created.
+        For each matrix component an :py:class:`ast.Assignment` is created.
         The assignments can be executed from the first one to the last one,
         because it is guaranteed that a dependent variable occurs after
         all its dependencies are computed.

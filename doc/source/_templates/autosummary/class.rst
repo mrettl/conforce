@@ -9,7 +9,9 @@
 {% block methods %}
 
 {% if methods %}
-.. rubric:: Methods
+
+Methods
+-------
 
 .. autosummary::
 	:toctree: {{ objname }}
@@ -22,7 +24,9 @@
 
 {% block attributes %}
 {% if attributes %}
-.. rubric:: Attributes
+
+Attributes
+----------
 
 .. autosummary::
 	:toctree: {{ objname }}

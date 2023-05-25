@@ -6,7 +6,9 @@
 
 {% block functions %}
 {% if functions %}
-.. rubric:: Functions
+
+Functions
+---------
 
 .. autosummary::
 	:toctree: {{ objname }}
@@ -18,7 +20,9 @@
 
 {% block classes %}
 {% if classes %}
-.. rubric:: Classes
+
+Classes
+-------
 
 .. autosummary::
 	:toctree: {{ objname }}
@@ -30,7 +34,9 @@
 
 {% block exceptions %}
 {% if exceptions %}
-.. rubric:: Exceptions
+
+Exceptions
+----------
 
 .. autosummary::
 {% for item in exceptions %}
@@ -42,7 +48,9 @@
 
 {% block attributes %}
 {% if attributes %}
-.. rubric:: Attributes
+
+Attributes
+----------
 
 .. autosummary::
 	:toctree: {{ objname }}
