@@ -1,26 +1,15 @@
 .. image:: conforce_logo_icon.png
     :alt: conforce logo
 
+Conforce supports element types defined in :py:attr:`conforce_shared.cf_c.map_type_to_info` directly.
 
-======== =========
-release: |release|
-created: |today|
-======== =========
+Furthermore, some element types are treated like a supported element type.
+This allows to apply also not directly supported element types.
+The dictionary defined in :py:attr:`conforce_shared.element_type_mapping.map_abaqus_element_type_to_supported_element_type`
+defines which element types can be treated as they were a supported element type.
 
-How to read this documentation
-------------------------------
+For a short theory on configurational forces see :py:mod:`conforce.expressions`.
 
-The README chapter explains how to install this package.
-
-The quick start chapter describes how a cell is generated.
-
-The theory chapter explains concepts for the cell generation.
-
-The documentation of classes and methods is in the reference chapter.
-
-The examples chapter shows some cells with the code for the cell generation.
-
-The changelog chapter lists changes for each version of this package.
 
 Table of Contents
 -----------------

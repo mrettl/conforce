@@ -14,8 +14,13 @@ import os
 import sys
 import shutil
 
-sys.path.insert(0, os.path.abspath('../..'))
-sys.path.append(os.path.abspath("./dummy_packages"))
+DOC_SOURCE_DIR = os.path.abspath(__file__ + '/..')
+DOC_DIR = os.path.abspath(DOC_SOURCE_DIR + '/..')
+HOME_DIR = os.path.abspath(DOC_SOURCE_DIR + '/../..')
+
+sys.path.append(os.path.abspath(DOC_SOURCE_DIR + "/dummy_packages"))
+sys.path.insert(0, HOME_DIR + "/examples/Example_1_Two-phase_bar")
+sys.path.insert(0, HOME_DIR)
 
 import conforce_shared
 
@@ -39,7 +44,6 @@ extensions = [
     'sphinx.ext.viewcode',  # Add links to highlighted source code
     'sphinx.ext.todo',  # Support for to do
     'sphinx.ext.mathjax',  # Render math via JavaScript
-    'sphinx.ext.doctest',  # Test snippets in the documentation
     'recommonmark',  # For markdown syntas (.md-files)
     'sphinx_rtd_theme'  # Read-the-Docs theme
 ]
@@ -65,7 +69,7 @@ html_split_index = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'  # 'pyramid'
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -79,6 +83,7 @@ html_sidebars = {
 
 # add logo
 html_logo = "_static/conforce_logo_icon_small.png"
+html_favicon = "_static/favicon.ico"
 
 # -- Extension configuration --------------------------------------------------
 autoclass_content = "init"
@@ -95,38 +100,27 @@ todo_include_todos = True
 # -- Options for autosummary extension ----------------------------------------
 autosummary_generate = True
 
-# -- Options for doctest extension --------------------------------------------
-doctest_global_setup = """
-import os
-os.chdir('..')
-"""
-doctest_global_cleanup = """
-import os
-os.chdir('doc')
-"""
-
 # -- Create _static dir -------------------------------------------------------
 
-static_dir_path = os.path.abspath(os.path.join(__file__, "../_static"))
+static_dir_path = os.path.abspath(os.path.join(DOC_SOURCE_DIR, "/_static"))
 if not os.path.exists(static_dir_path):
     print('make directory ' + static_dir_path)
     os.mkdir(static_dir_path)
 
 # -- Delete generated toc -----------------------------------------------------
-generated_toc_path = os.path.abspath(os.path.join(__file__, "generated"))
+generated_toc_path = os.path.abspath(os.path.join(DOC_SOURCE_DIR, "/generated"))
 if os.path.exists(generated_toc_path):
     shutil.rmtree(generated_toc_path)
 
 # -- Copy files for root directory --------------------------------------------
 
 for src, dest in [
-    ("../../../README.md", "../README.md"),
-    ("../../../conforce_logo_icon.png", "../conforce_logo_icon.png"),
-    ("../../../plugin_gui.png", "../plugin_gui.png"),
-    ("../../../CONTRIBUTING.md", "../CONTRIBUTING.md"),
-    ("../../../LICENSE.txt", "../LICENSE.txt"),
-    ("../../../examples/Example_1_Two-phase_bar/README.rst", "../example_1.rst"),
-    ("../../../examples/Example_1_Two-phase_bar/example_1_images", "../example_1_images"),
+    (f"{HOME_DIR}/README.md", f"{DOC_SOURCE_DIR}/README.md"),
+    (f"{HOME_DIR}/conforce_logo_icon.png", f"{DOC_SOURCE_DIR}/conforce_logo_icon.png"),
+    (f"{HOME_DIR}/plugin_gui.png", f"{DOC_SOURCE_DIR}/plugin_gui.png"),
+    (f"{HOME_DIR}/CONTRIBUTING.md", f"{DOC_SOURCE_DIR}/CONTRIBUTING.md"),
+    (f"{HOME_DIR}/LICENSE.txt", f"{DOC_SOURCE_DIR}/LICENSE.txt"),
+    (f"{HOME_DIR}/examples/Example_1_Two-phase_bar/example_1_images", f"{DOC_SOURCE_DIR}/examples/example_1_images"),
 ]:
     source = os.path.abspath(os.path.join(__file__, src))
     destination = os.path.abspath(os.path.join(__file__, dest))

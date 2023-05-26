@@ -1,3 +1,4 @@
+r"""
 Example 1 - Two-phase bar
 =========================
 
@@ -75,7 +76,8 @@ This results in the expected configurational force in x-direction at the interfa
 ...     e: u_val / l_val,
 ...     l: l_val,
 ...     l1: l1_val
-... })  # N
+... })
+>>> CFx_at_interface_theory  # N
 11.6666666666667
 
 Apply Plug-in
@@ -149,7 +151,7 @@ The Plug-In GUI opens.
   Set the energy density to `SENER` to only consider the elastic strain energy density.
   Or use `SENER+PENER` to build the sum of elastic and plastic energy density.
 - Select quantities in the field output section that are computed and saved into the odb.
-- The name of the configurational stress and force can be modified 
+- The name of the configurational stress and force can be modified
   to compute them with different methods.
 
 Click Apply to start the computation.
@@ -204,3 +206,4 @@ References
 .. [1] Kolling, S., and R. Mueller.
     "On configurational forces in short-time dynamics and their computation with an explicit solver."
     Computational Mechanics 35 (2005): 392-399.
+"""

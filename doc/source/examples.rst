@@ -4,4 +4,4 @@ Examples
 .. toctree::
     :maxdepth: 2
 
-    example_1.md
+    examples/example_1_two_phase_bar

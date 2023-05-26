@@ -570,16 +570,28 @@ R_3d = create_symbolic_matrix("r{row}", 3, 1)
 """symbolic reference space coordinates for the 3d space"""
 
 
-def eval_R(d_: int):
-    return sy.Matrix(R_3d[:d_])
+def eval_R(d: int):
+    """
+    Evaluate symbolic reference space coordinates.
+    :param d: number of dimensions (2 or 3)
+    :return: symbolic matrix
+    """
+    return sy.Matrix(R_3d[:d])
 
 
-def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
-    R_at_nodes_ = np.array(R_at_nodes_, dtype=float)
-    exponents_ = np.array(exponents_, dtype=int)
+def eval_H(R: sy.MatrixBase, R_at_nodes: np.ndarray, exponents: np.ndarray):
+    """
+    Evaluate shape functions.
+    :param R: symbolic reference space coordinates
+    :param R_at_nodes: reference space coordinates at nodes
+    :param exponents: exponents of powers of the shape functions
+    :return: symbolic matrix
+    """
+    R_at_nodes = np.array(R_at_nodes, dtype=float)
+    exponents = np.array(exponents, dtype=int)
 
-    num_points_ = R_at_nodes_.shape[0]
-    num_powers_ = exponents_.shape[0]
+    num_points_ = R_at_nodes.shape[0]
+    num_powers_ = exponents.shape[0]
     assert num_points_ == num_powers_
 
     # symbolic powers of shape functions
@@ -588,7 +600,7 @@ def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
             sy.Pow(ri, power)
             for ri, power in zip(R.T.tolist()[0], powers)
         ]).nsimplify()
-        for powers in exponents_
+        for powers in exponents
     ])
 
     # A_[i, j] = i-th shape power evaluated at j-th point
@@ -598,7 +610,7 @@ def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
             for ri, xi
             in zip(R.T.tolist()[0], point)
         })
-        for point in R_at_nodes_
+        for point in R_at_nodes
     ]).T
 
     # coefficients solve the system COEFFICIENTS_ * A_ = I,
@@ -612,6 +624,12 @@ def eval_H(R: sy.MatrixBase, R_at_nodes_: np.ndarray, exponents_: np.ndarray):
 
 
 def eval_dH_dR(H: sy.MatrixBase, R: sy.MatrixBase):
+    """
+    Evaluate derivatives of shape functions with respect to reference space coordinates.
+    :param H: shape functions
+    :param R: symbolic reference space coordinates
+    :return: symbolic matrix
+    """
     n_ = H.shape[0]
     d_ = R.shape[0]
 
@@ -624,31 +642,77 @@ def eval_dH_dR(H: sy.MatrixBase, R: sy.MatrixBase):
 
 
 def eval_dX_dR(X_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dR: sy.MatrixBase):
+    """
+    Evaluate derivatives of undeformed real space coordinates with respect to reference space coordinates.
+    :param X_at_nodes: undeformed real space coordinates at nodes
+    :param dH_dR: derivatives of shape functions with respect to reference space coordinates
+    :return: symbolic matrix
+    """
     return X_at_nodes.T * dH_dR
 
 
 def eval_dH_dX(dH_dR: sy.MatrixBase, dX_dR: sy.MatrixBase):
+    """
+    Evaluate derivatives of shape functions with respect to undeformed real space coordinates.
+    :param dH_dR: derivatives of shape functions with respect to reference space coordinates
+    :param dX_dR: derivatives of undeformed real space coordinates with respect to reference space coordinates
+    :return: symbolic matrix
+    """
     return dH_dR * inverse(dX_dR)
 
 
 def eval_dU_dX(U_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dX: sy.MatrixBase):
+    """
+    Evaluate derivatives of displacements with respect to undeformed real space coordinates.
+    :param U_at_nodes: displacements at nodes
+    :param dH_dX: derivatives of shape functions with respect to undeformed real space coordinates
+    :return: symbolic matrix
+    """
     return sy.Matrix(U_at_nodes.T) * dH_dX
 
 
-def eval_F(d_: int, dU_dX: sy.MatrixBase):
-    return sy.eye(d_) + dU_dX
+def eval_F(d: int, dU_dX: sy.MatrixBase):
+    """
+    Evaluate the deformation gradient.
+    :param d: number of dimensions
+    :param dU_dX: derivatives of displacements with respect to undeformed real space coordinates
+    :return: symbolic matrix
+    """
+    return sy.eye(d) + dU_dX
 
 
 def eval_P(F: sy.MatrixBase, S: sy.MatrixBase):
+    """
+    Evaluate the First Piola-Kirchhoff stress tensor.
+    :param F: deformation gradient
+    :param S: symmetric Cauchy stress tensor
+    :return: symbolic matrix
+    """
     return S * inverse(F).T * F.det()
 
 
-def eval_CS_mbf(d_: int, e: sy.Expr, F: sy.MatrixBase, P: sy.MatrixBase):
-    return e * sy.eye(d_) - F.T * P
+def eval_CS_mbf(d: int, e: sy.Expr, F: sy.MatrixBase, P: sy.MatrixBase):
+    """
+    Evaluate motion based configurational stress tensor.
+    :param d: number of dimensions
+    :param e: energy density
+    :param F: deformation gradient
+    :param P: First Piola-Kirchhoff stress tensor
+    :return: symbolic matrix
+    """
+    return e * sy.eye(d) - F.T * P
 
 
-def eval_CS_dbf(d_: int, e: sy.Expr, dU_dX: sy.MatrixBase, P: sy.MatrixBase):
-    return e * sy.eye(d_) - dU_dX.T * P
+def eval_CS_dbf(d: int, e: sy.Expr, dU_dX: sy.MatrixBase, P: sy.MatrixBase):
+    """
+    Evaluate deformation based configurational stress tensor.
+    :param d: number of dimensions
+    :param e: energy density
+    :param dU_dX: derivatives of displacements with respect to undeformed real space coordinates
+    :param P: First Piola-Kirchhoff stress tensor
+    :return: symbolic matrix
+    """
+    return e * sy.eye(d) - dU_dX.T * P
 
 
 def eval_CF_at_nodes(
@@ -657,6 +721,19 @@ def eval_CF_at_nodes(
         dX_dR: sy.MatrixBase,
         int_weights: np.ndarray,
         int_points_replacements: List[Dict[sy.Expr, Any]]):
+    """
+    Evaluate the configurational forces at the element nodes.
+
+    :param dH_dX: derivatives of shape functions with respect to undeformed real space coordinates
+    :param CS: configurational stress tensor
+    :param dX_dR: derivatives of undeformed real space coordinates with respect to reference space coordinates
+    :param int_weights: integration weights corresponding to the integration points
+    :param int_points_replacements: Each list entry corresponds to an integration point
+        and contains a dictionary that maps the reference space coordinate symbols
+        to the position of an integration point. (E.g. `[{r: 0., s: 0.}]`)
+
+    :return: symbolic matrix
+    """
 
     CF_contributions = list()
     for w, int_point_replacement in zip(int_weights, int_points_replacements):

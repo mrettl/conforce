@@ -92,16 +92,21 @@ import numpy as np
 
 
 # load c library
-if os.name == 'nt':
-    # windows
-    lib = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.join(
-        __file__, os.path.pardir, 'REPLACE_THIS_BY_LIBRARY_FILE_NAME.dll'
-    )))
-else:
-    # linux
-    lib = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.join(
-        __file__, os.path.pardir, 'REPLACE_THIS_BY_LIBRARY_FILE_NAME.so'
-    )))
+try:
+    if os.name == 'nt':
+        # windows
+        lib = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.join(
+            __file__, os.path.pardir, 'cf_c.dll'
+        )))
+    else:
+        # linux
+        lib = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.join(
+            __file__, os.path.pardir, 'cf_c.so'
+        )))
+
+except Exception as exception:
+    print("failed to bind to c-code library.")
+    print(exception)
 
 
 # function lookup dictionaries
