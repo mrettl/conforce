@@ -2,3 +2,4 @@ numpy~=1.21.5
 sympy~=1.10.1
 Sphinx>=5.0
 recommonmark>=0.7
+sphinx_rtd_theme

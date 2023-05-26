@@ -21,6 +21,7 @@ setup(
         "documentation": [
             "Sphinx>=5.0",
             "recommonmark>=0.7",
+            "sphinx_rtd_theme"
         ]
     },
 )
