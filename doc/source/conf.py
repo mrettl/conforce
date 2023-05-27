@@ -101,17 +101,6 @@ todo_include_todos = True
 # -- Options for autosummary extension ----------------------------------------
 autosummary_generate = True
 
-# -- Create _static dir -------------------------------------------------------
-
-static_dir_path = os.path.abspath(os.path.join(DOC_SOURCE_DIR, "/_static"))
-if not os.path.exists(static_dir_path):
-    print('make directory ' + static_dir_path)
-    os.mkdir(static_dir_path)
-
-# -- Delete generated toc -----------------------------------------------------
-generated_toc_path = os.path.abspath(os.path.join(DOC_SOURCE_DIR, "/generated"))
-if os.path.exists(generated_toc_path):
-    shutil.rmtree(generated_toc_path)
 
 # -- Copy files for root directory --------------------------------------------
 
