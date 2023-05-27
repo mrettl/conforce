@@ -18,6 +18,11 @@ DOC_SOURCE_DIR = os.path.abspath(__file__ + '/..')
 DOC_DIR = os.path.abspath(DOC_SOURCE_DIR + '/..')
 HOME_DIR = os.path.abspath(DOC_SOURCE_DIR + '/../..')
 
+print(__file__)
+print(DOC_SOURCE_DIR)
+print(DOC_DIR)
+print(HOME_DIR)
+
 sys.path.append(os.path.abspath(DOC_SOURCE_DIR + "/dummy_packages"))
 sys.path.insert(0, HOME_DIR + "/examples/Example_1_Two_phase_bar")
 sys.path.insert(0, HOME_DIR + "/examples/Example_2_CT_specimen_linear_elastic")
