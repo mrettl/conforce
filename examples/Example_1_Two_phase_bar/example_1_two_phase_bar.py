@@ -207,3 +207,7 @@ References
     "On configurational forces in short-time dynamics and their computation with an explicit solver."
     Computational Mechanics 35 (2005): 392-399.
 """
+import doctest
+
+if __name__ == '__main__':
+    doctest.testmod(verbose=True)

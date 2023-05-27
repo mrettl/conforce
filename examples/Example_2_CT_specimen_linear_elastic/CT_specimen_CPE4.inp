@@ -32697,7 +32697,7 @@ RF1, RF2, RF3, RM1, RM2, RM3
 ** 
 ** HISTORY OUTPUT: J_abq
 ** 
-*Contour Integral, crack name=J_abq_J_abq, contours=30, crack tip nodes
+*Contour Integral, crack name=J_abq_J_abq, contours=57, crack tip nodes
 _PickedSet28, _PickedSet29, 1., 0., 0.
 ** 
 ** HISTORY OUTPUT: J_abq_far

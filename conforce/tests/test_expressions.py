@@ -75,9 +75,9 @@ class TestExpressions(unittest.TestCase):
     def test_eval_P(self):
         """
         validate first piola kirchhoff tensor.
-        Bergstroem [1] provides a similar example
+        Bergstroem [1]_ provides a similar example
 
-        [1] Bergstroem, mechanics of solid polymers, page 169
+        .. [1] Bergstroem, mechanics of solid polymers, page 169
         """
         for typ in R_at_nodes_of_element.keys():
             with self.subTest(typ):
