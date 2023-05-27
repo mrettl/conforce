@@ -7,6 +7,11 @@ setup(
     version=conforce_shared.version,
     description=conforce_shared.description,
     url=conforce_shared.helpUrl,
+    project_urls={
+        'Documentation': 'https://cf-configurational-forces-plug-in.readthedocs.io/en/main/',
+        'Source': 'https://github.com/mrettl/ConfigurationalForcesPlugin',
+        'Tracker': 'https://github.com/mrettl/ConfigurationalForcesPlugin/issues',
+    },
     license_files=["LICENSE.txt"],
     author=conforce_shared.author,
     author_email='matthias.rettl@unileoben.ac.at',
