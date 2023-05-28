@@ -100,13 +100,13 @@ try:
         print(">>>>>>>> LOAD WINDOWS")
         # windows
         lib = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.join(
-            __file__, os.path.pardir, 'cf_c.dll'
+            __file__, os.path.pardir, '_cf_c.dll'
         )))
     else:
         print(">>>>>>>> LOAD LINUX")
         # linux
         lib = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.join(
-            __file__, os.path.pardir, 'cf_c.so'
+            __file__, os.path.pardir, '_cf_c.so'
         )))
     
     print(">>>>>>>> AFTER LOAD_LIBRARY")

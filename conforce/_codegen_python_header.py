@@ -96,12 +96,12 @@ try:
     if os.name == 'nt':
         # windows
         lib = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.join(
-            __file__, os.path.pardir, 'cf_c.dll'
+            __file__, os.path.pardir, '_cf_c.dll'
         )))
     else:
         # linux
         lib = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.join(
-            __file__, os.path.pardir, 'cf_c.so'
+            __file__, os.path.pardir, '_cf_c.so'
         )))
 
 except Exception as exception:
