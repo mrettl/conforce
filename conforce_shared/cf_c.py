@@ -85,7 +85,6 @@ array([[ 178.,  -20.],
 """
 from __future__ import print_function
 
-import ctypes
 import os
 from collections import namedtuple
 
@@ -94,6 +93,8 @@ import numpy as np
 
 # load c library
 try:
+    import ctypes
+
     if os.name == 'nt':
         # windows
         lib = ctypes.cdll.LoadLibrary(os.path.abspath(os.path.join(
