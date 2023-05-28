@@ -21,7 +21,6 @@ setup(
     install_requires=[
         "numpy~=1.21.5",
         "sympy~=1.10.1",
-        "ctypes>=1.10"
     ],
     extras_require={
         "documentation": [
