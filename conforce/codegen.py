@@ -232,8 +232,8 @@ class CPyCodeCompiler(object):
         The following code generates
 
          - test_library.py,
-         - test_library.c,
-         - test_library.dll or test_library.so
+         - _test_library.c,
+         - _test_library.dll or _test_library.so
 
         in the folder `res/tests/codegen` and writes an element information
         for the element type `CPE4`
@@ -275,7 +275,7 @@ class CPyCodeCompiler(object):
 
     def __enter__(self):
         self._py_file_handle = open(os.path.join(self._folder, self._name + ".py"), "w", encoding="utf-8")
-        self._c_file_handle = open(os.path.join(self._folder, self._name + ".c"), "w", encoding="utf-8")
+        self._c_file_handle = open(os.path.join(self._folder, "_" + self._name + ".c"), "w", encoding="utf-8")
 
         if self._write_header_at_entry:
             self.write_headers()
@@ -295,9 +295,9 @@ class CPyCodeCompiler(object):
             os.chdir(self._folder)
 
             if os.name == 'nt':
-                command = f"gcc -shared -O3 -fPIC -std=c99 -o {self._name}.dll {self._name}.c"
+                command = f"gcc -shared -O3 -fPIC -std=c99 -o _{self._name}.dll _{self._name}.c"
             else:
-                command = f"gcc -shared -O3 -fPIC -std=c99 -o {self._name}.so {self._name}.c"
+                command = f"gcc -shared -O3 -fPIC -std=c99 -o _{self._name}.so _{self._name}.c"
 
             print(f"{self._folder}>{command}")
             subprocess.call(command, shell=True)
@@ -339,7 +339,7 @@ class CPyCodeCompiler(object):
         with open(python_header_file_name, "r", encoding="utf-8") as fh:
             self._py_file_handle.write(
                 fh.read()
-                .replace("REPLACE_THIS_BY_LIBRARY_FILE_NAME", self._name)
+                .replace("REPLACE_THIS_BY_LIBRARY_FILE_NAME", "_" + self._name)
                 .replace("# DO NOT IMPORT OR RUN THIS FILE. "
                          "THIS IS JUST A TEMPLATE USED BY THE CODE GENERATION!\n", "")
             )
