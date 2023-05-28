@@ -26,6 +26,7 @@ print(HOME_DIR)
 sys.path.append(os.path.abspath(DOC_SOURCE_DIR + "/dummy_packages"))
 sys.path.insert(0, HOME_DIR + "/examples/Example_1_Two_phase_bar")
 sys.path.insert(0, HOME_DIR + "/examples/Example_2_CT_specimen_linear_elastic")
+sys.path.insert(0, HOME_DIR + "/examples/Example_3_CT_specimen_elastic_plastic")
 sys.path.insert(0, HOME_DIR)
 
 import conforce_shared
