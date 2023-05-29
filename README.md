@@ -3,7 +3,7 @@
 Readme
 ======
 
-![logo](conforce_logo_icon.png)
+# ![confore](conforce_logo_icon.png)
 
 This package provides:
 
@@ -101,6 +101,12 @@ The installed package contains:
     ````shell
     pip uninstall conforce
     ````
+
+Alternatively, if git is installed, the package can be installed directly without cloning the repository by
+  ````shell
+  pip install git+https://github.com/mrettl/conforce
+  ````
+
 
 ### Usage
 
