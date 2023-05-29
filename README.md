@@ -1,9 +1,10 @@
-[![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
-
 Readme
 ======
 
 # ![confore](conforce_logo_icon.png)
+
+[![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
+
 
 This package provides:
 
@@ -33,7 +34,9 @@ The Abaqus Plug-in contains:
 
 ### Installation
 
-Download the zip file called `conforce_plugin_{version}.zip`.
+Open 
+[https://github.com/mrettl/conforce/releases](https://github.com/mrettl/conforce/releases)
+and download the latest zip file called `conforce_plugin_{version}.zip`.
 The zip file has the following structure:
 
 - `conforce_plugin_{version}.zip`
@@ -83,16 +86,16 @@ The Plug-in gui opens:
 Click Apply to compute the requested field outputs.
 
 
-## Package
+## Python 3.* Package
 
-The installed package contains:
+The package requires Python 3 and contains:
 - methods to compute configurational force, ...
 - methods for symbolic computations, code generation, ...
 
 ### Installation
 
-1. Clone the repository into a folder
-2. Open a shell in this folder where the setup.py file is located. Activate your environment, if you are using conda.
+1. Download and unzip [conforce repository](https://github.com/mrettl/conforce).
+2. Open a shell in the unzipped folder where the *setup.py* file is located.
 3. Type:
     ````shell
     pip install .
@@ -102,10 +105,10 @@ The installed package contains:
     pip uninstall conforce
     ````
 
-Alternatively, if git is installed, the package can be installed directly without cloning the repository by
-  ````shell
-  pip install git+https://github.com/mrettl/conforce
-  ````
+If git is available, the package can be installed directly without cloning the repository by
+````shell
+pip install git+https://github.com/mrettl/conforce
+````
 
 
 ### Usage
@@ -149,3 +152,8 @@ array([[[ 0., -5.],
         [ 0.,  5.],
         [-0.,  5.]]])
 ````
+
+## Report Bugs, Ask questions
+
+Use the [github issue tracker](https://github.com/mrettl/conforce/issues) to report
+bugs and troubles or to ask questions.
