@@ -1,7 +1,7 @@
 Readme
 ======
 
-# ![confore](conforce_logo_icon.png)
+![confore](conforce_logo_icon.png)
 
 [![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
 

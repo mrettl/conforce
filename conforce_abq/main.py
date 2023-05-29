@@ -105,8 +105,8 @@ def apply(
 
     # Summary
     print(" ")
-    print("CF - log summary")
-    print("----------------")
+    print("conforce - log summary")
+    print("----------------------")
 
     log.seek(0)
     messages = log.read()
@@ -118,6 +118,6 @@ def apply(
     for level, msgs in level_msgs.items():
         print("{0:3d} x {1:s}".format(len(msgs), level))
 
-    print("----------------\n ")
+    print("----------------------\n ")
 
     return odb

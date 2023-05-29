@@ -32705,7 +32705,7 @@ ENER, LE, PE, PEEQ, PEMAG, S
 **
 *Output, history
 *Node Output, nset=constraints
-RF1, RF2, RF3, RM1, RM2, RM3
+U2, RF1, RF2, RF3, RM1, RM2, RM3
 ** 
 ** HISTORY OUTPUT: H-Output-1
 ** 

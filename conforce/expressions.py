@@ -573,6 +573,7 @@ R_3d = create_symbolic_matrix("r{row}", 3, 1)
 def eval_R(d: int):
     """
     Evaluate symbolic reference space coordinates.
+
     :param d: number of dimensions (2 or 3)
     :return: symbolic matrix
     """
@@ -582,6 +583,7 @@ def eval_R(d: int):
 def eval_H(R: sy.MatrixBase, R_at_nodes: np.ndarray, exponents: np.ndarray):
     """
     Evaluate shape functions.
+
     :param R: symbolic reference space coordinates
     :param R_at_nodes: reference space coordinates at nodes
     :param exponents: exponents of powers of the shape functions
@@ -626,6 +628,7 @@ def eval_H(R: sy.MatrixBase, R_at_nodes: np.ndarray, exponents: np.ndarray):
 def eval_dH_dR(H: sy.MatrixBase, R: sy.MatrixBase):
     """
     Evaluate derivatives of shape functions with respect to reference space coordinates.
+
     :param H: shape functions
     :param R: symbolic reference space coordinates
     :return: symbolic matrix
@@ -644,6 +647,7 @@ def eval_dH_dR(H: sy.MatrixBase, R: sy.MatrixBase):
 def eval_dX_dR(X_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dR: sy.MatrixBase):
     """
     Evaluate derivatives of undeformed real space coordinates with respect to reference space coordinates.
+
     :param X_at_nodes: undeformed real space coordinates at nodes
     :param dH_dR: derivatives of shape functions with respect to reference space coordinates
     :return: symbolic matrix
@@ -654,6 +658,7 @@ def eval_dX_dR(X_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dR: sy.MatrixBas
 def eval_dH_dX(dH_dR: sy.MatrixBase, dX_dR: sy.MatrixBase):
     """
     Evaluate derivatives of shape functions with respect to undeformed real space coordinates.
+
     :param dH_dR: derivatives of shape functions with respect to reference space coordinates
     :param dX_dR: derivatives of undeformed real space coordinates with respect to reference space coordinates
     :return: symbolic matrix
@@ -664,6 +669,7 @@ def eval_dH_dX(dH_dR: sy.MatrixBase, dX_dR: sy.MatrixBase):
 def eval_dU_dX(U_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dX: sy.MatrixBase):
     """
     Evaluate derivatives of displacements with respect to undeformed real space coordinates.
+
     :param U_at_nodes: displacements at nodes
     :param dH_dX: derivatives of shape functions with respect to undeformed real space coordinates
     :return: symbolic matrix
@@ -674,6 +680,7 @@ def eval_dU_dX(U_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dX: sy.MatrixBas
 def eval_F(d: int, dU_dX: sy.MatrixBase):
     """
     Evaluate the deformation gradient.
+
     :param d: number of dimensions
     :param dU_dX: derivatives of displacements with respect to undeformed real space coordinates
     :return: symbolic matrix
@@ -684,6 +691,7 @@ def eval_F(d: int, dU_dX: sy.MatrixBase):
 def eval_P(F: sy.MatrixBase, S: sy.MatrixBase):
     """
     Evaluate the First Piola-Kirchhoff stress tensor.
+
     :param F: deformation gradient
     :param S: symmetric Cauchy stress tensor
     :return: symbolic matrix
@@ -694,6 +702,7 @@ def eval_P(F: sy.MatrixBase, S: sy.MatrixBase):
 def eval_CS_mbf(d: int, e: sy.Expr, F: sy.MatrixBase, P: sy.MatrixBase):
     """
     Evaluate motion based configurational stress tensor.
+
     :param d: number of dimensions
     :param e: energy density
     :param F: deformation gradient
@@ -706,6 +715,7 @@ def eval_CS_mbf(d: int, e: sy.Expr, F: sy.MatrixBase, P: sy.MatrixBase):
 def eval_CS_dbf(d: int, e: sy.Expr, dU_dX: sy.MatrixBase, P: sy.MatrixBase):
     """
     Evaluate deformation based configurational stress tensor.
+
     :param d: number of dimensions
     :param e: energy density
     :param dU_dX: derivatives of displacements with respect to undeformed real space coordinates
@@ -867,12 +877,25 @@ class Computation(object):
 
         #
         self.symbols_to_expressions = symbols_to_expressions
+        """dictionary mapping symbols to (symbolic) expressions"""
+
         self.replacements_by_int_points = replacements_by_int_points
+        """list of dictionary in the form [{r0: 0, r1: 0}, {r0: 1, r1: 0}, ...]"""
+
         self.R = R
+        """symbolic reference coordinates"""
+
         self.F = F
+        """deformation gradient"""
+
         self.P = P
+        """first Piola-Kirchhoff stress tensor"""
+
         self.CS = CS
+        """configurational stresses"""
+
         self.CF_at_nodes = CF_at_nodes
+        """configurational forces at element nodes"""
 
     def map_symbolic_to_expression(self, symbolic: sy.Expr, expr: sy.Expr):
         """

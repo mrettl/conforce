@@ -50,27 +50,41 @@ def simulate_and_save_results(inp_file_path="CT_specimen_CPE4.inp"):
     odb = apply(
         odb,
         request_CF=True,
-        CF_name="CONF_FORCE_LIN_EL",
+        CF_name="CONF_FORCE_EL",
         method="dbf",
         e_expression="SENER"
+    )
+    odb = apply(
+        odb,
+        request_CF=True,
+        CF_name="CONF_FORCE_EL_PL",
+        method="dbf",
+        e_expression="SENER+PENER"
     )
 
     # put all results in this dictionary
     results = dict()
 
     # extract CF field output
-    fo_CF = odb.steps['Loading'].frames[-1].fieldOutputs["CONF_FORCE_LIN_EL"]
+    for CF_name in ["CONF_FORCE_EL", "CONF_FORCE_EL_PL"]:
+        CF_results = list()
+        results[CF_name + "_at_frame"] = CF_results
+        for frame in odb.steps['Loading'].frames:
+            frame_results = dict()
+            CF_results.append(frame_results)
 
-    results["CF"] = dict()
-    for set_name, region in odb.rootAssembly.nodeSets.items():
-        fo_CF_in_region = fo_CF.getSubset(
-            region=region
-        )
+            # extract CF field output
+            fo_CF_EL = frame.fieldOutputs[CF_name]
 
-        results["CF"][set_name] = np.sum([
-            value.data
-            for value in fo_CF_in_region.values
-        ], axis=0).tolist()
+            for set_name, region in odb.rootAssembly.nodeSets.items():
+                fo_CF_in_region = fo_CF_EL.getSubset(
+                    region=region
+                )
+
+                frame_results[set_name] = np.sum([
+                    value.data
+                    for value in fo_CF_in_region.values
+                ], axis=0).tolist()
 
     # extract history outputs
     (ho_assembly, ho_J_integral, ho_bc_lower, ho_bc_upper) = [
@@ -84,8 +98,9 @@ def simulate_and_save_results(inp_file_path="CT_specimen_CPE4.inp"):
         for key, value in ho_J_integral.items()
     ]
 
-    # extract reaction forces
-    results["reaction_force"] = ho_bc_upper['RF2'].data[-1][-1]
+    # extract reaction forces/displacements
+    results["reaction_force"] = np.array(ho_bc_upper['RF2'].data).tolist()
+    results["u"] = np.array(ho_bc_upper['U2'].data).tolist()
 
     # save results
     with open("results.json", "w") as fh:
