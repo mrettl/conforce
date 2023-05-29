@@ -1,4 +1,4 @@
-[![Documentation Status](https://readthedocs.org/projects/cf-configurational-forces-plug-in/badge/?version=main)](https://cf-configurational-forces-plug-in.readthedocs.io/en/main/?badge=main)
+[![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
 
 Readme
 ======
