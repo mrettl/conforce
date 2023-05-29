@@ -295,9 +295,15 @@ class CPyCodeCompiler(object):
             os.chdir(self._folder)
 
             if os.name == 'nt':
-                command = f"gcc -shared -O3 -fPIC -std=c99 -o _{self._name}.dll _{self._name}.c"
+                command = [
+                    "gcc", "-shared", "-fPIC", "-std=c99",
+                    "-o", f"_{self._name}.dll", f"_{self._name}.c"
+                ]
             else:
-                command = f"gcc -shared -O3 -fPIC -std=c99 -o _{self._name}.so _{self._name}.c"
+                command = [
+                    "gcc", "-shared", "-fPIC", "-std=c99",
+                    "-o", f"_{self._name}.so", f"_{self._name}.c"
+                ]
 
             print(f"{self._folder}>{command}")
             subprocess.call(command, shell=True)
