@@ -2,7 +2,8 @@ r"""
 Example 1 - Two-phase bar
 =========================
 
-Considering a bar that consists of a stiffer and a softer material.
+Considering a bar that consists of a stiffer and a softer material
+with yoiungs_modulus :math:`E_{1}`, and :math:`E_{2}`.
 The bar is fixed on the left side and a displacement :math:`u` is applied to the right side.
 The configurational forces on the interface should be computed using the Abaqus plugin.
 
@@ -48,7 +49,9 @@ Next, the energy of the beam is formulated as
 
 >>> ALLSE = 0.5 * E1 * e1**2 * A * l1 + 0.5 * E2 * e2**2 * A * (l - l1)
 
-The kinematic relationship between `e1`, `e2` and `e` is used to eliminated `e2`.
+The strain :math:`e = \frac{u}/{l} = e_{1} + e_{2}` is the sum of the strain
+`e1` in the left material and the strain `e2` in the right material.
+This kinematic relationship between `e1`, `e2` and `e` is used to eliminated `e2`.
 
 >>> e2_expr = sy.solve(sy.Eq(l*e, l1*e1 + (l - l1) * e2), e2)[0]
 >>> ALLSE = ALLSE.replace(e2, e2_expr)
@@ -84,8 +87,8 @@ Apply Plug-in
 -------------
 
 In this section the configurational forces are computed using the Abaqus Plug-in.
-First, open the folder containing the \*.inp file.
-The folder is the working directory.
+First, open the folder that contains the \*.inp file.
+This folder is the working directory.
 
 .. image:: example_1_images/01_folder.png
     :alt: working directory
@@ -127,7 +130,7 @@ Use the default settings and click OK.
 .. image:: example_1_images/08_job.png
     :alt: job settings
 
-Submit the job and wait until it completed.
+Submit the job and wait for completion.
 
 .. image:: example_1_images/09_submit.png
     :alt: submit button
@@ -175,7 +178,7 @@ Verify Results
 --------------
 
 For the comparison with the theoretical values, the x-component of the
-configurational forces on the interface is summed up.
+configurational forces on the interface are summed up.
 This can be done by probing values in abaqus.
 Navigate to `Tools -> Query -> Prove values`.
 
@@ -189,7 +192,7 @@ Select the two nodes on the interface in the viewport.
 .. image:: example_1_images/16_CF_at_interface.png
     :alt: CF at interface nodes
 
-The plugin computed configurational forces of
+The plugin computes configurational forces of
 
 >>> CFx_at_interface_plugin = 5.8591 + 5.8591  # N
 >>> CFx_at_interface_plugin

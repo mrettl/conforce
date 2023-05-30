@@ -5,7 +5,7 @@ Example 2 - CT-specimen with linear elastic material behaviour
 Problem description
 -------------------
 
-Kolednik [1]_ suggested the following compact tension (CT) test.
+Kolednik [1]_ suggests the following compact tension (CT) test.
 Contrary to Kolednik, in this example a linear elastic material behaviour is used
 instead of an elastic plastic behaviour.
 This allows a comparisson with theoertical prediction for CT specimens by Anderson [2]_.
@@ -100,50 +100,57 @@ For a plane strain state, the J-Integral is computed by:
 Abaqus J-Integral
 -----------------
 
-Abaqus comptues the J-Integral using the virtual crack extension method by Parks [3]_.
-According to Abaqus J-Integral over the region `B` is:
+Abaqus computes the J-Integral using the virtual crack extension method by Parks [3]_.
+Abaqus computes the J-Integral over several contours.
+The regions correspond to the following contour indices
+- region `A` corresponds to the contour index 21
+- region `B` corresponds to the contour index 57
+- region `far` corresponds to the contour index 0 and is the region `C` without the nodes on the boundaries
 
->>> j_integral_abaqus = results["J"][57][-1]
->>> np.around(j_integral_abaqus, 3)  # mJ/mm**2
+According to Abaqus the J-Integral for region `A` is
+
+>>> j_integral_in_a_abaqus = results["J"][21][-1]
+>>> np.around(j_integral_in_a_abaqus, 3)  # mJ/mm**2
+54.503
+
+for region `B`
+
+>>> j_integral_in_b_abaqus = results["J"][57][-1]
+>>> np.around(j_integral_in_b_abaqus, 3)  # mJ/mm**2
 54.635
 
+and for region `far`
+
+>>> j_integral_in_far_abaqus = results["J"][0][-1]
+>>> np.around(j_integral_in_far_abaqus, 3)  # mJ/mm**2
+54.765
+
 This is in good aggreement with the prediction made by Anderson.
+
 
 Configurational forces
 ----------------------
 
-Finally. the configurational forces computed by `conforce` are summed up
-for the regions `A`, `B`, and `C`.
+Conforce can predict J-Integrals by summing up configurational forces inside a region.
+The resulting configurational force is projected onto the crack extension direction.
+In this case the crack extension direction is simply the x-component.
+
+The configurational forces for the regions `A`, `B`, and `far` show a good aggreement with Anderson and Abaqus.
 
 .. note::
     The configurational forces have a negative sign.
 
-Only the x-component of the configurational force is considered.
-The configurational force for region `A` shows a good aggreement with Anderson.
-
 >>> (cfx_in_a, _) = results["CF"]["A"]
->>> np.around(cfx_in_a, 3)
+>>> np.around(cfx_in_a, 3)  # mJ/mm**2
 -54.484
 
-The configurational force for region `B` shows an excellent aggreement to the Abaqus results
-as they are computed both in the same domain `B`.
-
 >>> (cfx_in_b, _) = results["CF"]["B"]
->>> np.around(cfx_in_b, 3)
+>>> np.around(cfx_in_b, 3)  # mJ/mm**2
 -54.633
 
-The configurational force for region `C` is much smaller than predicted by Abaqus and Anderson.
-The configurational force is the deviation of the energy if the whole region is shifted rightwards.
-For small regions, just the domain near the crack tip is shifted and according to the crack similarity assumption
-this cooresponds to the deviation of the energy if the crack grows.
-However, the region `C` contains almost the whole specimen.
-Consequently, the assumption that the stress field is dominated only by the crack tip is wrong,
-as the boundary condition have also a considerable influence.
-Hence, the crack similarity assumptioin is invalid and the configurational force of region `C` is underestimated.
-
->>> (cfx_in_c, _) = results["CF"]["C"]
->>> np.around(cfx_in_c, 3)
--32.306
+>>> (cfx_in_far, _) = results["CF"]["J_ABQ_FAR_J_ABQ_FAR_J__PICKEDSET42_Contour_1"]
+>>> np.around(cfx_in_far, 3)  # mJ/mm**2
+-54.794
 
 Like conventional forces, the configurational forces fullfill the equilibrium of forces.
 The configuraional forces summed up for the whole model are zero.
@@ -151,6 +158,20 @@ The configuraional forces summed up for the whole model are zero.
 >>> (cfx_whole_model, _) = results["CF"][" ALL NODES"]
 >>> np.around(cfx_whole_model, 3)
 -0.0
+
+Comparison
+----------
+
+The figure compares the J-Integral of Abaqus and Anderson with the negative configurational forces of conforce.
+Abaqus and conforce show a good aggreement for all contours in the regions `A` and `B`.
+
+>>> fig = plot_comparison_j_integral_cfx(results, j_integral_theory)
+>>> fig.savefig("example_2_images/01_comparison_over_contours.svg")
+
+.. image:: example_2_images/01_comparison_over_contours.svg
+    :width: 400
+    :alt: comparison
+
 
 References
 ----------
@@ -172,6 +193,41 @@ Change to home directory
 >>> os.chdir(HOME_DIR)
 """
 import doctest
+
+
+def plot_comparison_j_integral_cfx(results, j_integral_theory):
+    import matplotlib.pyplot as plt
+
+    j_contours = {
+        int(set_name.split("_")[-1]): set_name
+        for set_name, _ in results["J"]
+        if "_PICKEDSET28" in set_name.upper()
+    }
+    cf_regions = {
+        int(set_name.split("_")[-1]): set_name
+        for set_name in results["CF"].keys()
+        if "_PICKEDSET28" in set_name.upper()
+    }
+    contour_ids = sorted(j_contours.keys())
+
+    j_map = {k: v for k, v in results["J"]}
+    cfx_map = {k: v[0] for k, v in results["CF"].items()}
+
+    fig, ax = plt.subplots()  # type: plt.Figure, plt.Axes
+    fig.set_size_inches(3.15, 3.15)
+    ax.axvline(21, ls=":", c="k")
+    ax.text(21/2, 50, "region A", ha="center")
+    ax.text(21 + (57-21)/2, 50, "region B", ha="center")
+    ax.axhline(j_integral_theory, ls="-", c="k", label="J-Integral (Anderson)")
+    ax.plot(contour_ids, [j_map[j_contours[idx]] for idx in contour_ids], label="J-Integral (Abaqus)")
+    ax.plot(contour_ids, [-cfx_map[cf_regions[idx]] for idx in contour_ids], label="-CF (conforce)")
+    ax.set_xlabel("contour index")
+    ax.set_ylabel("J-Integral and -CF [mJ/mm²]")
+    ax.set_xlim(left=0, right=contour_ids[-1])
+    ax.legend()
+    fig.tight_layout()
+    return fig
+
 
 if __name__ == '__main__':
     doctest.testmod(verbose=True)

@@ -11,13 +11,13 @@ Kolednik [1]_ suggested the following compact tension (CT) test.
     :width: 400
     :alt: scheme
 
+>>> import os
+>>> import json
+>>> import matplotlib.pyplot as plt
 
 Geometeric dimensions:
 ^^^^^^^^^^^^^^^^^^^^^^
 
->>> import os
->>> import numpy as np
->>> import matplotlib.pyplot as plt
 >>> w = 50  # mm
 >>> a = 27  # mm
 >>> b = 25  # mm
@@ -52,7 +52,7 @@ Material properties:
 Boundary condition:
 ^^^^^^^^^^^^^^^^^^^
 
->>> u = 0.5  # mm
+>>> u_max = 0.5  # mm
 
 Simulation
 ----------
@@ -74,16 +74,12 @@ To save time, the script is not exectued if the `results.json` file already exis
 After the simulation, the result file is loaded to fetch the reaction force `load`.
 This force is needed to reach the defined displacement `u`.
 
->>> import matplotlib.pyplot as plt import json
 >>> with open("results.json", "r", encoding="UTF-8") as fh:
 ...     results = json.load(fh)
 >>> load = np.array(results["reaction_force"])[:, 1]
 >>> u = np.array(results["u"])[:, 1]
 
->>> fig, ax = plt.subplots()  # type: plt.Figure, plt.Axes
->>> _ = ax.plot(u, load, "k-")
->>> _ = ax.set_xlabel("u [mm]"), ax.set_ylabel("load [N]")
->>> _ = ax.set_xlim(left=0), ax.set_ylim(bottom=0)
+>>> fig = plot_force_displacement(u, load)
 >>> _ = fig.savefig("example_3_images/02_force_displacement.svg")
 
 .. image:: example_3_images/02_force_displacement.svg
@@ -104,8 +100,8 @@ Configurational forces
 References
 ----------
 
-.. [1] Kolednik, Otmar, Ronald SchÃ¶ngrundner, and Franz Dieter Fischer.
-    "A new view on J-integrals in elasticâ€“plastic materials."
+.. [1] Kolednik, Otmar, Ronald Schoengrundner, and Franz Dieter Fischer.
+    "A new view on J-integrals in elastic-plastic materials."
     International Journal of Fracture 187.1 (2014): 77-107.
 
 Change to home directory
@@ -113,10 +109,10 @@ Change to home directory
 >>> os.chdir(HOME_DIR)
 """
 import doctest
+import numpy as np
 
 
 def plot_stress_strain(youngs_modulus, yield_stress_over_plastic_strain):
-    import numpy as np
     import matplotlib.pyplot as plt
 
     yield_stress_cal = yield_stress_over_plastic_strain[:, 0]
@@ -150,6 +146,19 @@ def plot_stress_strain(youngs_modulus, yield_stress_over_plastic_strain):
     ax2.set_xlabel(r"$\varepsilon$ [-]")
     ax2.set_ylabel(r"$\sigma$ [MPa]")
 
+    fig.tight_layout()
+    return fig
+
+
+def plot_force_displacement(u, load):
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots()  # type: plt.Figure, plt.Axes
+    ax.plot(u, load, "k-")
+    ax.set_xlabel("u [mm]")
+    ax.set_ylabel("load [N]")
+    ax.set_xlim(left=0)
+    ax.set_ylim(bottom=0)
     fig.tight_layout()
     return fig
 
