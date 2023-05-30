@@ -155,8 +155,8 @@ The configuraional forces summed up for the whole model are zero.
 References
 ----------
 
-.. [1] Kolednik, Otmar, Ronald SchÃ¶ngrundner, and Franz Dieter Fischer.
-    "A new view on J-integrals in elasticâ€“plastic materials."
+.. [1] Kolednik, Otmar, Ronald Schöngrundner, and Franz Dieter Fischer.
+    "A new view on J-integrals in elastic-plastic materials."
     International Journal of Fracture 187.1 (2014): 77-107.
 
 .. [2] Anderson, T. L., and T. Anderson.

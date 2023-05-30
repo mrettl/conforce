@@ -1,5 +1,12 @@
+Welcome to the conforce documentation!
+======================================
+
 .. image:: conforce_logo_icon.png
+    :width: 400 px
     :alt: conforce logo
+
+Conforce is a Python package for computing configurational forces
+out of the displacement-, stress-, and energy-density-fields of Finite Element Analysis.
 
 Features
 ========
@@ -9,10 +16,10 @@ Features
     - motion based formulation (see :py:func:`conforce.expressions.eval_CS_mbf`)
 - Applicable element types:
     - Conforce supports element types defined in :py:attr:`conforce_shared.cf_c.map_type_to_info`.
-    - Furthermore, some element types are treated like a supported element type.
-      This allows to apply not directly supported element types.
-      The dictionary defined in :py:attr:`conforce_shared.element_type_mapping.map_abaqus_element_type_to_supported_element_type`
-      defines which element types can be treated as if they would be a supported element type.
+    - Furthermore, element types not directly supported can be treated like an other element type that is supported.
+      This allows to use not supported element types with some assumptions and simplifications.
+      The dictionary :py:attr:`conforce_shared.element_type_mapping.map_abaqus_element_type_to_supported_element_type`
+      defines which supported element types can imitate not directly supported elements.
 - Material orientations are supported:
     - Field outputs for the displacement and stress field in the global coordinate system are computed automatically.
 - Static configurational stresses and forces may consider:
@@ -34,9 +41,11 @@ Table of Contents
     CONTRIBUTING.md
 
     examples
+
     reference
     reference_abq
 
+    license
 
 
 Indices and tables

@@ -108,10 +108,6 @@ References
     "A new view on J-integrals in elasticâ€“plastic materials."
     International Journal of Fracture 187.1 (2014): 77-107.
 
-.. [2] Parks, D. M.
-    "The virtual crack extension method for nonlinear material behavior."
-    Computer methods in applied mechanics and engineering 12.3 (1977): 353-364.
-
 Change to home directory
 
 >>> os.chdir(HOME_DIR)
