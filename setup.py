@@ -8,6 +8,15 @@ def read_file(path: str):
         return fh.read()
 
 
+def read_requirements(path: str):
+    return [
+        requirement.strip()
+        for requirement
+        in read_file(path).splitlines()
+        if not requirement.startswith("#") or requirement.strip() == ""
+    ]
+
+
 setup(
     name=conforce_shared.project,
     version=conforce_shared.version,
@@ -22,24 +31,14 @@ setup(
         'Source': 'https://github.com/mrettl/conforce',
         'Tracker': 'https://github.com/mrettl/conforce/issues',
     },
-    license=read_file("LICENSE.txt"),
     license_files=["LICENSE.txt"],
     packages=['conforce', 'conforce_shared'],
     package_dir={'.': ''},
     package_data={'conforce_shared': ['*.dll', '*.so']},
-    install_requires=[
-        requirement.strip()
-        for requirement
-        in read_file("requirements.txt").splitlines()
-        if not requirement.startswith("#") or requirement.strip() == ""
-    ],
+    install_requires=read_requirements("requirements.txt"),
     extras_require={
-        "doc": [
-            requirement.strip()
-            for requirement
-            in read_file("doc/requirements.txt").splitlines()
-            if not requirement.startswith("#") or requirement.strip() == ""
-        ]
+        "doc": read_requirements("doc/requirements.txt"),
+        "examples": read_requirements("examples/requirements.txt")
     },
     classifiers=[
         "Intended Audience :: Science/Research",

@@ -5,8 +5,12 @@ If you want to use this package, we refer to the README file.
 
 ## Getting started
 
-Clone or download this repository to your disk.
-Make sure all dependencies declared in `setup.py` are installed.
+Clone or download this repository.
+Install all dependencies declared in the `requirements.txt` files located in:
+- `./requirements.txt`
+- `./doc/requirements.txt`
+- `./examples/requirements.txt`
+
 
 ### Only for Windows users:
 
@@ -17,16 +21,15 @@ and append the path `w64devkit\bin` where `gcc.exe` is located.
 
 ### Run tests
 
-Try to run all tests located in the modules `conforce` and `conforce_shared`.
-Additionally, an Abaqus installation is required to execute code located in `conforce_abq`.
+Try to run all doctest and unittests located in the modules `conforce` and `conforce_shared`.
+Additionally, an Abaqus installation is required to execute code of the `conforce_abq` package.
 
 ## Test Code
 
 Test code is written:
  - as `Doctest` in the docstrings of modules, classes or functions
  - as `unittest.TestCase`. Modules containing Unit Tests start with `test_` and are placed 
-   in a subfolder of the module called `tests`.
-
+   in a sub-folder of the module called `tests`.
 
 ## Documentation
 
@@ -87,10 +90,10 @@ The following is a set of guidelines and conventions.
 
 ### Packages
     
- - The package
-   - `conforce` contains modules that require Python 3.* and do not run in Abaqus Python
-   - `conforce_abq` contains modules that require Abaqus Python and do not run in Python 3.*
-   - `conforce_shared` contains modules that run in both, Abaqus Python and Python 3.*
+- The package
+  - `conforce` contains modules that require Python 3 and do not run in Abaqus Python
+  - `conforce_abq` contains modules that require Abaqus Python and do not run in Python 3
+  - `conforce_shared` contains modules that run in both, Abaqus Python and Python 3
 
 ### Naming Conventions
 
@@ -100,20 +103,20 @@ However, there are a few exceptions.
 
 #### Variables
 
- - A mathematical naming convention is used for variables.
-   - Matrices and vectors are upper case.
-   - Scalars are lower case.
-   - Matrix components are scalars and thus are lower case. The index is written without an underscore. 
-     E.g. `X = [x0, x1, x2]`
-   - If (sympy) symbols and concrete values are used simultaneously, the variable for the concrete value ends with an underscore. E.g.:
-     `U` (symbolic displacements) and `U_` (numpy array of displacements)
-   - Variables referring to specific points are named according to `{variable_name}_at_{point_name}`.
-   - The derivative of `H` with respect to `R` is written as `dH_dR`.
+- A mathematical naming convention is used for variables.
+  - Matrices and vectors are upper case.
+  - Scalars are lower case.
+  - Matrix components are scalars and thus are lower case. The index is written without an underscore. 
+    E.g. `X = [x0, x1, x2]`
+  - If (sympy) symbols and concrete values are used simultaneously, the variable for the concrete value ends with an underscore. E.g.:
+    `U` (symbolic displacements) and `U_` (numpy array of displacements)
+  - Variables referring to specific points are named according to `{variable_name}_at_{point_name}`.
+  - The derivative of `H` with respect to `R` is written as `dH_dR`.
 
 #### Functions
 
- - Function names are lower case except they refer to a mathematical symbol that is written upper case 
-    (e.g. `eval_H` refers to `H` the matrix of shape functions)
+- Function names are lower case except they refer to a mathematical symbol that is written upper case 
+  (e.g. `eval_H` refers to `H` the matrix of shape functions)
 
 ### Versioning
 Use [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `{major}.{minor}.{patch}[-{modifier}]`

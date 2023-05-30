@@ -5,15 +5,12 @@ Readme
 
 [![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
 
-
-This package provides:
-
+Conforce provides:
 - methods to compute for various element types the following quantities:
   - configurational forces (deformation and motion based, quasi-static)
   - configurational stresses (deformation and motion based, quasi-static)
   - First Piola-Kirchhoff stresses
   - deformation gradients
-- an Abaqus Plug-in to compute those quantities in the post-processing
 - a code generation that generates C-code from symbolic functions
 - a C-code binding to use the generated and compiled C-code
 
@@ -22,15 +19,17 @@ Supported OS:
 - CentOS (64-bit)
 - other Linux distributions might work
 
-Supported Abaqus versions:
-- \>= Abaqus 2017
+Conforce can be used as Abaqus Plug-in or as Python 3 package.
 
 ## Abaqus Plug-in
 
 The Abaqus Plug-in contains:
-- methods to compute configurational force, ...
+- C-code bindings to methods for the computation of configurational force, ...
 - Abaqus specific code to read and write to *.odb files
 - a GUI for the Abaqus Plug-in
+
+Supported Abaqus versions:
+- \>= Abaqus 2017
 
 ### Installation
 
@@ -86,20 +85,35 @@ The Plug-in gui opens:
 Click Apply to compute the requested field outputs.
 
 
-## Python 3.* Package
+## Python 3 Package
 
-The package requires Python 3 and contains:
-- methods to compute configurational force, ...
+The Python package requires Python 3 and contains:
+- C-code bindings to methods for the computation of configurational force, ...
 - methods for symbolic computations, code generation, ...
 
 ### Installation
 
 1. Download and unzip [conforce repository](https://github.com/mrettl/conforce).
 2. Open a shell in the unzipped folder where the *setup.py* file is located.
-3. Type:
-    ````shell
-    pip install .
-    ````
+3. conforce is installed by
+   ````shell
+   pip install "."
+   ````
+   However, to run examples or build the documentation additional requirements are necessary.
+   The following options are available.
+   - Install requirements for the examples:
+     ````shell
+     pip install ".[examples]"
+     ````
+   - Install requirements to build the documentation
+     ````shell
+     pip install ".[doc]"
+     ````
+   - Install all requirements
+     ````shell
+     pip install ".[examples, doc]"
+     ````
+   
 4. To uninstall the package, type:
     ````shell
     pip uninstall conforce
@@ -107,9 +121,9 @@ The package requires Python 3 and contains:
 
 If git is available, the package can be installed directly without cloning the repository by
 ````shell
-pip install git+https://github.com/mrettl/conforce
+pip install "conforce[examples, doc] @ git+https://github.com/mrettl/conforce"
 ````
-
+The extras `examples` and `doc` are optional.
 
 ### Usage
 
