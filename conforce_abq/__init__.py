@@ -1,5 +1,5 @@
 """
-This package contains code that runs only in Abaqus Python, but not in Python 3.*.
+This package contains code that runs only in Abaqus Python, but not in Python 3.
 """
 
 import logging

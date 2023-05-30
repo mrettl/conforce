@@ -6,7 +6,7 @@ Welcome to the conforce documentation!
     :alt: conforce logo
 
 Conforce is a Python package for computing configurational forces
-out of the displacement-, stress-, and energy-density-fields of Finite Element Analysis.
+out of the displacement-, stress-, and energy-density-fields obtained by Finite Element Analysis.
 
 Features
 ========
@@ -42,8 +42,7 @@ Table of Contents
 
     examples
 
-    reference
-    reference_abq
+    references
 
     license
 
