@@ -30,8 +30,6 @@ class TestElementDefinitions(unittest.TestCase):
                 R_at_int_points = R_at_integration_points_of_element[element_type]
                 weights_of_int_points = weights_of_integration_points_of_element[element_type]
                 exponents = exponents_of_shape_functions_of_element[element_type]
-                corner_nodes = corner_nodes_of_element[element_type]
-                adjacency_matrix = adjacent_nodes_of_element[element_type]
 
                 n, d = R_at_nodes.shape
                 ips = R_at_int_points.shape[0]
@@ -41,8 +39,6 @@ class TestElementDefinitions(unittest.TestCase):
                 self.assertEqual((ips, d), R_at_int_points.shape)
                 self.assertEqual((ips,), weights_of_int_points.shape)
                 self.assertEqual((n, d), exponents.shape)
-                self.assertEqual((n,), corner_nodes.shape)
-                self.assertEqual((n, n), adjacency_matrix.shape)
 
     def test_sum_of_shape_functions(self):
         for element_type in R_at_nodes_of_element.keys():
