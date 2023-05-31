@@ -35,14 +35,33 @@ Table of Contents
 =================
 
 .. toctree::
+    :caption: Getting started
     :maxdepth: 2
 	
     README.md
     CONTRIBUTING.md
 
-    examples
+.. toctree::
+    :caption: Examples
+    :maxdepth: 2
 
-    references
+    examples/example_1_two_phase_bar
+    examples/example_2_ct_specimen_linear_elastic
+    examples/example_2_abaqus_script
+    examples/example_3_ct_specimen_elastic_plastic
+    examples/example_3_abaqus_script
+
+.. toctree::
+    :caption: References
+    :maxdepth: 2
+
+    reference
+    reference_abq
+    reference_shared
+
+.. toctree::
+    :caption: Appendix
+    :maxdepth: 2
 
     license
 
