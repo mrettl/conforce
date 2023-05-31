@@ -105,7 +105,9 @@ However, there are a few exceptions.
 
 - A mathematical naming convention is used for variables.
   - Matrices and vectors are upper case.
-  - Scalars are lower case.
+  - Scalars are lower case except for quantities that are only known upper case like:
+    - the youngs modulus `E`
+    - the J-Integral `J`
   - Matrix components are scalars and thus are lower case. The index is written without an underscore. 
     E.g. `X = [x0, x1, x2]`
   - If (sympy) symbols and concrete values are used simultaneously, the variable for the concrete value ends with an underscore. E.g.:

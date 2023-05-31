@@ -2,6 +2,14 @@ r"""
 Example 3 - CT-specimen with linear elastic material behaviour
 ==============================================================
 
+Import packages and change to the directory where the \*.inp file is located.
+
+>>> import os
+>>> import json
+>>> import matplotlib.pyplot as plt
+>>> HOME_DIR = os.path.abspath(".")
+>>> os.chdir(__file__ + "/..")
+
 Problem description
 -------------------
 
@@ -10,10 +18,6 @@ Kolednik [1]_ suggested the following compact tension (CT) test.
 .. image:: example_3_images/00_scheme.png
     :width: 400
     :alt: scheme
-
->>> import os
->>> import json
->>> import matplotlib.pyplot as plt
 
 Geometeric dimensions:
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -26,8 +30,11 @@ Geometeric dimensions:
 Material properties:
 ^^^^^^^^^^^^^^^^^^^^
 
+Schoengrundner [2]_ provides material data for an elastic plastic behaviour with isotropic hardening.
+Region `D` is modeled without plasticty to prevent large deformations.
+
 >>> nu = 0.3
->>> youngs_modulus = 200_000 # MPa
+>>> E = 200_000 # MPa
 >>> yield_stress_over_plastic_strain = np.array([
 ...     [    270.,         0.],
 ...     [ 273.052, 0.00109256],
@@ -42,8 +49,8 @@ Material properties:
 ...     [ 578.368,   0.399433],
 ...     [   1460.,         3.],
 ... ])
->>> fig = plot_stress_strain(youngs_modulus, yield_stress_over_plastic_strain)
->>> _ = fig.savefig(__file__ + "/../example_3_images/01_stress_strain.svg")
+>>> fig = plot_stress_strain(E, yield_stress_over_plastic_strain)
+>>> _ = fig.savefig("example_3_images/01_stress_strain.svg")
 
 .. image:: example_3_images/01_stress_strain.svg
     :width: 400
@@ -54,15 +61,32 @@ Boundary condition:
 
 >>> u_max = 0.5  # mm
 
+Literature values
+-----------------
+
+Kolednik [1]_ provides literature values for this problem.
+
+>>> literature_data = {
+...     "u": [0.10, 0.25, 0.50],  # mm
+...     "j_el_contour_tip": [1.513, 8.45, 31.80],  # mJ/mm²
+...     "j_el_pl_contour_tip": [1.736, 10.15, 38.58],  # mJ/mm²
+...     "j_el_contour_1": [2.132, 11.92, 44.72],  # mJ/mm²
+...     "j_el_pl_contour_1": [2.271, 13.90, 51.18],  # mJ/mm²
+...     "j_el_contour_3": [2.239, 12.88, 46.36],  # mJ/mm²
+...     "j_el_pl_contour_3": [2.239, 13.05, 47.42],  # mJ/mm²
+...     "j_el_contour_7": [2.246, 13.67, 47.03],  # mJ/mm²
+...     "j_el_pl_contour_7": [2.246, 13.20, 47.35],  # mJ/mm²
+...     "j_el_contour_25": [2.247, 13.56, 48.13],  # mJ/mm²
+...     "j_el_pl_contour_25": [2.247, 13.56, 47.72],  # mJ/mm²
+...     "j_el_contour_far": [2.247, 13.56, 48.21],  # mJ/mm²
+...     "j_el_pl_contour_far": [2.247, 13.10, 30.40],  # mJ/mm²
+... }
+
+
 Simulation
 ----------
 
 The model is scripted and there is no need to manually open the `conforce`-plugin.
-First, change to the directory where the \*.inp file is located.
-
->>> HOME_DIR = os.path.abspath(".")
->>> os.chdir(__file__ + "/..")
-
 Next, call the Abaqus script (:py:mod:`example_3_abaqus_script`).
 The script simulates the \*.inp file and writes a `results.json` file.
 To save time, the script is not exectued if the `results.json` file already exists.
@@ -79,6 +103,8 @@ This force is needed to reach the defined displacement `u`.
 >>> load = np.array(results["reaction_force"])[:, 1]
 >>> u = np.array(results["u"])[:, 1]
 
+With the obtained results the force displacement curve is plotted.
+
 >>> fig = plot_force_displacement(u, load)
 >>> _ = fig.savefig("example_3_images/02_force_displacement.svg")
 
@@ -86,16 +112,41 @@ This force is needed to reach the defined displacement `u`.
     :width: 400
     :alt: force displacement
 
-
 Abaqus J-Integral
 -----------------
 
-.. todo: describe results
+Abaqus computes the J-integral using the virtual crack extension method by Parks [3]_.
+This J-integral is compared to the literature values of Kolednik [1]_.
+
+>>> fig = compare_abaqus_j_with_literature(results, literature_data)
+>>> _ = fig.savefig("example_3_images/03_j_integral.svg")
+
+.. image:: example_3_images/03_j_integral.svg
+    :width: 400
+    :alt: comparison of J-Integral with literature
+
+Except for the first contour, the Abaqus J-integral fit the literature values.
+
+.. todo::  warum passt das nicht genau zusammen? Gleiche Auswertemethode
 
 Configurational forces
 ----------------------
 
-.. todo: describe results
+Furthermore, the x-components of the configurational forces are summed up inside the contours.
+This corresponds to the J-integral with swapped signs.
+If only the elastic strain energy (SENER) is considered,
+the far field contour and the first contour show a deviation.
+If both the elastich strain energy and the plastic dissipation (SENER+PENER)
+are considere, the first contour and the far field contour seem to be swapped.
+
+.. todo:: Fehler-suche
+
+>>> fig = compare_conforce_cfx_with_literature(results, literature_data)
+>>> _ = fig.savefig("example_3_images/04_negative_cfx.svg")
+
+.. image:: example_3_images/04_negative_cfx.svg
+    :width: 400
+    :alt: comparison of configurational forces with literature
 
 References
 ----------
@@ -103,6 +154,14 @@ References
 .. [1] Kolednik, Otmar, Ronald Schoengrundner, and Franz Dieter Fischer.
     "A new view on J-integrals in elastic-plastic materials."
     International Journal of Fracture 187.1 (2014): 77-107.
+
+.. [2] Schoengrundner.
+    "Numerische Studien zur Ermittlung der risstreibenden Kraft in elastisch-plastischen Materialien bei unterschiedlichen Belastungsbedingungen"
+    Ph.D. thesis, University of Leoben (2010).
+
+.. [3] Parks, D. M.
+    "The virtual crack extension method for nonlinear material behavior."
+    Computer methods in applied mechanics and engineering 12.3 (1977): 353-364.
 
 Change to home directory
 
@@ -130,6 +189,7 @@ def plot_stress_strain(youngs_modulus, yield_stress_over_plastic_strain):
 
     # plot
     fig, (ax1, ax2) = plt.subplots(nrows=2)  # type: plt.Figure, (plt.Axes, plt.Axes)
+    fig.set_size_inches(6., 6.)
     zoom_strain = 0.05
     zoom_stress = np.interp(0.05, strains, stresses)
 
@@ -154,11 +214,101 @@ def plot_force_displacement(u, load):
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots()  # type: plt.Figure, plt.Axes
+    fig.set_size_inches(6., 6.)
     ax.plot(u, load, "k-")
     ax.set_xlabel("u [mm]")
     ax.set_ylabel("load [N]")
     ax.set_xlim(left=0)
     ax.set_ylim(bottom=0)
+    fig.tight_layout()
+    return fig
+
+
+def compare_abaqus_j_with_literature(results, literature):
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots()  # type: plt.Figure, plt.Axes
+    fig.set_size_inches(6., 6.)
+
+    j = results["J"]
+    t, u = np.array(results["u"]).T
+    for contour in [1, 3, 7, 25]:
+        (line, ) = ax.plot(
+            u,
+            np.interp(t, *np.array(j[f"J at J_NEAR_CRACK_TIP_Contour_{contour:02}"]).T),
+            label=f"contour {contour}; Abaqus"
+        )
+        ax.plot(
+            literature["u"],
+            literature[f"j_el_contour_{contour}"],
+            label=f"contour {contour}; Literature", ls="", marker="x",
+            color=line.get_color()
+        )
+
+    (line, ) = ax.plot(
+        u,
+        np.interp(t, *np.array(j["J at J_FAR_FAR_FIELD_Contour_1"]).T),
+        label=f"far field; Abaqus"
+    )
+    ax.plot(
+        literature["u"],
+        literature[f"j_el_contour_far"],
+        label=f"far field; Literature", ls="", marker="x",
+        color=line.get_color()
+    )
+
+    ax.legend()
+    ax.set_xlabel("u [mm]")
+    ax.set_ylabel("J-integral [mJ/mm²]")
+    ax.set_xlim(left=0)
+    ax.set_ylim(bottom=0)
+    fig.tight_layout()
+    return fig
+
+
+def compare_conforce_cfx_with_literature(results, literature):
+    import matplotlib.pyplot as plt
+
+    fig, (ax1, ax2) = plt.subplots(nrows=2)  # type: plt.Figure, (plt.Axes, plt.Axes)
+    fig.set_size_inches(6*2, 6)
+
+    t, u = np.array(results["u"]).T
+    for ax, cf, lit_fix, energy_expression in (
+            (ax1, results["CONF_FORCE_EL_at_frame"], "el", "SENER"),
+            (ax2, results["CONF_FORCE_EL_PL_at_frame"], "el_pl", "SENER+PENER")
+    ):
+        ax.set_title(energy_expression)
+        for contour in [1, 3, 7, 25]:
+            (line, ) = ax.plot(
+                u,
+                -np.array(cf[f"J_NEAR_J_CRACK_TIP_Contour_{contour:02}"])[:, 0],
+                label=f"contour {contour}; conforce"
+            )
+            ax.plot(
+                literature["u"],
+                literature[f"j_{lit_fix}_contour_{contour}"],
+                label=f"contour {contour}; Literature", ls="", marker="x",
+                color=line.get_color()
+            )
+
+        (line, ) = ax.plot(
+            u,
+            -np.array(cf["J_FAR_J_FAR_FIELD_Contour_1"])[:, 0],
+            label=f"far field; conforce"
+        )
+        ax.plot(
+            literature["u"],
+            literature[f"j_{lit_fix}_contour_far"],
+            label=f"far field; Literature", ls="", marker="x",
+            color=line.get_color()
+        )
+
+        ax.legend()
+        ax.set_xlabel("u [mm]")
+        ax.set_ylabel("-CFx [mJ/mm²]")
+        ax.set_xlim(left=0)
+        ax.set_ylim(bottom=0)
+
     fig.tight_layout()
     return fig
 

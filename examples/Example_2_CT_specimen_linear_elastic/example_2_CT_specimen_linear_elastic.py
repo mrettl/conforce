@@ -26,7 +26,7 @@ Material properties:
 ^^^^^^^^^^^^^^^^^^^^
 
 >>> nu = 0.3
->>> youngs_modulus = 200_000 # MPa
+>>> E = 200_000 # MPa
 
 Boundary condition:
 ^^^^^^^^^^^^^^^^^^^
@@ -93,8 +93,8 @@ The fracture thoughness is:
 
 For a plane strain state, the J-Integral is computed by:
 
->>> j_integral_theory = k**2 * (1 - nu**2) / youngs_modulus
->>> np.around(j_integral_theory, 3)  # mJ/mm**2
+>>> J_theory = k**2 * (1 - nu**2) / E
+>>> np.around(J_theory, 3)  # mJ/mm**2
 54.081
 
 Abaqus J-Integral
@@ -109,20 +109,20 @@ The regions correspond to the following contour indices
 
 According to Abaqus the J-Integral for region `A` is
 
->>> j_integral_in_a_abaqus = results["J"]["J at J_NEAR_CRACK_TIP_Contour_21"]
->>> np.around(j_integral_in_a_abaqus, 3)  # mJ/mm**2
+>>> J_in_a_abaqus = results["J"]["J at J_NEAR_CRACK_TIP_Contour_21"]
+>>> np.around(J_in_a_abaqus, 3)  # mJ/mm**2
 54.503
 
 for region `B`
 
->>> j_integral_in_b_abaqus = results["J"]["J at J_NEAR_CRACK_TIP_Contour_57"]
->>> np.around(j_integral_in_b_abaqus, 3)  # mJ/mm**2
+>>> J_in_b_abaqus = results["J"]["J at J_NEAR_CRACK_TIP_Contour_57"]
+>>> np.around(J_in_b_abaqus, 3)  # mJ/mm**2
 54.635
 
 and for region `FAR_FIELD`
 
->>> j_integral_in_far_abaqus = results["J"]["J at J_FAR_FAR_FIELD_Contour_1"]
->>> np.around(j_integral_in_far_abaqus, 3)  # mJ/mm**2
+>>> J_in_far_abaqus = results["J"]["J at J_FAR_FAR_FIELD_Contour_1"]
+>>> np.around(J_in_far_abaqus, 3)  # mJ/mm**2
 54.765
 
 This is in good aggreement with the prediction made by Anderson.
@@ -165,7 +165,7 @@ Comparison
 The figure compares the J-Integral of Abaqus and Anderson with the negative configurational forces of conforce.
 Abaqus and conforce show a good aggreement for all contours in the regions `A` and `B`.
 
->>> fig = plot_comparison_j_integral_cfx(results, j_integral_theory)
+>>> fig = compare_J_and_negative_cfx(results, J_theory)
 >>> fig.savefig("example_2_images/01_comparison_over_contours.svg")
 
 .. image:: example_2_images/01_comparison_over_contours.svg
@@ -195,10 +195,10 @@ Change to home directory
 import doctest
 
 
-def plot_comparison_j_integral_cfx(results, j_integral_theory):
+def compare_J_and_negative_cfx(results, J_theory):
     import matplotlib.pyplot as plt
 
-    j_contours = {
+    contour_ids_to_set_names = {
         int(set_name.split("_")[-1]): set_name
         for set_name in results["J"].keys()
         if "J_NEAR" in set_name.upper()
@@ -208,9 +208,9 @@ def plot_comparison_j_integral_cfx(results, j_integral_theory):
         for set_name in results["CF"].keys()
         if "J_NEAR" in set_name.upper()
     }
-    contour_ids = sorted(j_contours.keys())
+    contour_ids = sorted(contour_ids_to_set_names.keys())
 
-    j_map = {k: v for k, v in results["J"].items()}
+    J_map = {k: v for k, v in results["J"].items()}
     cfx_map = {k: v[0] for k, v in results["CF"].items()}
 
     fig, ax = plt.subplots()  # type: plt.Figure, plt.Axes
@@ -218,8 +218,8 @@ def plot_comparison_j_integral_cfx(results, j_integral_theory):
     ax.axvline(21, ls=":", c="k")
     ax.text(21/2, 50, "region A", ha="center")
     ax.text(21 + (57-21)/2, 50, "region B", ha="center")
-    ax.axhline(j_integral_theory, ls="-", c="k", label="J-Integral (Anderson)")
-    ax.plot(contour_ids, [j_map[j_contours[idx]] for idx in contour_ids], label="J-Integral (Abaqus)")
+    ax.axhline(J_theory, ls="-", c="k", label="J-Integral (Anderson)")
+    ax.plot(contour_ids, [J_map[contour_ids_to_set_names[idx]] for idx in contour_ids], label="J-Integral (Abaqus)")
     ax.plot(contour_ids, [-cfx_map[cf_regions[idx]] for idx in contour_ids], label="-CF (conforce)")
     ax.set_xlabel("contour index")
     ax.set_ylabel("J-Integral and -CF [mJ/mm²]")

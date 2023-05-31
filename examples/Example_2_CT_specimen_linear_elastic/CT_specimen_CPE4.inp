@@ -31153,7 +31153,7 @@ ENER, LE, PE, PEEQ, PEMAG, S
 ** 
 *Output, history
 *Node Output, nset=BC
-RF1, RF2, RF3, RM1, RM2, RM3
+RF1, RF2, RF3, U1, U2, RM1, RM2, RM3
 ** 
 ** HISTORY OUTPUT: H-Output-1
 ** 

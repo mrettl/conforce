@@ -7,24 +7,6 @@ with yoiungs_modulus :math:`E_{1}`, and :math:`E_{2}`.
 The bar is fixed on the left side and a displacement :math:`u` is applied to the right side.
 The configurational forces on the interface should be computed using the Abaqus plugin.
 
-.. list-table:: Parameters
-    :header-rows: 1
-
-    * - Parameter
-      - value
-    * - :math:`l`
-      - 10 mm
-    * - :math:`h`
-      - 10 mm
-    * - :math:`u`
-      - 0.1 mm
-    * - :math:`\nu` (Poisson's ratio)
-      - 0
-    * - :math:`E_{1}`
-      - 210 GPa
-    * - :math:`E_{2}`
-      - 105 GPa
-
 .. image:: example_1_images/00_scheme.png
     :width: 400
     :alt: scheme
@@ -35,9 +17,19 @@ Theory
 Kollnig et. al. [1]_ provide a theoretical solution for the configurational forces on the interface.
 The solution can be computed symbolically using sympy.
 First, define symbolic and real quantities.
+The Poisson's ratio :math:`\nu` is set to zero.
 
 >>> import sympy as sy
->>> (E1, E2, A, l, l1, e, e1, e2) = sy.symbols("E1 E2 A l l1 e e1 e2", real=True)
+>>> (
+...     E1,  # youngs modulus of left side
+...     E2,  # youngs modulus of right side
+...     A,  # cross-section of beam
+...     l,  # total length of beam
+...     l1,  # length of left side
+...     e,  # total strain
+...     e1,  # strain of left side
+...     e2  # strain of right side
+... ) = sy.symbols("E1 E2 A l l1 e e1 e2", real=True)
 >>> E1_val = 210_000  # MPa
 >>> E2_val = E1_val / 2  # MPa
 >>> l1_val = 10  # mm
@@ -49,7 +41,7 @@ Next, the energy of the beam is formulated as
 
 >>> ALLSE = 0.5 * E1 * e1**2 * A * l1 + 0.5 * E2 * e2**2 * A * (l - l1)
 
-The strain :math:`e = \frac{u}/{l} = e_{1} + e_{2}` is the sum of the strain
+The strain :math:`e = \frac{u}{l} = e_{1} + e_{2}` is the sum of the strain
 `e1` in the left material and the strain `e2` in the right material.
 This kinematic relationship between `e1`, `e2` and `e` is used to eliminated `e2`.
 
@@ -72,7 +64,7 @@ The symbolic values are replaced by the numeric values.
 This results in the expected configurational force in x-direction at the interface.
 
 >>> dAllSE_dl1 = ALLSE.diff(l1)
->>> CFx_at_interface_theory = dAllSE_dl1.xreplace({
+>>> cfx_at_interface_theory = dAllSE_dl1.xreplace({
 ...     A: A_val,
 ...     E1: E1_val,
 ...     E2: E2_val,
@@ -80,7 +72,7 @@ This results in the expected configurational force in x-direction at the interfa
 ...     l: l_val,
 ...     l1: l1_val
 ... })
->>> CFx_at_interface_theory  # N
+>>> cfx_at_interface_theory  # N
 11.6666666666667
 
 Apply Plug-in
@@ -194,13 +186,13 @@ Select the two nodes on the interface in the viewport.
 
 The plugin computes configurational forces of
 
->>> CFx_at_interface_plugin = 5.8591 + 5.8591  # N
->>> CFx_at_interface_plugin
+>>> cfx_at_interface_plugin = 5.8591 + 5.8591  # N
+>>> cfx_at_interface_plugin
 11.7182
 
 The theoretical and computed values differ by a factor of
 
->>> CFx_at_interface_plugin / CFx_at_interface_theory
+>>> cfx_at_interface_plugin / cfx_at_interface_theory
 1.00441714285714
 
 References

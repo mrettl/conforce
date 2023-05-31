@@ -67,12 +67,9 @@ def simulate_and_save_results(inp_file_path="CT_specimen_CPE4.inp"):
 
     # extract CF field output
     for CF_name in ["CONF_FORCE_EL", "CONF_FORCE_EL_PL"]:
-        CF_results = list()
+        CF_results = dict()
         results[CF_name + "_at_frame"] = CF_results
         for frame in odb.steps['Loading'].frames:
-            frame_results = dict()
-            CF_results.append(frame_results)
-
             # extract CF field output
             fo_CF_EL = frame.fieldOutputs[CF_name]
 
@@ -81,10 +78,17 @@ def simulate_and_save_results(inp_file_path="CT_specimen_CPE4.inp"):
                     region=region
                 )
 
-                frame_results[set_name] = np.sum([
-                    value.data
-                    for value in fo_CF_in_region.values
-                ], axis=0).tolist()
+                if set_name in CF_results.keys():
+                    CF_result_for_set = CF_results[set_name]
+                else:
+                    CF_result_for_set = CF_results[set_name] = list()
+
+                CF_result_for_set.append(
+                    np.sum([
+                        value.data
+                        for value in fo_CF_in_region.values
+                    ], axis=0).tolist()
+                )
 
     # extract history outputs
     (ho_assembly, ho_J_integral, ho_bc_lower, ho_bc_upper) = [
@@ -93,10 +97,10 @@ def simulate_and_save_results(inp_file_path="CT_specimen_CPE4.inp"):
     ]
 
     # extract J-Integrals at the last frame
-    results["J"] = [
-        [key, value.data[-1][-1]]
+    results["J"] = {
+        key: np.array(value.data).tolist()
         for key, value in ho_J_integral.items()
-    ]
+    }
 
     # extract reaction forces/displacements
     results["reaction_force"] = np.array(ho_bc_upper['RF2'].data).tolist()
