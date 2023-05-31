@@ -79,10 +79,10 @@ def simulate_and_save_results(inp_file_path="CT_specimen_CPE4.inp"):
     ]
 
     # extract J-Integrals at the last frame
-    results["J"] = [
-        [key, value.data[-1][-1]]
+    results["J"] = {
+        key: value.data[-1][-1]
         for key, value in ho_J_integral.items()
-    ]
+    }
 
     # extract reaction forces
     results["reaction_force"] = ho_bc_upper['RF2'].data[-1][-1]

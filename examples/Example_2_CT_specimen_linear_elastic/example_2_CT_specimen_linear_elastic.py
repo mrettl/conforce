@@ -105,23 +105,23 @@ Abaqus computes the J-Integral over several contours.
 The regions correspond to the following contour indices
 - region `A` corresponds to the contour index 21
 - region `B` corresponds to the contour index 57
-- region `far` corresponds to the contour index 0 and is the region `C` without the nodes on the boundaries
+- region `FAR_FFIELD`
 
 According to Abaqus the J-Integral for region `A` is
 
->>> j_integral_in_a_abaqus = results["J"][21][-1]
+>>> j_integral_in_a_abaqus = results["J"]["J at J_NEAR_CRACK_TIP_Contour_21"]
 >>> np.around(j_integral_in_a_abaqus, 3)  # mJ/mm**2
 54.503
 
 for region `B`
 
->>> j_integral_in_b_abaqus = results["J"][57][-1]
+>>> j_integral_in_b_abaqus = results["J"]["J at J_NEAR_CRACK_TIP_Contour_57"]
 >>> np.around(j_integral_in_b_abaqus, 3)  # mJ/mm**2
 54.635
 
-and for region `far`
+and for region `FAR_FIELD`
 
->>> j_integral_in_far_abaqus = results["J"][0][-1]
+>>> j_integral_in_far_abaqus = results["J"]["J at J_FAR_FAR_FIELD_Contour_1"]
 >>> np.around(j_integral_in_far_abaqus, 3)  # mJ/mm**2
 54.765
 
@@ -135,7 +135,7 @@ Conforce can predict J-Integrals by summing up configurational forces inside a r
 The resulting configurational force is projected onto the crack extension direction.
 In this case the crack extension direction is simply the x-component.
 
-The configurational forces for the regions `A`, `B`, and `far` show a good aggreement with Anderson and Abaqus.
+The configurational forces for the regions `A`, `B`, and `FAR_FIELD` show a good aggreement with Anderson and Abaqus.
 
 .. note::
     The configurational forces have a negative sign.
@@ -148,14 +148,14 @@ The configurational forces for the regions `A`, `B`, and `far` show a good aggre
 >>> np.around(cfx_in_b, 3)  # mJ/mm**2
 -54.633
 
->>> (cfx_in_far, _) = results["CF"]["J_ABQ_FAR_J_ABQ_FAR_J__PICKEDSET42_Contour_1"]
+>>> (cfx_in_far, _) = results["CF"]["FAR_FIELD"]
 >>> np.around(cfx_in_far, 3)  # mJ/mm**2
 -54.794
 
 Like conventional forces, the configurational forces fullfill the equilibrium of forces.
 The configuraional forces summed up for the whole model are zero.
 
->>> (cfx_whole_model, _) = results["CF"][" ALL NODES"]
+>>> (cfx_whole_model, _) = results["CF"]["ALL_NODES"]
 >>> np.around(cfx_whole_model, 3)
 -0.0
 
@@ -176,7 +176,7 @@ Abaqus and conforce show a good aggreement for all contours in the regions `A` a
 References
 ----------
 
-.. [1] Kolednik, Otmar, Ronald Schöngrundner, and Franz Dieter Fischer.
+.. [1] Kolednik, Otmar, Ronald Schoengrundner, and Franz Dieter Fischer.
     "A new view on J-integrals in elastic-plastic materials."
     International Journal of Fracture 187.1 (2014): 77-107.
 
@@ -200,17 +200,17 @@ def plot_comparison_j_integral_cfx(results, j_integral_theory):
 
     j_contours = {
         int(set_name.split("_")[-1]): set_name
-        for set_name, _ in results["J"]
-        if "_PICKEDSET28" in set_name.upper()
+        for set_name in results["J"].keys()
+        if "J_NEAR" in set_name.upper()
     }
     cf_regions = {
         int(set_name.split("_")[-1]): set_name
         for set_name in results["CF"].keys()
-        if "_PICKEDSET28" in set_name.upper()
+        if "J_NEAR" in set_name.upper()
     }
     contour_ids = sorted(j_contours.keys())
 
-    j_map = {k: v for k, v in results["J"]}
+    j_map = {k: v for k, v in results["J"].items()}
     cfx_map = {k: v[0] for k, v in results["CF"].items()}
 
     fig, ax = plt.subplots()  # type: plt.Figure, plt.Axes
