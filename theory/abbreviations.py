@@ -21,7 +21,7 @@ List of abbreviations:
 - `e`: Helmholtz free energy density
 - `CS`: (d, d)-Matrix of configurational stresses. Implemented formulations:
 
-    - `mbf`: motion based formulation (original formulation)
+    - `mbf`: motion based formulation (Eshelby's formulation)
     - `dbf`: displacement based formulation
 
 - `CF`: (d,)-Matrix of a configurational force in the real space
