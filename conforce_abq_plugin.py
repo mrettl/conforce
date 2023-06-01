@@ -59,7 +59,7 @@ class MyDialog(gui.AFXDataDialog):
         owner.kw_method.setValue("motion based formulation")
 
         drop_down.appendItem("motion based formulation")
-        drop_down.appendItem("deformation based formulation")
+        drop_down.appendItem("displacement based formulation")
 
         # energy density expression
         gb = gui.FXGroupBox(

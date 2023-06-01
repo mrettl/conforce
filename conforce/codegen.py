@@ -656,7 +656,7 @@ map_type_to_P_function['{element_typ}'] = {function_name_n_elements}
         :param S_at_int_points: name of the matrix that contains stress tensors at the integration points
         :param CS_at_int_points: name of the matrix that contains the
             configurational stress tensors at the integration points
-        :param is_dbf: deformation based of motion based formulation
+        :param is_dbf: displacement based or motion based formulation
         """
         n_, d_ = X_at_nodes.shape
         ips_ = S_at_int_points.shape[0]
@@ -673,7 +673,7 @@ map_type_to_P_function['{element_typ}'] = {function_name_n_elements}
  * The element has n={n_} nodes and ips={ips_} integration points.
  * The computation is {method_name}.
  * 
- * @param[in] {e} internal energy density
+ * @param[in] {e} Helmholtz free energy density
  * @param[in] {X_at_nodes} Coordinates at n nodes of the element.
  * @param[in] {U_at_nodes} Displacements at n nodes of the element.
  * @param[in] {S_at_int_points} Symmetric stress tensors at ips integration points.
@@ -701,7 +701,7 @@ void {function_name_one_element}(
  * The computation is {method_name}.
  * 
  * @param[in] num_elem number of elements
- * @param[in] {e} Array of shape (num_elem, ips) containing the internal energy densities
+ * @param[in] {e} Array of shape (num_elem, ips) containing the Helmholtz free energy densities
  * @param[in] {X_at_nodes} Array of shape (num_elem, n, {d_})
  *            containing the coordinates at n nodes of num_elem elements.
  * @param[in] {U_at_nodes} Array of shape (num_elem, n, {d_})
@@ -746,7 +746,7 @@ def {function_name_n_elements}(
     Compute the configurational stresses for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
 
-    :param {e}: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param {e}: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
     :param {U_at_nodes}: Array of shape (num_elem, n, {d_}) containing the displacements at n nodes of num_elem elements.
     :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_})
@@ -809,7 +809,7 @@ map_type_and_method_to_CS_function[('{element_typ}', '{method}')] = {function_na
         :param S_at_int_points: name of the matrix that contains stress tensors at the integration points
         :param CF_at_nodes: name of the matrix that contains the
             configurational forces at the element nodes
-        :param is_dbf: deformation based of motion based formulation
+        :param is_dbf: displacement based or motion based formulation
         """
         n_, d_ = X_at_nodes.shape
         ips_ = S_at_int_points.shape[0]
@@ -826,7 +826,7 @@ map_type_and_method_to_CS_function[('{element_typ}', '{method}')] = {function_na
  * The element has n={n_} nodes and ips={ips_} integration points.
  * The computation is {method_name}.
  * 
- * @param[in] {e} internal energy density
+ * @param[in] {e} Helmholtz free energy density
  * @param[in] {X_at_nodes} Coordinates at n nodes of the element.
  * @param[in] {U_at_nodes} Displacements at n nodes of the element.
  * @param[in] {S_at_int_points} Symmetric stress tensors at ips integration points.
@@ -854,7 +854,7 @@ void {function_name_one_element}(
  * The computation is {method_name}.
  * 
  * @param[in] num_elem number of elements
- * @param[in] {e} Array of shape (num_elem, ips) containing the internal energy densities
+ * @param[in] {e} Array of shape (num_elem, ips) containing the Helmholtz free energy densities
  * @param[in] {X_at_nodes} Array of shape (num_elem, n, {d_}) 
  *            containing the coordinates at n nodes of num_elem elements.
  * @param[in] {U_at_nodes} Array of shape (num_elem, n, {d_}) 
@@ -899,7 +899,7 @@ def {function_name_n_elements}(
     Compute the configurational forces for num_elem elements of typ {element_typ}.
     Each element has n={n_} nodes and ips={ips_} integration points.
 
-    :param {e}: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param {e}: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param {X_at_nodes}: Array of shape (num_elem, n, {d_}) containing the coordinates at n nodes of num_elem elements.
     :param {U_at_nodes}: Array of shape (num_elem, n, {d_}) containing the displacements at n nodes of num_elem elements.
     :param {S_at_int_points}: Array of shape (num_elem, ips, {d_}, {d_})

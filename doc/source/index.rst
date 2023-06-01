@@ -12,7 +12,7 @@ Features
 ========
 
 - Supported methods:
-    - deformation based formulation (see :py:func:`conforce.expressions.eval_CS_dbf`)
+    - displacement based formulation (see :py:func:`conforce.expressions.eval_CS_dbf`)
     - motion based formulation (see :py:func:`conforce.expressions.eval_CS_mbf`)
 - Applicable element types:
     - Conforce supports element types defined in :py:attr:`conforce_shared.cf_c.map_type_to_info`.
@@ -39,7 +39,7 @@ Table of Contents
     :maxdepth: 2
 	
     README.md
-    CONTRIBUTING.md
+    theory
 
 .. toctree::
     :caption: Examples
@@ -63,6 +63,7 @@ Table of Contents
     :caption: Appendix
     :maxdepth: 2
 
+    CONTRIBUTING.md
     license
 
 

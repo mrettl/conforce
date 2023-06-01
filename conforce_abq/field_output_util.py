@@ -1182,10 +1182,10 @@ def add_field_outputs(
                     logger.warning("skip field output %s_ij (%s)", name_CS, msg)
 
                 if request_CF and name_CF not in fo_keys:
-                    logger.info("create field output %s_ij (%s)", name_CF, msg)
+                    logger.info("create field output %s (%s)", name_CF, msg)
                     fo_writers.append(CFFieldOutputWriter(frame, d, name=name_CF, method=method))
                 elif request_CF:
-                    logger.warning("skip field output %s_ij (%s)", name_CF, msg)
+                    logger.warning("skip field output %s (%s)", name_CF, msg)
 
                 # add data for all element types
                 for element_type in get_present_element_types_in(fo["S"].bulkDataBlocks):

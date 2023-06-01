@@ -203,7 +203,7 @@ def compute_CS(
             - "dbf" :py:func:`conforce.expressions.eval_CS_dbf`
 
     :param e_at_int_points: Array of shape (num_elem, ips)
-        containing the internal energy densities at ips integration points for num_elem elements.
+        containing the Helmholtz free energy densities at ips integration points for num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, d) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, d) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, d, d)
@@ -243,7 +243,7 @@ def compute_CF(
             - "dbf" :py:func:`conforce.expressions.eval_CS_dbf`
 
     :param e_at_int_points: Array of shape (num_elem, ips)
-        containing the internal energy densities at ips integration points for num_elem elements.
+        containing the Helmholtz free energy densities at ips integration points for num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, d) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, d) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, d, d)
@@ -356,7 +356,7 @@ def compute_CS_for_C3D20_using_dbf(
     Compute the configurational stresses for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
 
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -403,7 +403,7 @@ def compute_CF_for_C3D20_using_dbf(
     Compute the configurational forces for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -456,7 +456,7 @@ def compute_CS_for_C3D20_using_mbf(
     Compute the configurational stresses for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -503,7 +503,7 @@ def compute_CF_for_C3D20_using_mbf(
     Compute the configurational forces for num_elem elements of typ C3D20.
     Each element has n=20 nodes and ips=27 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -634,7 +634,7 @@ def compute_CS_for_C3D20R_using_dbf(
     Compute the configurational stresses for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -681,7 +681,7 @@ def compute_CF_for_C3D20R_using_dbf(
     Compute the configurational forces for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -734,7 +734,7 @@ def compute_CS_for_C3D20R_using_mbf(
     Compute the configurational stresses for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -781,7 +781,7 @@ def compute_CF_for_C3D20R_using_mbf(
     Compute the configurational forces for num_elem elements of typ C3D20R.
     Each element has n=20 nodes and ips=8 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -912,7 +912,7 @@ def compute_CS_for_CPE8_using_dbf(
     Compute the configurational stresses for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -959,7 +959,7 @@ def compute_CF_for_CPE8_using_dbf(
     Compute the configurational forces for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -1012,7 +1012,7 @@ def compute_CS_for_CPE8_using_mbf(
     Compute the configurational stresses for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -1059,7 +1059,7 @@ def compute_CF_for_CPE8_using_mbf(
     Compute the configurational forces for num_elem elements of typ CPE8.
     Each element has n=8 nodes and ips=9 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -1190,7 +1190,7 @@ def compute_CS_for_CPE8R_using_dbf(
     Compute the configurational stresses for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -1237,7 +1237,7 @@ def compute_CF_for_CPE8R_using_dbf(
     Compute the configurational forces for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -1290,7 +1290,7 @@ def compute_CS_for_CPE8R_using_mbf(
     Compute the configurational stresses for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -1337,7 +1337,7 @@ def compute_CF_for_CPE8R_using_mbf(
     Compute the configurational forces for num_elem elements of typ CPE8R.
     Each element has n=8 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -1468,7 +1468,7 @@ def compute_CS_for_C3D8_using_dbf(
     Compute the configurational stresses for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -1515,7 +1515,7 @@ def compute_CF_for_C3D8_using_dbf(
     Compute the configurational forces for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -1568,7 +1568,7 @@ def compute_CS_for_C3D8_using_mbf(
     Compute the configurational stresses for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -1615,7 +1615,7 @@ def compute_CF_for_C3D8_using_mbf(
     Compute the configurational forces for num_elem elements of typ C3D8.
     Each element has n=8 nodes and ips=8 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -1746,7 +1746,7 @@ def compute_CS_for_C3D8R_using_dbf(
     Compute the configurational stresses for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -1793,7 +1793,7 @@ def compute_CF_for_C3D8R_using_dbf(
     Compute the configurational forces for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -1846,7 +1846,7 @@ def compute_CS_for_C3D8R_using_mbf(
     Compute the configurational stresses for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -1893,7 +1893,7 @@ def compute_CF_for_C3D8R_using_mbf(
     Compute the configurational forces for num_elem elements of typ C3D8R.
     Each element has n=8 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -2024,7 +2024,7 @@ def compute_CS_for_CPE4_using_dbf(
     Compute the configurational stresses for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -2071,7 +2071,7 @@ def compute_CF_for_CPE4_using_dbf(
     Compute the configurational forces for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -2124,7 +2124,7 @@ def compute_CS_for_CPE4_using_mbf(
     Compute the configurational stresses for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -2171,7 +2171,7 @@ def compute_CF_for_CPE4_using_mbf(
     Compute the configurational forces for num_elem elements of typ CPE4.
     Each element has n=4 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -2302,7 +2302,7 @@ def compute_CS_for_CPE4R_using_dbf(
     Compute the configurational stresses for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -2349,7 +2349,7 @@ def compute_CF_for_CPE4R_using_dbf(
     Compute the configurational forces for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -2402,7 +2402,7 @@ def compute_CS_for_CPE4R_using_mbf(
     Compute the configurational stresses for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -2449,7 +2449,7 @@ def compute_CF_for_CPE4R_using_mbf(
     Compute the configurational forces for num_elem elements of typ CPE4R.
     Each element has n=4 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -2580,7 +2580,7 @@ def compute_CS_for_C3D10_using_dbf(
     Compute the configurational stresses for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -2627,7 +2627,7 @@ def compute_CF_for_C3D10_using_dbf(
     Compute the configurational forces for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -2680,7 +2680,7 @@ def compute_CS_for_C3D10_using_mbf(
     Compute the configurational stresses for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -2727,7 +2727,7 @@ def compute_CF_for_C3D10_using_mbf(
     Compute the configurational forces for num_elem elements of typ C3D10.
     Each element has n=10 nodes and ips=4 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -2858,7 +2858,7 @@ def compute_CS_for_C3D4_using_dbf(
     Compute the configurational stresses for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -2905,7 +2905,7 @@ def compute_CF_for_C3D4_using_dbf(
     Compute the configurational forces for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -2958,7 +2958,7 @@ def compute_CS_for_C3D4_using_mbf(
     Compute the configurational stresses for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3005,7 +3005,7 @@ def compute_CF_for_C3D4_using_mbf(
     Compute the configurational forces for num_elem elements of typ C3D4.
     Each element has n=4 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3136,7 +3136,7 @@ def compute_CS_for_C3D15_using_dbf(
     Compute the configurational stresses for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3183,7 +3183,7 @@ def compute_CF_for_C3D15_using_dbf(
     Compute the configurational forces for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3236,7 +3236,7 @@ def compute_CS_for_C3D15_using_mbf(
     Compute the configurational stresses for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3283,7 +3283,7 @@ def compute_CF_for_C3D15_using_mbf(
     Compute the configurational forces for num_elem elements of typ C3D15.
     Each element has n=15 nodes and ips=9 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3414,7 +3414,7 @@ def compute_CS_for_CPE6_using_dbf(
     Compute the configurational stresses for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -3461,7 +3461,7 @@ def compute_CF_for_CPE6_using_dbf(
     Compute the configurational forces for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -3514,7 +3514,7 @@ def compute_CS_for_CPE6_using_mbf(
     Compute the configurational stresses for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -3561,7 +3561,7 @@ def compute_CF_for_CPE6_using_mbf(
     Compute the configurational forces for num_elem elements of typ CPE6.
     Each element has n=6 nodes and ips=3 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -3692,7 +3692,7 @@ def compute_CS_for_C3D6_using_dbf(
     Compute the configurational stresses for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3739,7 +3739,7 @@ def compute_CF_for_C3D6_using_dbf(
     Compute the configurational forces for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3792,7 +3792,7 @@ def compute_CS_for_C3D6_using_mbf(
     Compute the configurational stresses for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3839,7 +3839,7 @@ def compute_CF_for_C3D6_using_mbf(
     Compute the configurational forces for num_elem elements of typ C3D6.
     Each element has n=6 nodes and ips=2 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 3) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 3) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 3, 3) 
@@ -3970,7 +3970,7 @@ def compute_CS_for_CPE3_using_dbf(
     Compute the configurational stresses for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -4017,7 +4017,7 @@ def compute_CF_for_CPE3_using_dbf(
     Compute the configurational forces for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -4070,7 +4070,7 @@ def compute_CS_for_CPE3_using_mbf(
     Compute the configurational stresses for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 
@@ -4117,7 +4117,7 @@ def compute_CF_for_CPE3_using_mbf(
     Compute the configurational forces for num_elem elements of typ CPE3.
     Each element has n=3 nodes and ips=1 integration points.
     
-    :param e_at_int_points: Array of shape (num_elem, ips) containing the internal energy densities of num_elem elements.
+    :param e_at_int_points: Array of shape (num_elem, ips) containing the Helmholtz free energy densities of num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, 2) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, 2) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, 2, 2) 

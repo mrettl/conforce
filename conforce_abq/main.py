@@ -83,7 +83,7 @@ def apply(
             "mbf": "mbf",
             "motion based formulation": "mbf",
             "dbf": "dbf",
-            "deformation based formulation": "dbf"
+            "displacement based formulation": "dbf"
         }
         method = method_map[method]
 

@@ -204,7 +204,7 @@ def compute_CS(
             - "dbf" :py:func:`conforce.expressions.eval_CS_dbf`
 
     :param e_at_int_points: Array of shape (num_elem, ips)
-        containing the internal energy densities at ips integration points for num_elem elements.
+        containing the Helmholtz free energy densities at ips integration points for num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, d) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, d) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, d, d)
@@ -244,7 +244,7 @@ def compute_CF(
             - "dbf" :py:func:`conforce.expressions.eval_CS_dbf`
 
     :param e_at_int_points: Array of shape (num_elem, ips)
-        containing the internal energy densities at ips integration points for num_elem elements.
+        containing the Helmholtz free energy densities at ips integration points for num_elem elements.
     :param X_at_nodes: Array of shape (num_elem, n, d) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, d) containing the displacements at n nodes of num_elem elements.
     :param S_at_int_points: Array of shape (num_elem, ips, d, d)
