@@ -171,3 +171,4 @@ array([[[ 0., -5.],
 
 Use the [github issue tracker](https://github.com/mrettl/conforce/issues) to report
 bugs and troubles or to ask questions.
+And if you like our tool, we would be happy if you leave a star on our Github repository.
