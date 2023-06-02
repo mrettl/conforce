@@ -166,9 +166,9 @@ The figure compares the J-Integral of Abaqus and Anderson with the negative conf
 Abaqus and conforce show a good aggreement for all contours in the regions `A` and `B`.
 
 >>> fig = compare_J_and_negative_cfx(results, J_theory)
->>> fig.savefig("example_2_images/01_comparison_over_contours.svg")
+>>> save_fig(fig, "example_2_images/01_comparison_over_contours.png")
 
-.. image:: example_2_images/01_comparison_over_contours.svg
+.. image:: example_2_images/01_comparison_over_contours.png
     :width: 400
     :alt: comparison
 
@@ -192,7 +192,13 @@ Change to home directory
 
 >>> os.chdir(HOME_DIR)
 """
+import os
 import doctest
+
+
+def save_fig(fig, path):
+    if not os.path.exists(path):
+        fig.savefig(path)
 
 
 def compare_J_and_negative_cfx(results, J_theory):

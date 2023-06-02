@@ -1,6 +1,6 @@
 r"""
-Example 3 - CT-specimen with linear elastic material behaviour
-==============================================================
+Example 3 - CT-specimen with elastic-plastic material behaviour
+===============================================================
 
 Import packages and change to the directory where the \*.inp file is located.
 
@@ -50,9 +50,9 @@ Region `D` is modeled without plasticty to prevent large deformations.
 ...     [   1460.,         3.],
 ... ])
 >>> fig = plot_stress_strain(E, yield_stress_over_plastic_strain)
->>> _ = fig.savefig("example_3_images/01_stress_strain.svg")
+>>> save_fig(fig, "example_3_images/01_stress_strain.png")
 
-.. image:: example_3_images/01_stress_strain.svg
+.. image:: example_3_images/01_stress_strain.png
     :width: 400
     :alt: stress strain curve
 
@@ -68,18 +68,18 @@ Kolednik [1]_ provides literature values for this problem.
 
 >>> literature_data = {
 ...     "u": [0.10, 0.25, 0.50],  # mm
-...     "j_el_contour_tip": [1.513, 8.45, 31.80],  # mJ/mm²
-...     "j_el_pl_contour_tip": [1.736, 10.15, 38.58],  # mJ/mm²
-...     "j_el_contour_1": [2.132, 11.92, 44.72],  # mJ/mm²
-...     "j_el_pl_contour_1": [2.271, 13.90, 51.18],  # mJ/mm²
-...     "j_el_contour_3": [2.239, 12.88, 46.36],  # mJ/mm²
-...     "j_el_pl_contour_3": [2.239, 13.05, 47.42],  # mJ/mm²
-...     "j_el_contour_7": [2.246, 13.67, 47.03],  # mJ/mm²
-...     "j_el_pl_contour_7": [2.246, 13.20, 47.35],  # mJ/mm²
-...     "j_el_contour_25": [2.247, 13.56, 48.13],  # mJ/mm²
-...     "j_el_pl_contour_25": [2.247, 13.56, 47.72],  # mJ/mm²
-...     "j_el_contour_far": [2.247, 13.56, 48.21],  # mJ/mm²
-...     "j_el_pl_contour_far": [2.247, 13.10, 30.40],  # mJ/mm²
+...     "j_nl_el_contour_tip": [1.513, 8.45, 31.80],  # mJ/mm²
+...     "j_inc_pl_contour_tip": [1.736, 10.15, 38.58],  # mJ/mm²
+...     "j_nl_el_contour_1": [2.132, 11.92, 44.72],  # mJ/mm²
+...     "j_inc_pl_contour_1": [2.271, 13.90, 51.18],  # mJ/mm²
+...     "j_nl_el_contour_3": [2.239, 12.88, 46.36],  # mJ/mm²
+...     "j_inc_pl_contour_3": [2.239, 13.05, 47.42],  # mJ/mm²
+...     "j_nl_el_contour_7": [2.246, 13.67, 47.03],  # mJ/mm²
+...     "j_inc_pl_contour_7": [2.246, 13.20, 47.35],  # mJ/mm²
+...     "j_nl_el_contour_25": [2.247, 13.56, 48.13],  # mJ/mm²
+...     "j_inc_pl_contour_25": [2.247, 13.56, 47.72],  # mJ/mm²
+...     "j_nl_el_contour_far": [2.247, 13.56, 48.21],  # mJ/mm²
+...     "j_inc_pl_contour_far": [2.247, 13.10, 30.40],  # mJ/mm²
 ... }
 
 
@@ -106,9 +106,9 @@ This force is needed to reach the defined displacement `u`.
 With the obtained results the force displacement curve is plotted.
 
 >>> fig = plot_force_displacement(u, load)
->>> _ = fig.savefig("example_3_images/02_force_displacement.svg")
+>>> save_fig(fig, "example_3_images/02_force_displacement.png")
 
-.. image:: example_3_images/02_force_displacement.svg
+.. image:: example_3_images/02_force_displacement.png
     :width: 400
     :alt: force displacement
 
@@ -119,9 +119,9 @@ Abaqus computes the J-integral using the virtual crack extension method by Parks
 This J-integral is compared to the literature values of Kolednik [1]_.
 
 >>> fig = compare_abaqus_j_with_literature(results, literature_data)
->>> _ = fig.savefig("example_3_images/03_j_integral.svg")
+>>> save_fig(fig, "example_3_images/03_j_integral.png")
 
-.. image:: example_3_images/03_j_integral.svg
+.. image:: example_3_images/03_j_integral.png
     :width: 400
     :alt: comparison of J-Integral with literature
 
@@ -142,9 +142,9 @@ are considere, the first contour and the far field contour seem to be swapped.
 .. todo:: Fehler-suche
 
 >>> fig = compare_conforce_cfx_with_literature(results, literature_data)
->>> _ = fig.savefig("example_3_images/04_negative_cfx.svg")
+>>> save_fig(fig, "example_3_images/04_negative_cfx.png")
 
-.. image:: example_3_images/04_negative_cfx.svg
+.. image:: example_3_images/04_negative_cfx.png
     :width: 400
     :alt: comparison of configurational forces with literature
 
@@ -168,7 +168,14 @@ Change to home directory
 >>> os.chdir(HOME_DIR)
 """
 import doctest
+import os.path
+
 import numpy as np
+
+
+def save_fig(fig, path):
+    if not os.path.exists(path):
+        fig.savefig(path)
 
 
 def plot_stress_strain(youngs_modulus, yield_stress_over_plastic_strain):
@@ -240,7 +247,7 @@ def compare_abaqus_j_with_literature(results, literature):
         )
         ax.plot(
             literature["u"],
-            literature[f"j_el_contour_{contour}"],
+            literature[f"j_nl_el_contour_{contour}"],
             label=f"contour {contour}; Literature", ls="", marker="x",
             color=line.get_color()
         )
@@ -252,7 +259,7 @@ def compare_abaqus_j_with_literature(results, literature):
     )
     ax.plot(
         literature["u"],
-        literature[f"j_el_contour_far"],
+        literature[f"j_nl_el_contour_far"],
         label=f"far field; Literature", ls="", marker="x",
         color=line.get_color()
     )
@@ -274,8 +281,8 @@ def compare_conforce_cfx_with_literature(results, literature):
 
     t, u = np.array(results["u"]).T
     for ax, cf, lit_fix, energy_expression in (
-            (ax1, results["CONF_FORCE_EL_at_frame"], "el", "SENER"),
-            (ax2, results["CONF_FORCE_EL_PL_at_frame"], "el_pl", "SENER+PENER")
+            (ax1, results["CONF_FORCE_EL_at_frame"], "inc_pl", "SENER"),
+            (ax2, results["CONF_FORCE_EL_PL_at_frame"], "nl_el", "SENER+PENER")
     ):
         ax.set_title(energy_expression)
         for contour in [1, 3, 7, 25]:
