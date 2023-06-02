@@ -1,5 +1,5 @@
 """
-This is an Abaqus script for the example in :py:mod:`example_3_CT_specimen_linear_elastic`.
+This is an Abaqus script for the example in :py:mod:`example_3_CT_specimen_elastic_plastic`.
 
 To simulated and write a result.json file open a shell and type:
 

@@ -122,21 +122,14 @@ This J-integral is compared to the literature values of Kolednik [1]_.
     :width: 400
     :alt: comparison of J-Integral with literature
 
-Except for the first contour, the Abaqus J-integral fit the literature values.
-
-.. todo::  warum passt das nicht genau zusammen? Gleiche Auswertemethode
+Except for the first contour, the Abaqus J-integrals fit the literature values.
 
 Configurational forces
 ----------------------
 
-Furthermore, the x-components of the configurational forces are summed up inside the contours.
-This corresponds to the J-integral with swapped signs.
-If only the elastic strain energy (SENER) is considered,
-the far field contour and the first contour show a deviation.
-If both the elastich strain energy and the plastic dissipation (SENER+PENER)
-are considere, the first contour and the far field contour seem to be swapped.
-
-.. todo:: Fehler-suche
+Furthermore, the x-components of the configurational forces are summed up in regions sourounded by the contours.
+This corresponds to the J-integral with negative signs.
+Except for the first contour, a good aggrement between the `conforce` and the literature values is observed.
 
 >>> fig = compare_conforce_cfx_with_literature(results, literature_data)
 >>> save_fig(fig, "example_3_images/04_negative_cfx.png")
@@ -274,14 +267,14 @@ def compare_conforce_cfx_with_literature(results, literature):
     import matplotlib.pyplot as plt
 
     fig, (ax1, ax2) = plt.subplots(nrows=2)  # type: plt.Figure, (plt.Axes, plt.Axes)
-    fig.set_size_inches(6*2, 6)
+    fig.set_size_inches(6, 6*2)
 
     t, u = np.array(results["u"]).T
     for ax, cf, lit_fix, energy_expression in (
             (ax1, results["CONF_FORCE_EL_at_frame"], "inc_pl", "SENER"),
             (ax2, results["CONF_FORCE_EL_PL_at_frame"], "nl_el", "SENER+PENER")
     ):
-        ax.set_title(energy_expression)
+        ax.set_title(f"conforce with e={energy_expression} and literature with j_{lit_fix} ")
         for contour in [1, 3, 7, 25]:
             (line, ) = ax.plot(
                 u,
