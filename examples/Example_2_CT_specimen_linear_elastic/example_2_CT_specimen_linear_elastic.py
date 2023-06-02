@@ -1,7 +1,4 @@
 r"""
-Example 2 - CT-specimen with linear elastic material behaviour
-==============================================================
-
 Problem description
 -------------------
 

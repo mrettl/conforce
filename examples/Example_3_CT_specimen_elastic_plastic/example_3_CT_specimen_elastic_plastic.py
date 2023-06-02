@@ -1,7 +1,4 @@
 r"""
-Example 3 - CT-specimen with elastic-plastic material behaviour
-===============================================================
-
 Import packages and change to the directory where the \*.inp file is located.
 
 >>> import os
