@@ -71,7 +71,6 @@ class TestEnergyGradient(unittest.TestCase):
                     CF_at_nodes,
                     decimal=2
                 )
-                # TODO:
 
 
 if __name__ == '__main__':

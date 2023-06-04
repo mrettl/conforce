@@ -1,6 +1,8 @@
 """
-This is an Abaqus plugin
-# TODO:
+This is an Abaqus plugin with a GUI.
+
+**Do not rename this file.**
+Abaqus recognizes only plugins whose name ends with "_plugin.py".
 """
 from __future__ import print_function
 
@@ -10,6 +12,11 @@ import kernelAccess as ka
 
 class MyDialog(gui.AFXDataDialog):
     def __init__(self, owner):
+        """
+        This is the GUI with buttons, checkboxes and so on.
+
+        :param owner: AFXForm
+        """
         gui.AFXDataDialog.__init__(
             self,
             owner,
@@ -129,11 +136,22 @@ class MyDialog(gui.AFXDataDialog):
 
 class MyForm(gui.AFXForm):
     def __init__(self, owner):
+        """
+        Handle dialogs.
+
+        :param owner: Abaqus toolset
+        """
         # Construct the base class.
         gui.AFXForm.__init__(self, owner)
         self.owner = owner
 
         self.cmd = gui.AFXGuiCommand(self, "apply", "cf_abq_main")
+        """
+        This command calls the apply function in the module cf_abq_main.
+        Assure this module is imported in the kernel.
+        """
+
+        # Keyword arguments for the function cf_abq_main.apply
         self.kw_odb_name = gui.AFXStringKeyword(self.cmd, "odb_or_odb_name", True)
         self.kw_method = gui.AFXStringKeyword(self.cmd, "method", True)
         self.kw_e_expression = gui.AFXStringKeyword(self.cmd, "e_expression", True)
@@ -147,10 +165,12 @@ class MyForm(gui.AFXForm):
         self.dialog = None
 
     def getFirstDialog(self):
+        # open the GUI
         self.dialog = MyDialog(self)
         return self.dialog
 
 
+# register the Plugin as context menu entry under `plugin -> Conf. Force`
 toolset = gui.getAFXApp().getAFXMainWindow().getPluginToolset()
 toolset.registerGuiMenuButton(
     object=MyForm(toolset),
