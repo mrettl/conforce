@@ -51,7 +51,7 @@ def simulate_and_save_results(inp_file_path="CT_specimen_CPE4.inp"):
         odb,
         request_CF=True,
         CF_name="CONF_FORCE_LIN_EL",
-        method="dbf",
+        method="mbf",
         e_expression="SENER"
     )
 

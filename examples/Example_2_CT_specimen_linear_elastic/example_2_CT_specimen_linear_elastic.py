@@ -139,7 +139,7 @@ The configurational forces for the regions `A`, `B`, and `FAR_FIELD` show a good
 
 >>> (cfx_in_a, _) = results["CF"]["A"]
 >>> np.around(cfx_in_a, 3)  # mJ/mm**2
--54.484
+-54.485
 
 >>> (cfx_in_b, _) = results["CF"]["B"]
 >>> np.around(cfx_in_b, 3)  # mJ/mm**2
@@ -147,14 +147,14 @@ The configurational forces for the regions `A`, `B`, and `FAR_FIELD` show a good
 
 >>> (cfx_in_far, _) = results["CF"]["FAR_FIELD"]
 >>> np.around(cfx_in_far, 3)  # mJ/mm**2
--54.794
+-54.808
 
 Like conventional forces, the configurational forces fullfill the equilibrium of forces.
 The configuraional forces summed up for the whole model are zero.
 
 >>> (cfx_whole_model, _) = results["CF"]["ALL_NODES"]
 >>> np.around(cfx_whole_model, 3)
--0.0
+0.0
 
 Comparison
 ----------
