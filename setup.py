@@ -25,9 +25,9 @@ setup(
     description=conforce_shared.description,
     long_description=read_file("README.md"),
     long_description_content_type="text/markdown",
-    url='https://cf-configurational-forces-plug-in.readthedocs.io/en/main/',
+    url='https://conforce.readthedocs.io/',
     project_urls={
-        'Documentation': 'https://cf-configurational-forces-plug-in.readthedocs.io/en/main/',
+        'Documentation': 'https://conforce.readthedocs.io/',
         'Source': 'https://github.com/mrettl/conforce',
         'Tracker': 'https://github.com/mrettl/conforce/issues',
     },
