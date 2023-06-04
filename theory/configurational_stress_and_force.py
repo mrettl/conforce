@@ -1,12 +1,6 @@
 r"""
 Configurational forces are the derivative of the Helmholtz energy with respect to a change in the geometry.
 
->>> import numpy as np
->>> import sympy as sy
->>> import conforce.expressions as expr
->>> import conforce.element_definitions as el_def
-
-
 Helmholtz free energy density `e`
 ---------------------------------
 
@@ -118,12 +112,12 @@ Contrary to (a), a boundary condition is present in (b) in the region near the e
 The boundary condition pins a piece of the material to this fixed position.
 In this case we can see whether the ellipse or the eye moves.
 If the eye moves, the boundary condition would move along the ellipse,
-wherease if the ellipse moves the boundary conditions pins material to a fixed position.
+whereas if the ellipse moves the boundary conditions pins material to a fixed position.
 In this case :math:`dx` can **not** be interpreted as a geometry change :math:`-dl`.
 The configurational force is only a derivative of the energy density with respect to :math:`dx`.
 
 Even, if the configurational body force :math:`G` corresponds to a geometry change,
-the derivate :math:`\frac{\partial e}{\partial x_{i}}` can not be computed in a straight forward way.
+the derivative :math:`\frac{\partial e}{\partial x_{i}}` can not be computed in a straight forward way.
 Instead, equation :eq:`eq_cf_body_forces_balance` is used to compute :math:`G` with the help
 of the configurational stress tensor `CS`.
 
@@ -140,7 +134,7 @@ and subsequently the configurational body force `G` are computed
 using the **motion based formulation**.
 
 First, derive the Helmholtz energy density :math:`e` with respect to a :math:`X`.
-According to the chain rule, the total derivative with repsect to :math:`X` equals
+According to the chain rule, the total derivative with respect to :math:`X` equals
 the partial derivatives with respect to the independent quantities :math:`X` and :math:`F`
 times the total derivatives of those quantities with respect to :math:`X`.
 
@@ -258,7 +252,7 @@ Finally, the configurational body force `G` is computed
     \frac{d {cs}_{ik}}{d x_{k}} = -g_{k}
 
 
-displacement based formulation (dbf)
+Displacement based formulation (dbf)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 An alternative formulation is the **displacement based formulation**
@@ -288,7 +282,7 @@ However, at the boundaries of a material the configurational body forces might d
 Plasticity
 ^^^^^^^^^^
 
-The implemented formulation does **not** support plasticiy in general,
+The implemented formulation does **not** support plasticity in general,
 because the Helmholtz energy density not only depend on :math:`X` and :math:`F`,
 but also on plastic hardening parameters that are not considered here.
 Furthermore, it would be necessary to split the deformation gradient :math:`F`
@@ -296,34 +290,76 @@ into an elastic and plastic part.
 
 However, under the assumption of small strain plasticity the formulation is valid
 and has already been used by Kolednik [5]_.
-Kolednik suggests two modifictions for the configurational stress:
+Kolednik suggests two modifications for the configurational stress:
 
 - incremental plasticity that considers only the elastic strain energy density (SENER)
 
 .. math::
 
-    cs_{\textrm{ep}, ik} = e_{\mathrm{elastic}} \cdot \delta_{ik} - f_{kj} \cdot p_{ji}
+    cs_{\textrm{ep}, ik} = e_{\textrm{elastic}} \cdot \delta_{ik} - f_{kj} \cdot p_{ji}
 
 - deformation plasticity that consider both elastic and plastic strain energy densities (SENER+PENER)
 
 .. math::
 
-    cs_{\textrm{nlel}, ik} = (e_{\mathrm{elastic}} + e_{\mathrm{plastic}}) \cdot \delta_{ik} - f_{kj} \cdot p_{ji}
+    cs_{\textrm{nlel}, ik} = (e_{\textrm{elastic}} + e_{\textrm{plastic}}) \cdot \delta_{ik} - f_{kj} \cdot p_{ji}
 
 
 Configurational forces `CF`
 ---------------------------
 
-The configurational forces `CF` are defined as the integral over the
-configurational body forces weighted by a shape function.
-We use the element shape function to compute configurational forces for each node.
-This leads to the integral
+The configurational force `CF` corresponds to a specific geometrical measure.
+In our implementation `CF` is associated to element nodes.
+So the configurational force is the volume integral
 
 .. math::
+    :label: q_cf_0
 
-    \textrm{cf_at_node}_{j}
-    = \int h \cdot g_{j} \; dV
-    = \int \frac{d h}{d x_{i}} \cdot cs_{ij} \; dV
+    \textrm{cf_at_node}_{ij}
+    = \int_{\textrm{body}} g_{j} \cdot h_{i} \; dV
+
+over the configurational body force weighted by the shape function of the :math:`i`-th node.
+The right integral is approximated using Galerkin's method.
+The configurational force balance :eq:`eq_cf_body_forces_balance`
+is true at every position.
+Consequently, the (weighted) integral over it
+
+.. math::
+    :label: q_cf_2
+
+    \int_{\textrm{body}} \frac{d {cs}_{jk}}{d x_{k}} \cdot h_{i} \; dV
+    = \int_{\textrm{body}} g_{j} \cdot h_{i} \; dV
+
+is also zero for every test/shape function `H`.
+As already mentioned, we use the element shape functions.
+A partial integration transfers the derivative from the configurational body force
+to the shape function
+
+.. math::
+    :label: q_cf_3
+
+    \int_{\textrm{body}} g_{j} \cdot h_{i} \; dV
+    = \int_{\textrm{body}} {cs}_{jk} \cdot \frac{d h_{i}}{d x_{k}} \; dV
+    - \int_{\textrm{surface}} {cs}_{jk} \cdot n_{k} \cdot h_{i} \; dA
+
+However, we assume the surface integral is zero.
+This is a valid approach for configurational forces
+with no component normal to the surface.
+In this case either the normal vector :math:`N` or :math:`cs` vanishes.
+
+We compute the configurational force purely from the volume integral
+
+.. math::
+    :label: q_cf_4
+
+    \int_{\textrm{body}} g_{j} \cdot h_{i} \; dV
+    = \int_{\textrm{body}} {cs}_{jk} \cdot \frac{d h_{i}}{d x_{k}} \; dV
+
+
+If you want to evaluate also configurational forces normal to the surface,
+we provide methods to compute configurational stresses.
+Just use them to evaluate the surface integral and subtract that
+from our configurational forces.
 
 
 References

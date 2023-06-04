@@ -8,4 +8,4 @@ Theory
     theory.finite_element
     theory.deformation_gradient
     theory.first_piola_kirchhoff_stress
-    theory.configurational_stress_and_forces
+    theory.configurational_stress_and_force
