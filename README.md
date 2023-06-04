@@ -7,9 +7,9 @@ Readme
 
 Conforce provides:
 - methods to compute for various element types the following quantities:
-  - configurational forces (deformation and motion based, quasi-static)
-  - configurational stresses (deformation and motion based, quasi-static)
-  - First Piola-Kirchhoff stresses
+  - configurational forces (displacement and motion based, quasi-static)
+  - configurational stresses (displacement and motion based, quasi-static)
+  - first Piola-Kirchhoff stresses
   - deformation gradients
 - a code generation that generates C-code from symbolic functions
 - a C-code binding to use the generated and compiled C-code
@@ -47,7 +47,7 @@ The zip file has the following structure:
     - `conforce_abq_plugin.py`
     - ...
 
-To install the Abaqus Plug-in, unzip the file in one of the following valid `plugin-folder`:
+To install the Abaqus Plug-in, unzip the file in one of the following valid `plugin-folder`s:
 
 - `plugin_central_dir`: This is an Abaqus environment parameter.
   A Plug-in in this folder is accessible regardless of the home
@@ -99,7 +99,8 @@ The Python package requires Python 3 and contains:
    ````shell
    pip install "."
    ````
-   However, to run examples or build the documentation additional requirements are necessary.
+   However, in order to run examples or build the documentation,
+   additional packages are required.
    The following options are available.
    - Install requirements for the examples:
      ````shell
@@ -119,7 +120,7 @@ The Python package requires Python 3 and contains:
     pip uninstall conforce
     ````
 
-If git is available, the package can be installed directly without cloning the repository by
+If git is available, the package can be installed directly from the remote repository by
 ````shell
 pip install "conforce[examples, doc] @ git+https://github.com/mrettl/conforce"
 ````
@@ -158,7 +159,7 @@ cf_c.compute_CF(
 )
 ````
 
-This yields the configurational forces:
+This yields the configurational forces at the element nodes:
 
 ````
 array([[[ 0., -5.],
@@ -171,4 +172,4 @@ array([[[ 0., -5.],
 
 Use the [github issue tracker](https://github.com/mrettl/conforce/issues) to report
 bugs and troubles or to ask questions.
-And if you like our tool, we would be happy if you leave a star on our Github repository.
+If you like our tool, we would be happy if you leave a star on our Github repository.

@@ -1,5 +1,5 @@
 r"""
-Configurational forces are the derivative of the energy with respect to a change in the geometry.
+Configurational forces are the derivative of the Helmholtz energy with respect to a change in the geometry.
 
 >>> import numpy as np
 >>> import sympy as sy
@@ -13,12 +13,12 @@ Helmholtz free energy density `e`
 The Helmholtz free energy density `e` is defined as
 
 .. math::
-    e = \psi - temperature \cdot entropy
+    e = \psi - \textrm{temperature} \cdot \textrm{entropy}
 
 where :math:`\psi` is the internal energy density.
 For a hyper-elastic material the Helmholtz free energy density is the strain energy density.
-Consequently, the partial derivative of `e` with respect to the deformation gradient `F` is
-the first Piola-Kirchhoff stress tensor.
+The partial derivative of `e` with respect to the deformation gradient `F` is
+the first Piola-Kirchhoff stress tensor. [1]_
 
 .. math::
     :label: eq_partial_e_partial_F
@@ -33,9 +33,9 @@ a function of
 
     e = e(X, F)
 
-the two independent quantities `X` and `F`.
-`X` is a position of the material in the undeformed state and
-`F` is the deformation gradient.
+the two independent quantities :math:`X` and :math:`F`.
+:math:`X` is a location in the undeformed state and
+:math:`F` is the deformation gradient. [2]_
 
 
 Static equilibrium in the reference space
@@ -47,10 +47,10 @@ In the deformed state, the static equilibrium is known as
 .. math::
     :label: eq_stat_force_balance_deformed
 
-    \frac{\partial \sigma_{ij}}{\partial x_{j}}
-    = -b_{deformed, j}
+    \frac{\partial \sigma_{ij}}{\partial x_{\textrm{deformed}, j}}
+    = -b_{\textrm{deformed}, j}
 
-where :math:`\sigma` is the true Cauchy stress tensor and :math:`B_{deformed}`
+where :math:`\sigma` is the true Cauchy stress tensor and :math:`B_{\textrm{deformed}}`
 is a body force acting on the deformed shape.
 
 The balance of forces can also be written in terms of the undeformed state.
@@ -60,11 +60,11 @@ Then the first Piola-Kirchhoff stress `P` is used and the equilibrium is
     :label: eq_stat_force_balance_undeformed
 
     \frac{\partial p_{ij}}{\partial x_{j}}
-    = -b_{undeformed, i}
+    = -b_{\textrm{undeformed}, i}
 
-with the body force :math:`B_{undeformed}`.
+with the body force :math:`B_{\textrm{undeformed}}`.
 
-Although, :math:`B_{deformed}` and  :math:`B_{undeformed}` are defined on either
+Although, :math:`B_{\textrm{deformed}}` and  :math:`B_{\textrm{undeformed}}` are defined on either
 the deformed or undeformed state, they both act on the **displacement** field.
 An alternative idea is to define a body force that acts on the
 **geometry** instead on the **displacements**.
@@ -74,7 +74,7 @@ Configurational body force `G`
 
 This is exactly, what the configurational body force `G` does.
 Like for the other two balance laws
-:eq:`eq_stat_force_balance_deformed` and :eq:`eq_stat_force_balance_deformed`,
+:eq:`eq_stat_force_balance_deformed` and :eq:`eq_stat_force_balance_undeformed`,
 the divergence of some stress tensor (we call it configurational stress `CS`)
 corresponds to the negative configurational body force `G`.
 
@@ -90,29 +90,59 @@ The static configurational body force is defined as
 
     g_{i}
     = - \frac{\partial e}{\partial x_{i}}
-    - f_{ji} \cdot b_{undeformed, j}
+    - f_{ji} \cdot b_{\textrm{undeformed}, j}
 
-If no body force :math:`B_{undeformed}` like a pressure or gravity acts on the **displacement** field,
-the configurational body forces are the partial derivative of the Helmholtz energy with
-respect to a **geometry** change.
+If no body force :math:`B_{\textrm{undeformed}}` like a pressure or gravity is present,
+the configurational body force is :math:`-\frac{\partial e}{\partial x_{i}}`,
+the partial derivative of the Helmholtz energy density :math:`e`
+with respect to the position :math:`x_{i}`
+under a constant deformation gradient :math:`F`.
 
-However, the term :math:`\frac{\partial e}{\partial x_{i}}` can not be computed in a straight forward way.
-Instead, equation :eq:`eq_cf_body_forces_balance` is used to compute `G` with the help
+This involves the derivative with respect to a position,
+but not with respect to a **geometry** change.
+However, with a small trick, :math:`dx` can be interpreted as :math:`-dl`
+where :math:`dl` stands for geometry change of e.g. a length.
+
+In the image below the eye observes a region near a geometrical feature (ellipse).
+The left side states the original and the right side shows that something moved.
+In (a) it is not possible to distinguish if the eye moved by :math:`dx`
+or the ellipse moved by :math:`-dl`.
+In this case :math:`dx = -dl` holds true and the configurational force acting on the ellipse
+can be interpreted as the negative derivative of the energy density with respect to a geometry change.
+
+.. image:: theory_images/similarity.png
+    :width: 600
+    :alt: similarity
+
+Contrary to (a), a boundary condition is present in (b) in the region near the ellipse.
+The boundary condition pins a piece of the material to this fixed position.
+In this case we can see whether the ellipse or the eye moves.
+If the eye moves, the boundary condition would move along the ellipse,
+wherease if the ellipse moves the boundary conditions pins material to a fixed position.
+In this case :math:`dx` can **not** be interpreted as a geometry change :math:`-dl`.
+The configurational force is only a derivative of the energy density with respect to :math:`dx`.
+
+Even, if the configurational body force :math:`G` corresponds to a geometry change,
+the derivate :math:`\frac{\partial e}{\partial x_{i}}` can not be computed in a straight forward way.
+Instead, equation :eq:`eq_cf_body_forces_balance` is used to compute :math:`G` with the help
 of the configurational stress tensor `CS`.
 
-Configurational stress tensor `CS` (mbf)
-----------------------------------------
+Configurational stress tensor `CS`
+----------------------------------
+
+Motion based formulation (mbf)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The configurational stress tensor is also known as energy-momentum tensor
-and was first introduced by Eshelby.
+and was first introduced by Eshelby [3]_.
 This section explains how the configurational stress tensor `CS`
 and subsequently the configurational body force `G` are computed
 using the **motion based formulation**.
 
-First, derive the Helmholtz energy density `e` with respect to a geometry change `X`.
-According to the chain rule, the total derivative with repsect to `X` equals
-the partial derivatives with respect to the independent quantities `X` and `F`
-times the total derivatives of those quantities with respect to `X`.
+First, derive the Helmholtz energy density :math:`e` with respect to a :math:`X`.
+According to the chain rule, the total derivative with repsect to :math:`X` equals
+the partial derivatives with respect to the independent quantities :math:`X` and :math:`F`
+times the total derivatives of those quantities with respect to :math:`X`.
 
 .. math::
     :label: eq_de_dx
@@ -134,37 +164,37 @@ by the first Piola-Kirchhoff stress tensor using equation :eq:`eq_partial_e_part
 
 .. note::
 
-    **Auxiliary calculation**
+    **Identity from Gurtin [page 16, equation (1-26)]** [4]_
 
     .. math::
 
-        \frac{d (p_{jk} \cdot f_{ji}) }{d x_{i}}
-        = f_{ji} \cdot \frac{d p_{jk} }{d x_{i}}
-        + p_{ji} \cdot \frac{d f_{jk} }{d x_{i}}
+        P : \textrm{grad}(F)
+        = \textrm{div}(F^{T} P)
+        - F^{T} \textrm{div}(P)
+
+    The identity in the summation notation is
 
     .. math::
-        :label: eq_p_partial_f_partial_x
+        :label: eq_p_df_dx
 
-        p_{jk} \cdot \frac{d f_{jk} }{d x_{i}}
-        = \frac{d (p_{jk} \cdot f_{ji}) }{d x_{i}}
-        - f_{ji} \cdot \frac{d p_{jk} }{d x_{k}}
-
-.. todo:: fix indices
+        p_{jk} \frac{d f_{jk}}{d x_{i}}
+        = \frac{d (f_{kj} \cdot p_{ji}) }{d x_{i}}
+        - f_{kj} \frac{d p_{ji}}{d x_{i}}
 
 
-Next, inserting :eq:`eq_p_partial_f_partial_x` into :eq:`eq_de_dx_2` yields
+Insert this identity :eq:`eq_p_df_dx` into :eq:`eq_de_dx_2`.
 
 .. math::
     :label: eq_de_dx_3
 
     \frac{d e}{d x_{i}}
     = \frac{\partial e}{\partial x_{i}}
-    + \frac{d (p_{jk} \cdot f_{ji}) }{d x_{i}}
-    - f_{ji} \cdot \frac{d p_{jk} }{d x_{i}}
+    + \frac{d (f_{kj} \cdot p_{ji}) }{d x_{i}}
+    - f_{kj} \frac{d p_{ji}}{d x_{i}}
 
 
-The term :math:`\frac{d p_{jk} }{d x_{i}}` occurs in the force balance
-and can be replaced by :math:`B_{undeformed}` using
+The term :math:`\frac{d p_{ji}}{d x_{i}}` occurs in the force balance
+and can be replaced by :math:`B_{\textrm{undeformed}}` using
 equation :eq:`eq_stat_force_balance_undeformed`.
 
 .. math::
@@ -172,8 +202,8 @@ equation :eq:`eq_stat_force_balance_undeformed`.
 
     \frac{d e}{d x_{i}}
     = \frac{\partial e}{\partial x_{i}}
-    + \frac{d (p_{jk} \cdot f_{jk}) }{d x_{i}}
-    + b_{undeformed, i} \cdot f_{jk}
+    + \frac{d (f_{kj} \cdot p_{ji}) }{d x_{i}}
+    + b_{\textrm{undeformed}, j} \cdot f_{kj}
 
 Collecting the total derivatives yields
 
@@ -182,29 +212,35 @@ Collecting the total derivatives yields
 
     \left(
         \frac{d e}{d x_{i}}
-        - \frac{d (p_{jk} \cdot f_{jk}) }{d x_{i}}
+        - \frac{d (f_{kj} \cdot p_{ji}) }{d x_{i}}
     \right)
     + \left(
         - \frac{\partial e}{\partial x_{i}}
-        - b_{undeformed, i} \cdot f_{jk}
+        - b_{\textrm{undeformed}, j} \cdot f_{kj}
     \right)
     = 0
 
-    \frac{ d (e - p_{jk} \cdot f_{jk})}{d x_{i}}
+Pull out the total derivative in the left bracket.
+Note, the kronecker delta :math:`\delta_{ik}` nearby the Helmholtz energy density.
+
+.. math::
+    :label: eq_de_dx_5_b
+
+    \frac{ d (e \delta_{ik} - f_{kj} \cdot p_{ji})}{d x_{i}}
     + \left(
         - \frac{\partial e}{\partial x_{i}}
-        - b_{undeformed, i} \cdot f_{jk}
+        - b_{\textrm{undeformed}, i} \cdot f_{kj}
     \right)
     = 0
 
-Note, that the right bracket is exactly the configurational body force from equation :eq:`eq_cf_body_forces`.
+The right bracket is exactly the configurational body force from equation :eq:`eq_cf_body_forces`.
 Inserting the equation yields
 
 .. math::
     :label: eq_de_dx_6
 
-    \frac{ d (e - p_{jk} \cdot f_{jk})}{d x_{i}}
-    = -g
+    \frac{ d (e \cdot \delta_{ik} - f_{kj} \cdot p_{ji})}{d x_{i}}
+    = -g_{i}
 
 This equation is the (static) configurational force balance known from equation :eq:`eq_cf_body_forces_balance`.
 Consequently, the configurational stress has to be
@@ -212,32 +248,32 @@ Consequently, the configurational stress has to be
 .. math::
     :label: eq_cs_explicit
 
-    cs_{jk} = e - p_{jk} \cdot f_{jk}
+    cs_{ik} = e \cdot \delta_{ik} - f_{kj} \cdot p_{ji}
 
 Finally, the configurational body force `G` is computed
 
 .. math::
     :label: eq_de_dx_7
 
-    \frac{d {cs}_{jk}}{d x_{i}} = -g_{i}
+    \frac{d {cs}_{ik}}{d x_{k}} = -g_{k}
 
 
-Configurational stress tensor `CS` (dbf)
-----------------------------------------
+displacement based formulation (dbf)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 An alternative formulation is the **displacement based formulation**
-of the configurational stress tensor
+of the configurational stress tensor [4]_
 
 .. math::
     :label: eq_cs_dbf_explicit
 
-    cs_{dbf, jk} = e - \frac{u_{k}}{x_{j}} \cdot f_{jk}
+    cs_{dbf, ik} = e \cdot \delta_{ik} - \frac{u_{k}}{x_{j}} p_{ji}
 
 The dbf and mbf quantities can be transformed to each other.
 
 .. math::
 
-    cs_{mbf, jk} = cs_{dbf, jk} - \textrm{second-Piola-Kirchhoff tensor}
+    cs_{mbf, ik} = cs_{dbf, ik} - \textrm{second_Piola_Kirchhoff_stress}_{ik}
 
 .. math::
 
@@ -247,6 +283,32 @@ Inside a material the configurational body forces stay the same.
 The configurational stresses differ by the second Piola-Kirchhoff stress tensor.
 
 However, at the boundaries of a material the configurational body forces might deviate.
+
+
+Plasticity
+^^^^^^^^^^
+
+The implemented formulation does **not** support plasticiy in general,
+because the Helmholtz energy density not only depend on :math:`X` and :math:`F`,
+but also on plastic hardening parameters that are not considered here.
+Furthermore, it would be necessary to split the deformation gradient :math:`F`
+into an elastic and plastic part.
+
+However, under the assumption of small strain plasticity the formulation is valid
+and has already been used by Kolednik [5]_.
+Kolednik suggests two modifictions for the configurational stress:
+
+- incremental plasticity that considers only the elastic strain energy density (SENER)
+
+.. math::
+
+    cs_{\textrm{ep}, ik} = e_{\mathrm{elastic}} \cdot \delta_{ik} - f_{kj} \cdot p_{ji}
+
+- deformation plasticity that consider both elastic and plastic strain energy densities (SENER+PENER)
+
+.. math::
+
+    cs_{\textrm{nlel}, ik} = (e_{\mathrm{elastic}} + e_{\mathrm{plastic}}) \cdot \delta_{ik} - f_{kj} \cdot p_{ji}
 
 
 Configurational forces `CF`
@@ -264,6 +326,28 @@ This leads to the integral
     = \int \frac{d h}{d x_{i}} \cdot cs_{ij} \; dV
 
 
+References
+----------
+
+.. [1] Bergstrom, Jorgen S.
+    Mechanics of solid polymers: theory and computational modeling.
+    William Andrew, 2015.
+
+.. [2] Mueller, R., and Maugin.
+    "On material forces and finite element discretizations."
+    Computational mechanics 29 (2002): 52-60.
+
+.. [3] Eshelby, John Douglas.
+    "The force on an elastic singularity."
+    Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences 244.877 (1951): 87-112.
+
+.. [4] Gurtin, Morton E.
+    "Motions."
+    Configurational Forces as Basic Concepts of Continuum Physics (2000): 182-183.
+
+.. [5] Kolednik, Otmar, Ronald Schöngrundner, and Franz Dieter Fischer.
+    "A new view on J-integrals in elastic–plastic materials."
+    International Journal of Fracture 187.1 (2014): 77-107.
 
 """
 import doctest

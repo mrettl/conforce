@@ -25,8 +25,8 @@ an undeformed area and undeformed length of
 >>> width_undeformed = 10.
 >>> length_undeformed = 100.
 
-This causes a strain of :math:`\varepsilon_{x} = 0.1`
-and a lateral strain of :math:`\varepsilon_{y} = -0.03`.
+This causes a strain of :math:`\varepsilon_{\textrm{x}} = 0.1`
+and a lateral strain of :math:`\varepsilon_{\textrm{y}} = -0.03`.
 The deformation gradient is
 
 >>> F = expr.eval_F(2, sy.Matrix([
@@ -65,9 +65,9 @@ The traction vector of the undeformed state is defined as
 
 .. math::
 
-    T_{undeformed} = P \cdot N_{undeformed}
+    T_{\textrm{undeformed}} = P \cdot N_{\textrm{undeformed}}
 
-Consquently, the first Piola-Kirchhoff stress can be computed
+Consequently, the first Piola-Kirchhoff stress can be computed
 by multiplying the base of the undeformed traction vectors
 times the inverse base of the undeformed normal vectors.
 
@@ -108,10 +108,15 @@ the deformed width and length.
 ...     [0.]
 ... ]) / (1*length_deformed)
 >>> T_deformed = sy.Matrix.hstack(Tx_deformed, TY_deformed)
+
+The Cauchy stress is
+
 >>> S = T_deformed * N_deformed.inv()
 >>> np.around(np.array(S, dtype=float), 6)
 array([[1030.927835,    0.      ],
        [   0.      ,    0.      ]])
+
+higher than the first Piola-Kirchhoff stress.
 
 The first Piola-Kirchhoff stress can be also computed
 directly with the Cauchy stress and the deformation gradient.
@@ -125,7 +130,7 @@ Matrix([
 Simple shear and tension
 ------------------------
 
-Considering a combined load case (:math:`\gamma_{yx} = 0.1; \varepsilon_{xx}=0.2`)
+Considering a combined load case (:math:`\gamma_{\textrm{yx}} = 0.1; \varepsilon_{\textrm{xx}}=0.2`)
 with a deformation gradient
 
 >>> F = expr.eval_F(2, sy.Matrix([
@@ -166,7 +171,7 @@ Matrix([
 [ 0.7071..., 0.7071...],
 [-0.7071..., 0.7071...]])
 
-Consider a hypothetical (true) Cauchy-stress appears in the specimen.
+A (true) Cauchy-stress appears in the specimen.
 The Cauchy-stress corresponds to the deformed and hence rotated state.
 Consequently, the Cauchy-stress
 
@@ -175,20 +180,19 @@ Consequently, the Cauchy-stress
 ...     [0., 0.],
 ... ])
 
-points normal to the rotaed stated.
+points normal to the rotated state.
 
 However, the first Piola-Kirchhoff stress tensor is defined in the
 undeformed state.
-In the undeformed state the normal stress is split into
-a normal and a shear component.
+This results in
 
 >>> P = expr.eval_P(F, S)
 >>> np.around(np.array(P, dtype=float), 3)
 array([[0.707, 0.707],
        [0.   , 0.   ]])
 
-However, the stress magnitude does not change since there
-is no deformation.
+Nevertheless, the stress magnitude does not change since there
+is no change of the surface area.
 
 >>> np.linalg.norm(np.array(P[0, :], dtype=float))
 1.0

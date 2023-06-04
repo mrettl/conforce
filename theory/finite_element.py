@@ -1,4 +1,6 @@
 r"""
+Finite elements are commonly used to approximate a field (e.g. displacement field).
+The field is approximated by shape or test functions.
 Isoparametric finite elements use the same shape functions for:
 
 - the displacement field
@@ -12,8 +14,8 @@ Isoparametric finite elements use the same shape functions for:
 Define an element type
 ----------------------
 
-Element types are prototypse for elements in the real space.
-Element types are defined in the reference coordinate system.
+Element types are defined in the reference coordinate system and
+are prototypse for elements in the real space.
 In this example a 2d plain strain element with four nodes and reduced integration is considere.
 
 >>> typ = el_def.CPE4R
@@ -86,7 +88,7 @@ and the powers of the shape functions.
 Each shape function corresponds to one node.
 At this node the shape function is one, whereas at other nodes
 it is zero.
-E.g. The i-th shape function is one at the i-th node.
+E.g. the i-th shape function is one at the i-th node.
 
 >>> i = 1
 >>> node_i = R_at_nodes[i]
@@ -104,9 +106,9 @@ but is zero at any j-th node (j != i).
 Interpolation of nodal values using `H`
 ---------------------------------------
 
-Shape functions are used to interpolate quantities inside the element.
+Shape functions are used to interpolate quantities inside an element.
 Values for a quantity are provided at the element nodes.
-E.g. The coordinates are provided at the element nodes.
+E.g. the coordinates are provided at the element nodes.
 
 >>> quantity_at_nodes = sy.Matrix(R_at_nodes)
 

@@ -2,7 +2,7 @@ Welcome to the conforce documentation!
 ======================================
 
 .. image:: conforce_logo_icon.png
-    :width: 400 px
+    :width: 400
     :alt: conforce logo
 
 Conforce is a Python package for computing configurational forces
@@ -24,11 +24,8 @@ Features
     - Field outputs for the displacement and stress field in the global coordinate system are computed automatically.
 - Static configurational stresses and forces may consider:
     - Elastic energy density (Abaqus field output SENER)
-    - Plastic energy density (Abaqus field output PENER)
-    - Viscous energy density (Abaqus field output VENER)
+    - Plastic energy density (Abaqus field output PENER) under the assumption of small-strain plasticity
     - `Kinematic energies are not yet supported.`
-
-:py:mod:`conforce.expressions` provides a short description of the computation.
 
 
 Table of Contents

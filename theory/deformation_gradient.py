@@ -62,6 +62,9 @@ would decrease the volume by a factor of
 >>> float(sy.det(expr.eval_F(2, sy.Matrix([[0.0, 0.1], [0.1, 0]]))))
 0.99
 
+Transformation
+--------------
+
 The deformation gradient is a linear transformation from the
 undeformed to the deformation state.
 Considering a simple shear deformation,
