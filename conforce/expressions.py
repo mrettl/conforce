@@ -17,19 +17,19 @@ def eval_R(d: int):
     Evaluate symbolic reference space coordinates.
 
     :param d: number of dimensions (2 or 3)
-    :return: symbolic matrix
+    :return: symbolic matrix of shape (d, 1)
     """
     return sy.Matrix(R_3d[:d])
 
 
 def eval_H(R: sy.MatrixBase, R_at_nodes: np.ndarray, exponents: np.ndarray):
     """
-    Evaluate shape functions.
+    Evaluate all shape functions of an element.
 
-    :param R: symbolic reference space coordinates
-    :param R_at_nodes: reference space coordinates at nodes
-    :param exponents: exponents of powers of the shape functions
-    :return: symbolic matrix
+    :param R: matrix of shape (d, 1); symbolic reference space coordinates
+    :param R_at_nodes: array of shape (n, d); reference space coordinates at nodes
+    :param exponents: matrix of shape (n, d); exponents of powers of the shape functions
+    :return: symbolic matrix of shape (n, 1)
     """
     R_at_nodes = np.array(R_at_nodes, dtype=float)
     exponents = np.array(exponents, dtype=int)
@@ -71,9 +71,9 @@ def eval_dH_dR(H: sy.MatrixBase, R: sy.MatrixBase):
     """
     Evaluate derivatives of shape functions with respect to reference space coordinates.
 
-    :param H: shape functions
-    :param R: symbolic reference space coordinates
-    :return: symbolic matrix
+    :param H: matrix of shape (n, 1); shape functions
+    :param R: matrix of shape (d, 1); symbolic reference space coordinates
+    :return: symbolic matrix of shape (n, d)
     """
     n_ = H.shape[0]
     d_ = R.shape[0]
@@ -90,9 +90,9 @@ def eval_dX_dR(X_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dR: sy.MatrixBas
     """
     Evaluate derivatives of undeformed real space coordinates with respect to reference space coordinates.
 
-    :param X_at_nodes: undeformed real space coordinates at nodes
-    :param dH_dR: derivatives of shape functions with respect to reference space coordinates
-    :return: symbolic matrix
+    :param X_at_nodes: matrix of shape (n, d); undeformed real space coordinates at nodes
+    :param dH_dR: matrix of shape (n, d); derivatives of shape functions with respect to reference space coordinates
+    :return: symbolic matrix with shape (d, d)
     """
     return X_at_nodes.T * dH_dR
 
@@ -101,9 +101,11 @@ def eval_dH_dX(dH_dR: sy.MatrixBase, dX_dR: sy.MatrixBase):
     """
     Evaluate derivatives of shape functions with respect to undeformed real space coordinates.
 
-    :param dH_dR: derivatives of shape functions with respect to reference space coordinates
-    :param dX_dR: derivatives of undeformed real space coordinates with respect to reference space coordinates
-    :return: symbolic matrix
+    :param dH_dR: matrix of shape (n, d); derivatives of shape functions with respect to reference space coordinates
+    :param dX_dR: matrix of shape (d, d);
+        derivatives of undeformed real space coordinates with respect to reference space coordinates
+
+    :return: symbolic matrix of shape (n, d)
     """
     return dH_dR * inverse(dX_dR)
 
@@ -112,9 +114,11 @@ def eval_dU_dX(U_at_nodes: Union[sy.MatrixBase, np.ndarray], dH_dX: sy.MatrixBas
     """
     Evaluate derivatives of displacements with respect to undeformed real space coordinates.
 
-    :param U_at_nodes: displacements at nodes
-    :param dH_dX: derivatives of shape functions with respect to undeformed real space coordinates
-    :return: symbolic matrix
+    :param U_at_nodes: matrix of shape (n, d); displacements at nodes
+    :param dH_dX: matrix of shape (n, d);
+        derivatives of shape functions with respect to undeformed real space coordinates
+
+    :return: symbolic matrix of shape (d, d)
     """
     return sy.Matrix(U_at_nodes.T) * dH_dX
 
@@ -124,8 +128,10 @@ def eval_F(d: int, dU_dX: sy.MatrixBase):
     Evaluate the deformation gradient.
 
     :param d: number of dimensions
-    :param dU_dX: derivatives of displacements with respect to undeformed real space coordinates
-    :return: symbolic matrix
+    :param dU_dX: matrix of shape (d, d);
+        derivatives of displacements with respect to undeformed real space coordinates
+
+    :return: symbolic matrix of shape (d, d)
     """
     return sy.eye(d) + dU_dX
 
@@ -134,9 +140,9 @@ def eval_P(F: sy.MatrixBase, S: sy.MatrixBase):
     """
     Evaluate the First Piola-Kirchhoff stress tensor.
 
-    :param F: deformation gradient
-    :param S: symmetric Cauchy stress tensor
-    :return: symbolic matrix
+    :param F: matrix of shape (d, d); deformation gradient
+    :param S: matrix of shape (d, d); symmetric Cauchy stress tensor
+    :return: symbolic matrix of shape (d, d)
     """
     return S * inverse(F).T * F.det()
 
@@ -147,9 +153,9 @@ def eval_CS_mbf(d: int, e: sy.Expr, F: sy.MatrixBase, P: sy.MatrixBase):
 
     :param d: number of dimensions
     :param e: energy density
-    :param F: deformation gradient
-    :param P: First Piola-Kirchhoff stress tensor
-    :return: symbolic matrix
+    :param F: matrix of shape (d, d); deformation gradient
+    :param P: matrix of shape (d, d); First Piola-Kirchhoff stress tensor
+    :return: symbolic matrix of shape (d, d)
     """
     return e * sy.eye(d) - F.T * P
 
@@ -160,9 +166,11 @@ def eval_CS_dbf(d: int, e: sy.Expr, dU_dX: sy.MatrixBase, P: sy.MatrixBase):
 
     :param d: number of dimensions
     :param e: energy density
-    :param dU_dX: derivatives of displacements with respect to undeformed real space coordinates
-    :param P: First Piola-Kirchhoff stress tensor
-    :return: symbolic matrix
+    :param dU_dX: matrix of shape (d, d);
+        derivatives of displacements with respect to undeformed real space coordinates
+
+    :param P: matrix of shape (d, d); First Piola-Kirchhoff stress tensor
+    :return: symbolic matrix of shape (d, d)
     """
     return e * sy.eye(d) - dU_dX.T * P
 
@@ -177,14 +185,19 @@ def eval_CF_at_nodes(
     Evaluate the configurational forces at the element nodes.
 
     :param dH_dX: derivatives of shape functions with respect to undeformed real space coordinates
-    :param CS: configurational stress tensor
-    :param dX_dR: derivatives of undeformed real space coordinates with respect to reference space coordinates
-    :param int_weights: integration weights corresponding to the integration points
-    :param int_points_replacements: Each list entry corresponds to an integration point
+    :param CS: matrix of shape (d, d); configurational stress tensor
+    :param dX_dR: matrix of shape (d, d);
+        derivatives of undeformed real space coordinates with respect to reference space coordinates
+
+    :param int_weights: matrix of shape (ips, );
+        integration weights corresponding to the integration points
+
+    :param int_points_replacements: list of length (ips, );
+        Each list entry corresponds to an integration point
         and contains a dictionary that maps the reference space coordinate symbols
         to the position of an integration point. (E.g. `[{r: 0., s: 0.}]`)
 
-    :return: symbolic matrix
+    :return: symbolic matrix of shape (n, d)
     """
 
     CF_contributions = list()

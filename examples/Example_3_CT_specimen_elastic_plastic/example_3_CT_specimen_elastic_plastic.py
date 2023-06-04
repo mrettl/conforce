@@ -16,6 +16,9 @@ Kolednik [1]_ suggested the following compact tension (CT) test.
     :width: 400
     :alt: scheme
 
+.. todo:: new scheme image
+
+
 Geometeric dimensions:
 ^^^^^^^^^^^^^^^^^^^^^^
 

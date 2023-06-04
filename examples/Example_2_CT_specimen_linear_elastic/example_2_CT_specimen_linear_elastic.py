@@ -11,6 +11,8 @@ This allows a comparisson with theoertical prediction for CT specimens by Anders
     :width: 400
     :alt: scheme
 
+.. todo:: new scheme image
+
 Geometeric dimensions:
 ^^^^^^^^^^^^^^^^^^^^^^
 
