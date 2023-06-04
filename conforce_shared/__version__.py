@@ -1,2 +1,2 @@
-version = '1.0.0-alpha'
-build_date = '2023.05.29 14:37:15'
+version = '1.0.1-beta'
+build_date = '2023.06.04 19:50:50'
