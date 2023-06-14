@@ -30,6 +30,8 @@ sys.path.insert(0, HOME_DIR + "/examples/Example_3_CT_specimen_elastic_plastic")
 sys.path.insert(0, HOME_DIR)
 
 import conforce_shared
+from conforce_shared import cf_c
+from conforce_shared import element_type_mapping
 
 # -- Project information ------------------------------------------------------
 
@@ -108,7 +110,43 @@ todo_include_todos = True
 autosummary_generate = True
 
 
-# -- Copy files for root directory --------------------------------------------
+# -- Generate supported_element_types.rst -------------------------------------
+
+with open(f"{DOC_SOURCE_DIR}/supported_element_types.rst", "w") as fh:
+    fh.write("Supported element types\n"
+             "=======================\n"
+             "\n")
+
+    fh.write("""
+Directly supported element types
+--------------------------------
+
+This element types can be used by methods defined in :py:mod:`conforce_shared.cf_c`.
+
+""")
+
+    for el_type, el_info in cf_c.map_type_to_info.items():  # type: str, cf_c.ElementInfo
+        fh.write(f"- **{el_type}**: "
+                 f"{el_info.number_of_dimensions}D element with "
+                 f"{el_info.number_of_nodes} nodes and "
+                 f"{el_info.number_of_integration_points} integration points\n")
+
+    fh.write("""
+Indirectly supported element types 
+----------------------------------
+
+This (Abaqus) element types can be replaced by the directly supported element types on the right.
+This may involve some simplifications and approximations.
+For example the out-of-plane strain of plane stress elements is neglected.
+
+.. seealso:: :py:mod:`conforce_shared.element_type_mapping`
+
+""")
+
+    for el_type, supported_el_type in element_type_mapping.map_abaqus_element_type_to_supported_element_type.items():
+        fh.write(f"- **{el_type}** -> **{supported_el_type}**\n")
+
+# -- Copy files for root directory ---------------------------------------------
 
 for src, dest in [
     (f"{HOME_DIR}/README.md", f"{DOC_SOURCE_DIR}/README.md"),

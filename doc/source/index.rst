@@ -5,27 +5,32 @@ Welcome to the conforce documentation!
     :width: 400
     :alt: conforce logo
 
-Conforce is a Python package for computing configurational forces
-out of the displacement-, stress-, and energy-density-fields obtained by Finite Element Analysis.
+Conforce is available as Python 3 package and as Abaqus Plug-in.
+It computes configurational forces from the displacement-, stress-, and energy-density-fields
+for finite elements.
+The implementation is based on the paper "On material forces and finite element discretizations" by Mueller [1]_.
+Configurational forces correspond to the change of the energy density if some geometry measure changes.
+A common use case for configurational forces is fracture mechanics
+where they correspond the energy release if a crack grows.
 
-Features
-========
+How to read the documentation
+=============================
 
-- Supported methods:
-    - displacement based formulation (see :py:func:`conforce.expressions.eval_CS_dbf`)
-    - motion based formulation (see :py:func:`conforce.expressions.eval_CS_mbf`)
-- Applicable element types:
-    - Conforce supports element types defined in :py:attr:`conforce_shared.cf_c.map_type_to_info`.
-    - Furthermore, element types not directly supported can be treated like an other element type that is supported.
-      This allows to use not supported element types with some assumptions and simplifications.
-      The dictionary :py:attr:`conforce_shared.element_type_mapping.map_abaqus_element_type_to_supported_element_type`
-      defines which supported element types can imitate not directly supported elements.
-- Material orientations are supported:
-    - Field outputs for the displacement and stress field in the global coordinate system are computed automatically.
-- Static configurational stresses and forces may consider:
-    - Elastic energy density (Abaqus field output SENER)
-    - Plastic energy density (Abaqus field output PENER) under the assumption of small-strain plasticity
-    - `Kinematic energies are not yet supported.`
+The :doc:`README` section
+describes how to install and use the Python 3 package and the Abaqus Plug-in.
+Conforce supports 3D and 2D plane strain elements in a static load case.
+Plane stress elements are supported with a simplification.
+The :doc:`supported_element_types` section provides a full list of supported element types.
+The :doc:`theory` section describes how configurational forces are computed in detail.
+:doc:`examples/example_1_two_phase_bar` provides a detail walk-through for the Abaqus Plug-in.
+:doc:`examples/example_2_ct_specimen_linear_elastic` and
+:doc:`examples/example_3_ct_specimen_elastic_plastic`
+use the Abaqus Plug-in within an automated script to compute the J-integral for a crack.
+The library references
+(:doc:`reference`,
+:doc:`reference_abq`,
+:doc:`reference_shared`) contain documentation for every function.
+The :doc:`CONTRIBUTING` section is intended for developers who want to add new features or fix bugs.
 
 
 Table of Contents
@@ -33,22 +38,23 @@ Table of Contents
 
 .. toctree::
     :caption: Getting started
-    :maxdepth: 2
+    :maxdepth: 1
 	
     README.md
+    supported_element_types
     theory
 
 .. toctree::
     :caption: Examples
-    :maxdepth: 2
+    :maxdepth: 1
 
     examples/example_1_two_phase_bar
     examples/example_2_ct_specimen_linear_elastic
     examples/example_3_ct_specimen_elastic_plastic
 
 .. toctree::
-    :caption: References
-    :maxdepth: 2
+    :caption: Library references
+    :maxdepth: 1
 
     reference
     reference_abq
@@ -56,10 +62,19 @@ Table of Contents
 
 .. toctree::
     :caption: Appendix
-    :maxdepth: 2
+    :maxdepth: 1
 
     CONTRIBUTING.md
     license
+
+
+Reference
+=========
+
+.. [1] R. Mueller and G. A. Maugin,
+    "On material forces and finite element discretizations"
+    Computational Mechanics, vol. 29, no. 1, pp. 52-60, Jul. 2002, doi: 10.1007/s00466-002-0322-2.
+
 
 
 Indices and tables

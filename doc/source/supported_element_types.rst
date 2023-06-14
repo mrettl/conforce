@@ -1,0 +1,72 @@
+Supported element types
+=======================
+
+
+Directly supported element types
+--------------------------------
+
+This element types can be used by methods defined in :py:mod:`conforce_shared.cf_c`.
+
+- **C3D20**: 3D element with 20 nodes and 27 integration points
+- **C3D20R**: 3D element with 20 nodes and 8 integration points
+- **CPE8**: 2D element with 8 nodes and 9 integration points
+- **CPE8R**: 2D element with 8 nodes and 4 integration points
+- **C3D8**: 3D element with 8 nodes and 8 integration points
+- **C3D8R**: 3D element with 8 nodes and 1 integration points
+- **CPE4**: 2D element with 4 nodes and 4 integration points
+- **CPE4R**: 2D element with 4 nodes and 1 integration points
+- **C3D10**: 3D element with 10 nodes and 4 integration points
+- **C3D4**: 3D element with 4 nodes and 1 integration points
+- **C3D15**: 3D element with 15 nodes and 9 integration points
+- **CPE6**: 2D element with 6 nodes and 3 integration points
+- **C3D6**: 3D element with 6 nodes and 2 integration points
+- **CPE3**: 2D element with 3 nodes and 1 integration points
+
+Indirectly supported element types 
+----------------------------------
+
+This (Abaqus) element types can be replaced by the directly supported element types on the right.
+This may involve some simplifications and approximations.
+For example the out-of-plane strain of plane stress elements is neglected.
+
+.. seealso:: :py:mod:`conforce_shared.element_type_mapping`
+
+- **CPE3** -> **CPE3**
+- **CPE3H** -> **CPE3**
+- **CPE4** -> **CPE4**
+- **CPE4H** -> **CPE4**
+- **CPE4I** -> **CPE4**
+- **CPE4IH** -> **CPE4**
+- **CPE4R** -> **CPE4R**
+- **CPE4RH** -> **CPE4R**
+- **CPE6** -> **CPE6**
+- **CPE6H** -> **CPE6**
+- **CPE8** -> **CPE8**
+- **CPE8H** -> **CPE8**
+- **CPE8R** -> **CPE8R**
+- **CPE8RH** -> **CPE8R**
+- **CPS3** -> **CPE3**
+- **CPS4** -> **CPE4**
+- **CPS4I** -> **CPE4**
+- **CPS4R** -> **CPE4R**
+- **CPS6** -> **CPE6**
+- **CPS8** -> **CPE8**
+- **CPS8R** -> **CPE8R**
+- **C3D4** -> **C3D4**
+- **C3D4H** -> **C3D4**
+- **C3D6** -> **C3D6**
+- **C3D6H** -> **C3D6**
+- **C3D8** -> **C3D8**
+- **C3D8H** -> **C3D8**
+- **C3D8I** -> **C3D8**
+- **C3D8IH** -> **C3D8**
+- **C3D8R** -> **C3D8R**
+- **C3D8RH** -> **C3D8R**
+- **C3D10** -> **C3D10**
+- **C3D10H** -> **C3D10**
+- **C3D15** -> **C3D15**
+- **C3D15H** -> **C3D15**
+- **C3D20** -> **C3D20**
+- **C3D20H** -> **C3D20**
+- **C3D20R** -> **C3D20R**
+- **C3D20RH** -> **C3D20R**

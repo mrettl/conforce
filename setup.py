@@ -1,3 +1,6 @@
+"""
+This is the setup script for the Python 3 package.
+"""
 from setuptools import setup
 
 import conforce_shared
@@ -35,6 +38,7 @@ setup(
     packages=['conforce', 'conforce_shared'],
     package_dir={'.': ''},
     package_data={'conforce_shared': ['*.dll', '*.so']},
+    python_requires=">=3.7",
     install_requires=read_requirements("requirements.txt"),
     extras_require={
         "doc": read_requirements("doc/requirements.txt"),
@@ -46,6 +50,7 @@ setup(
         "Operating System :: Microsoft :: Windows",
         "Topic :: Scientific/Engineering :: Physics",
         "Topic :: Scientific/Engineering :: Mathematics",
+        "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3 :: Only",
         (
             "Development Status :: 3 - Alpha" if "-alpha" in conforce_shared.version.lower()

@@ -32,8 +32,8 @@ the two independent quantities :math:`X` and :math:`F`.
 :math:`F` is the deformation gradient. [2]_
 
 
-Static equilibrium in the reference space
------------------------------------------
+Static force equilibrium
+------------------------
 
 According to the static equilibrium the sum of all forces is zero.
 In the deformed state, the static equilibrium is known as
