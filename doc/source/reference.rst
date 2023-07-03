@@ -6,8 +6,6 @@ conforce
 .. autosummary::
 	:toctree: generated
 
-	conforce.codegen
-	conforce.element_definitions
-	conforce.expressions
-	conforce.one_element_runner
-	conforce.symbolic_util
+	conforce.cf_c
+	conforce.element_type_mapping
+	conforce.tensor_util

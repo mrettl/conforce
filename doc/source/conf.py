@@ -29,17 +29,17 @@ sys.path.insert(0, HOME_DIR + "/examples/Example_2_CT_specimen_linear_elastic")
 sys.path.insert(0, HOME_DIR + "/examples/Example_3_CT_specimen_elastic_plastic")
 sys.path.insert(0, HOME_DIR)
 
-import conforce_shared
-from conforce_shared import cf_c
-from conforce_shared import element_type_mapping
+import conforce
+from conforce import cf_c
+from conforce import element_type_mapping
 
 # -- Project information ------------------------------------------------------
 
-project = conforce_shared.project
-project_copyright = conforce_shared.project_copyright
-author = conforce_shared.author
-version = conforce_shared.version
-release = conforce_shared.version
+project = conforce.project
+project_copyright = conforce.project_copyright
+author = conforce.author
+version = conforce.version
+release = conforce.version
 
 # -- General configuration ----------------------------------------------------
 
@@ -121,7 +121,7 @@ with open(f"{DOC_SOURCE_DIR}/supported_element_types.rst", "w") as fh:
 Directly supported element types
 --------------------------------
 
-This element types can be used by methods defined in :py:mod:`conforce_shared.cf_c`.
+This element types can be used by methods defined in :py:mod:`conforce.cf_c`.
 
 """)
 
@@ -139,7 +139,7 @@ This (Abaqus) element types can be replaced by the directly supported element ty
 This may involve some simplifications and approximations.
 For example the out-of-plane strain of plane stress elements is neglected.
 
-.. seealso:: :py:mod:`conforce_shared.element_type_mapping`
+.. seealso:: :py:mod:`conforce.element_type_mapping`
 
 """)
 

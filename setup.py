@@ -3,7 +3,7 @@ This is the setup script for the Python 3 package.
 """
 from setuptools import setup
 
-import conforce_shared
+import conforce
 
 
 def read_file(path: str):
@@ -21,11 +21,11 @@ def read_requirements(path: str):
 
 
 setup(
-    name=conforce_shared.project,
-    version=conforce_shared.version,
-    author=conforce_shared.author,
+    name=conforce.project,
+    version=conforce.version,
+    author=conforce.author,
     author_email='matthias.rettl@unileoben.ac.at',
-    description=conforce_shared.description,
+    description=conforce.description,
     long_description=read_file("README.md"),
     long_description_content_type="text/markdown",
     url='https://conforce.readthedocs.io/',
@@ -35,9 +35,12 @@ setup(
         'Tracker': 'https://github.com/mrettl/conforce/issues',
     },
     license_files=["LICENSE.txt"],
-    packages=['conforce', 'conforce_shared'],
+    packages=['conforce_3', 'conforce'],
     package_dir={'.': ''},
-    package_data={'conforce_shared': ['*.dll', '*.so']},
+    package_data={
+        'conforce_3': ['*.json', '*.c'],
+        'conforce': ['*.dll', '*.so']
+    },
     python_requires=">=3.7",
     install_requires=read_requirements("requirements.txt"),
     extras_require={
@@ -53,8 +56,8 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3 :: Only",
         (
-            "Development Status :: 3 - Alpha" if "-alpha" in conforce_shared.version.lower()
-            else "Development Status :: 4 - Beta" if "-beta" in conforce_shared.version.lower()
+            "Development Status :: 3 - Alpha" if "-alpha" in conforce.version.lower()
+            else "Development Status :: 4 - Beta" if "-beta" in conforce.version.lower()
             else "Development Status :: 5 - Production/Stable"
         )
     ]

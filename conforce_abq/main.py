@@ -45,7 +45,7 @@ def apply(
     :type CS_name: str
     :param CF_name: name of the configurational force FieldOutput (only considered if `request_CF == True`)
     :type CF_name: str
-    :param method: see :py:func:`conforce_shared.cf_c.compute_CS`
+    :param method: see :py:func:`conforce.cf_c.compute_CS`
     :type method: str
     :param e_expression: see :py:func:`conforce_abq.field_output_util.eval_field_output_expression`
     :type e_expression: str

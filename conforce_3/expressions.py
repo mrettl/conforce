@@ -6,7 +6,7 @@ from typing import Union, List, Dict, Any
 import numpy as np
 import sympy as sy
 
-from conforce.symbolic_util import create_symbolic_matrix, inverse, create_replacement_rules, apply_replacement_rules
+from conforce_3.symbolic_util import create_symbolic_matrix, inverse, create_replacement_rules, apply_replacement_rules
 
 R_3d = create_symbolic_matrix("r{row}", 3, 1)
 """symbolic reference space coordinates for the 3d space"""

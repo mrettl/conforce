@@ -5,7 +5,7 @@ Supported element types
 Directly supported element types
 --------------------------------
 
-This element types can be used by methods defined in :py:mod:`conforce_shared.cf_c`.
+This element types can be used by methods defined in :py:mod:`conforce.cf_c`.
 
 - **C3D20**: 3D element with 20 nodes and 27 integration points
 - **C3D20R**: 3D element with 20 nodes and 8 integration points
@@ -29,7 +29,7 @@ This (Abaqus) element types can be replaced by the directly supported element ty
 This may involve some simplifications and approximations.
 For example the out-of-plane strain of plane stress elements is neglected.
 
-.. seealso:: :py:mod:`conforce_shared.element_type_mapping`
+.. seealso:: :py:mod:`conforce.element_type_mapping`
 
 - **CPE3** -> **CPE3**
 - **CPE3H** -> **CPE3**

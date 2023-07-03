@@ -29,7 +29,7 @@ use the Abaqus Plug-in within an automated script to compute the J-integral for 
 The library references
 (:doc:`reference`,
 :doc:`reference_abq`,
-:doc:`reference_shared`) contain documentation for every function.
+:doc:`reference_3`) contain documentation for every function.
 The :doc:`CONTRIBUTING` section is intended for developers who want to add new features or fix bugs.
 
 
@@ -57,8 +57,8 @@ Table of Contents
     :maxdepth: 1
 
     reference
+    reference_3
     reference_abq
-    reference_shared
 
 .. toctree::
     :caption: Appendix

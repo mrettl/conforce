@@ -56,7 +56,7 @@ array([[180.,   0.],
        [  0.,   0.]])
 
 The configuration stresses are computed using the motion based formulation "mbf" method
-(see :py:func:`conforce.expressions.eval_CS_mbf`).
+(see :py:func:`conforce_3.expressions.eval_CS_mbf`).
 
 >>> compute_CS(
 ...     [e_at_int_points],
@@ -138,7 +138,7 @@ def compute_F(
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
     .. seealso::
-        Module :py:mod:`conforce.element_definitions` for a list of supported element types
+        Module :py:mod:`conforce_3.element_definitions` for a list of supported element types
 
     :param X_at_nodes: Array of shape (num_elem, n, d) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, d) containing the displacements at n nodes of num_elem elements.
@@ -165,7 +165,7 @@ def compute_P(
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
     .. seealso::
-        Module :py:mod:`conforce.element_definitions` for a list of supported element types
+        Module :py:mod:`conforce_3.element_definitions` for a list of supported element types
 
     :param X_at_nodes: Array of shape (num_elem, n, d) containing the coordinates at n nodes of num_elem elements.
     :param U_at_nodes: Array of shape (num_elem, n, d) containing the displacements at n nodes of num_elem elements.
@@ -197,11 +197,11 @@ def compute_CS(
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
     .. seealso::
-        - Module :py:mod:`conforce.element_definitions` for a list of supported element types.
+        - Module :py:mod:`conforce_3.element_definitions` for a list of supported element types.
         - Supported methods are:
 
-            - "mbf" :py:func:`conforce.expressions.eval_CS_mbf`
-            - "dbf" :py:func:`conforce.expressions.eval_CS_dbf`
+            - "mbf" :py:func:`conforce_3.expressions.eval_CS_mbf`
+            - "dbf" :py:func:`conforce_3.expressions.eval_CS_dbf`
 
     :param e_at_int_points: Array of shape (num_elem, ips)
         containing the Helmholtz free energy densities at ips integration points for num_elem elements.
@@ -237,11 +237,11 @@ def compute_CF(
     2d elements have d=2 dimensions. 3d elements have d=3 dimensions.
 
     .. seealso::
-        - Module :py:mod:`conforce.element_definitions` for a list of supported element types.
+        - Module :py:mod:`conforce_3.element_definitions` for a list of supported element types.
         - Supported methods are:
 
-            - "mbf" :py:func:`conforce.expressions.eval_CS_mbf`
-            - "dbf" :py:func:`conforce.expressions.eval_CS_dbf`
+            - "mbf" :py:func:`conforce_3.expressions.eval_CS_mbf`
+            - "dbf" :py:func:`conforce_3.expressions.eval_CS_dbf`
 
     :param e_at_int_points: Array of shape (num_elem, ips)
         containing the Helmholtz free energy densities at ips integration points for num_elem elements.

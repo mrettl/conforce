@@ -2,10 +2,10 @@ import unittest
 
 import numpy as np
 
-from conforce.one_element_runner import simulate_one_element
-from conforce import element_definitions as el_def
-from conforce_shared.element_type_mapping import map_abaqus_element_type_to_supported_element_type as map_el_type
-from conforce_shared.cf_c import map_type_to_info
+from conforce_3.one_element_runner import simulate_one_element
+from conforce_3 import element_definitions as el_def
+from conforce.element_type_mapping import map_abaqus_element_type_to_supported_element_type as map_el_type
+from conforce.cf_c import map_type_to_info
 
 
 class TestElementTypeMapping(unittest.TestCase):

@@ -13,21 +13,21 @@ import sympy as sy
 from sympy.codegen import ast
 from sympy.printing.c import C99CodePrinter
 
-from conforce import element_definitions
-from conforce.expressions import Computation
-from conforce.symbolic_util import TermCollector, expand_matrices_in_symbols_to_expressions, apply_replacement_rules
+from conforce_3 import element_definitions
+from conforce_3.expressions import Computation
+from conforce_3.symbolic_util import TermCollector, expand_matrices_in_symbols_to_expressions, apply_replacement_rules
 
 
 def write_code_for_all_element_types():
     """
-    Generate and compile C- and Python-code for all element types defined in :py:mod:`conforce.element_definitions`.
-    Places the generated code to :py:mod:`conforce_shared.cf_c`.
+    Generate and compile C- and Python-code for all element types defined in :py:mod:`conforce_3.element_definitions`.
+    Places the generated code to :py:mod:`conforce.cf_c`.
     """
     types = element_definitions.R_at_nodes_of_element.keys()
 
     # generate and compile c and python code
     with CPyCodeCompiler(
-            name="cf_c", folder="conforce_shared",
+            name="cf_c", folder="conforce",
             compile_at_exit=False, write_header_at_enter=True
     ) as compiler:
         for element_type in types:
@@ -54,7 +54,7 @@ def write_code_for_element_type(
         compiler: CPyCodeCompiler
 ):
     """
-    Generate Code for an element type defined in :py:mod:`conforce.element_definitions`.
+    Generate Code for an element type defined in :py:mod:`conforce_3.element_definitions`.
 
     :param element_type: Name of the element type
     :param is_dbf: Deformation based or motion based formulation

@@ -10,7 +10,7 @@ The integration points and weights are computed using Abaqus.
 The other dictionaries are defined manually.
 
 .. seealso::
-    The module :py:mod:`conforce.expressions`
+    The module :py:mod:`conforce_3.expressions`
     describes how to use the nodes, exponents, etc.
 
 
@@ -45,7 +45,7 @@ import json
 
 import numpy as np
 
-from conforce.one_element_runner import simulate_one_element
+from conforce_3.one_element_runner import simulate_one_element
 
 
 # Declare dictionaries that define each element type

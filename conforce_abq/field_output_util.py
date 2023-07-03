@@ -8,13 +8,13 @@ import abaqusConstants as abqConst
 
 import numpy as np
 
-from conforce_shared import cf_c
-from conforce_shared.tensor_util import (
+from conforce import cf_c
+from conforce.tensor_util import (
     tensor_from_abaqus_notation,
     abaqus_notation_from_tensor,
     rotation_matrix_from_quaternion
 )
-from conforce_shared.element_type_mapping import map_abaqus_element_type_to_supported_element_type
+from conforce.element_type_mapping import map_abaqus_element_type_to_supported_element_type
 import conforce_abq
 
 
@@ -601,7 +601,7 @@ class _FieldOutputWriter(object):
 
         :param reader: FieldOutputReader
         :param supported_element_type: str, a supported element type
-            as described in :py:attr:`conforce_shared.cf_c.map_type_to_info`
+            as described in :py:attr:`conforce.cf_c.map_type_to_info`
         """
 
     def flush(self, odb_inst):
@@ -714,7 +714,7 @@ class CSFieldOutputWriter(_FieldOutputWriter):
         :param frame: OdbFrame to which FieldOutputs are added
         :param d: int, number of dimensions
         :param name: str, name of new FieldOutputs
-        :param method: Method as described in :py:func:`conforce_shared.cf_c.compute_CS`
+        :param method: Method as described in :py:func:`conforce.cf_c.compute_CS`
         """
         _FieldOutputWriter.__init__(self)
         self.name = str(name)
@@ -764,7 +764,7 @@ class CFFieldOutputWriter(_FieldOutputWriter):
         :param frame: OdbFrame to which the FieldOutput is added
         :param d: int, number of dimensions
         :param name: str, name of the new FieldOutput
-        :param method: Method as described in :py:func:`conforce_shared.cf_c.compute_CS`
+        :param method: Method as described in :py:func:`conforce.cf_c.compute_CS`
         """
         _FieldOutputWriter.__init__(self)
         self.name = str(name)
@@ -911,7 +911,7 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
 
     - Scalar values,
     - Vectors with 2 and 3 components
-    - Tensors supported by :py:func:`conforce_shared.tensor_util.tensor_from_abaqus_notation`
+    - Tensors supported by :py:func:`conforce.tensor_util.tensor_from_abaqus_notation`
 
     :param frame: The new field output is saved to this frame's fieldOutputs
     :param field_output: The existing field output whose values should be rotated
@@ -1030,10 +1030,10 @@ def add_field_outputs(
     regardless whether a transformation has been applied or not.
 
     Not supported element types can be replaced by supported element types.
-    See :py:attr:`conforce_shared.cf_c.map_type_to_info` for a list of supported element types.
+    See :py:attr:`conforce.cf_c.map_type_to_info` for a list of supported element types.
     The parameter `el_type_mapping` maps element types to supported element types.
     The default mapping of `el_type_mapping` is
-    :py:attr:`conforce_shared.element_type_mapping.map_abaqus_element_type_to_supported_element_type`.
+    :py:attr:`conforce.element_type_mapping.map_abaqus_element_type_to_supported_element_type`.
 
     .. note::
 
@@ -1043,7 +1043,7 @@ def add_field_outputs(
 
     :param odb: Odb into which the FieldOutput objects are written.
     :type odb: Odb
-    :param method: see :py:func:`conforce_shared.cf_c.compute_CS`
+    :param method: see :py:func:`conforce.cf_c.compute_CS`
     :type method: str
     :param e_expression: see :py:func:`eval_field_output_expression`
     :type e_expression: str

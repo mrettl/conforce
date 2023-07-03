@@ -2,10 +2,10 @@ import unittest
 
 import sympy as sy
 
-from conforce.element_definitions import *
-from conforce.one_element_runner import simulate_one_element
-from conforce.expressions import eval_R, eval_H, eval_dH_dR, eval_dX_dR, R_3d
-from conforce.symbolic_util import create_replacement_rules, apply_replacement_rules
+from conforce_3.element_definitions import *
+from conforce_3.one_element_runner import simulate_one_element
+from conforce_3.expressions import eval_R, eval_H, eval_dH_dR, eval_dX_dR, R_3d
+from conforce_3.symbolic_util import create_replacement_rules, apply_replacement_rules
 
 
 class TestElementDefinitions(unittest.TestCase):

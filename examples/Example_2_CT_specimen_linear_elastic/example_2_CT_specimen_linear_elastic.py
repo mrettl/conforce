@@ -225,7 +225,7 @@ def compare_J_and_negative_cfx(results, J_theory):
     ax.text(21 + (57-21)/2, 50, "region B", ha="center")
     ax.axhline(J_theory, ls="-", c="k", label="J-Integral (Anderson)")
     ax.plot(contour_ids, [J_map[contour_ids_to_set_names[idx]] for idx in contour_ids], label="J-Integral (Abaqus)")
-    ax.plot(contour_ids, [-cfx_map[cf_regions[idx]] for idx in contour_ids], label=r"$-\mathrm{CF}$ (conforce)")
+    ax.plot(contour_ids, [-cfx_map[cf_regions[idx]] for idx in contour_ids], label=r"$-\mathrm{CF}$ (conforce_3)")
     ax.set_xlabel("contour index")
     ax.set_ylabel(r"J-Integral and $-\mathrm{CF}$ [mJ/mm²]")
     ax.set_xlim(left=0, right=contour_ids[-1])

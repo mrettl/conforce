@@ -102,7 +102,7 @@ the displacement `U` and the symmetric Cauchy stress tensor `S`
 are passed to the `compute_CF` function alongside the element type and the computation method.
 
 ````python
-from conforce_shared import cf_c
+from conforce import cf_c
 
 cf_c.compute_CF(
     e_at_int_points=[[10.]],

@@ -6,7 +6,7 @@ This module provides mappings from element types to supported element types.
 The deformation gradient of a triangular plane stress element should be computed.
 This element type CPS3 is not supported.
 
->>> from conforce_shared import cf_c
+>>> from conforce import cf_c
 >>> not_supported_element_type = "CPS3"
 >>> X_at_nodes = [[
 ...     [0, 0],
@@ -24,7 +24,7 @@ Of course, this is an approximation that neglects the out-of-plane strain of the
 
 >>> supported_similar_element_type = map_abaqus_element_type_to_supported_element_type[not_supported_element_type]
 >>> supported_similar_element_type
-CPE3
+'CPE3'
 
 The deformation gradient is computed using the supported element type.
 

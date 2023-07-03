@@ -4,7 +4,7 @@ This is contrary to the Cauchy stress `S` that considers the deformed state,
 
 >>> import numpy as np
 >>> import sympy as sy
->>> import conforce.expressions as expr
+>>> import conforce_3.expressions as expr
 
 Tensile Test
 ------------

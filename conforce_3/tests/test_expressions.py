@@ -1,11 +1,11 @@
 import unittest
 
-from conforce.expressions import *
-from conforce.element_definitions import (
+from conforce_3.expressions import *
+from conforce_3.element_definitions import (
     R_at_nodes_of_element,
     exponents_of_shape_functions_of_element
 )
-from conforce.symbolic_util import create_replacement_rules, apply_replacement_rules
+from conforce_3.symbolic_util import create_replacement_rules, apply_replacement_rules
 
 
 class TestExpressions(unittest.TestCase):

@@ -2,10 +2,10 @@ import os
 import zipfile
 import datetime
 
-from conforce_shared.__version__ import version
+from conforce.__version__ import version
 
 # increment patch version
-with open("conforce_shared/__version__.py", "w") as fh:
+with open("conforce/__version__.py", "w") as fh:
     (version_id, *modifiers) = version.split("-")
     (major, minor, patch) = version_id.split(".")
     new_patch = int(patch) + 1
@@ -24,7 +24,7 @@ with zipfile.ZipFile(f"release/conforce_plugin_{version}.zip", "w", compression=
             print(file)
             writer.write(reader.read())
 
-    for packages in ["conforce_abq", "conforce_shared"]:
+    for packages in ["conforce_abq", "conforce"]:
         for root, dirs, files in os.walk(packages):
             if "__pycache__" in dirs:
                 dirs.remove("__pycache__")

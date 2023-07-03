@@ -2,10 +2,10 @@ import unittest
 
 import numpy as np
 
-from conforce import element_definitions as el_def
-from conforce_shared import cf_c
-from conforce.one_element_runner import simulate_one_element
-from conforce_shared.tensor_util import tensor_from_abaqus_notation
+from conforce_3 import element_definitions as el_def
+from conforce import cf_c
+from conforce_3.one_element_runner import simulate_one_element
+from conforce.tensor_util import tensor_from_abaqus_notation
 
 
 class TestEnergyGradient(unittest.TestCase):
