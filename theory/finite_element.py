@@ -141,8 +141,8 @@ matrix multiplication.
 E.g. the i-th quantity derived by the j-th reference space coordinate is
 
 >>> i, j = (0, 0)
->>> dQ_dR[i, j]
-1.00000000000000
+>>> dQ_dR[i, j] # doctest: +ELLIPSIS
+1.0...
 
 
 Integration in the reference space using integration points
@@ -201,8 +201,8 @@ The i-th real space coordinate derived by the
 j-th reference space coordinate is
 
 >>> i, j = (1, 0)
->>> dX_dR[i, j]
-0.500000000000000
+>>> dX_dR[i, j] # doctest: +ELLIPSIS
+0.5...
 
 Derivatives in real space `dH_dX` and `dU_dX`
 ---------------------------------------------

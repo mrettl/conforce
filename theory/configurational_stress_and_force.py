@@ -276,8 +276,6 @@ The dbf and mbf quantities can be transformed to each other.
 Inside a material the configurational body forces stay the same.
 The configurational stresses differ by the second Piola-Kirchhoff stress tensor.
 
-However, at the boundaries of a material the configurational body forces might deviate.
-
 
 Plasticity
 ^^^^^^^^^^

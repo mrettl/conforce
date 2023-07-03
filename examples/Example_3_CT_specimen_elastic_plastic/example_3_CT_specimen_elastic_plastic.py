@@ -305,7 +305,7 @@ def compare_conforce_cfx_with_literature(results, literature):
 
         ax.legend()
         ax.set_xlabel("u [mm]")
-        ax.set_ylabel("-CFx [mJ/mm²]")
+        ax.set_ylabel(r"$-\mathrm{CF}_{x}$ [mJ/mm²]")
         ax.set_xlim(left=0)
         ax.set_ylim(bottom=0)
 

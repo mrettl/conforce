@@ -91,7 +91,7 @@ html_sidebars = {
 }
 
 # add logo
-html_logo = "_static/conforce_logo_icon_small.png"
+html_logo = "_static/conforce_logo_small.png"
 html_favicon = "_static/favicon.ico"
 
 # -- Extension configuration --------------------------------------------------
@@ -150,7 +150,7 @@ For example the out-of-plane strain of plane stress elements is neglected.
 
 for src, dest in [
     (f"{HOME_DIR}/README.md", f"{DOC_SOURCE_DIR}/README.md"),
-    (f"{HOME_DIR}/conforce_logo_icon.png", f"{DOC_SOURCE_DIR}/conforce_logo_icon.png"),
+    (f"{HOME_DIR}/conforce_logo.png", f"{DOC_SOURCE_DIR}/conforce_logo.png"),
     (f"{HOME_DIR}/plugin_gui.png", f"{DOC_SOURCE_DIR}/plugin_gui.png"),
     (f"{HOME_DIR}/CONTRIBUTING.md", f"{DOC_SOURCE_DIR}/CONTRIBUTING.md"),
     (f"{HOME_DIR}/LICENSE.txt", f"{DOC_SOURCE_DIR}/LICENSE.txt"),

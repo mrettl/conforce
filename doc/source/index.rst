@@ -1,7 +1,7 @@
 Welcome to the conforce documentation!
 ======================================
 
-.. image:: conforce_logo_icon.png
+.. image:: conforce_logo.png
     :width: 400
     :alt: conforce logo
 

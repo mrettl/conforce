@@ -1,11 +1,11 @@
 Readme
 ======
 
-![conforce](conforce_logo_icon.png)
+![conforce](conforce_logo.png)
 
 [![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
 
-Conforce is a python package to compute configurational forces.
+Conforce is a python package to compute configurational (material) forces.
 The computation is generated and compiled automatically from symbolic calculations into C-code.
 A C-binding allows to access the C-functions from Python.
 This makes conforce fast enough to compute a whole finite element model with several thousand elements.
@@ -26,7 +26,7 @@ Conforce features:
 - material orientations: The stresses and displacements are automatically rotated to the global coordinate system.
 
 
-Supported OS:
+Supported Operating Systems:
 - Windows (64-bit)
 - CentOS (64-bit)
 - other Linux distributions might work
@@ -50,7 +50,7 @@ The Python package requires Python 3 and contains:
 
 #### PyPi
 
-We recommend to install the latest stable conforce from PyPi.
+We recommend to install the latest stable version from PyPi.
 
 ````shell
 pip install conforce
@@ -67,7 +67,7 @@ from our remote repository.
    ````shell
    pip install "."
    ````
-   However, in order to run examples or build the documentation,
+   In order to run examples or build the documentation,
    additional packages are required.
    The following options are available.
    - Install requirements for the examples:
@@ -164,7 +164,7 @@ The zip file has the following structure:
     - `conforce_abq_plugin.py`
     - ...
 
-To install the Abaqus Plug-in, unzip the file in one of the following valid `plugin-folder`s:
+To install the Abaqus Plug-in, unzip the file in one of the following valid `plugin-folder`:
 
 - `plugin_central_dir`: This is an Abaqus environment parameter.
   A Plug-in in this folder is accessible regardless of the home

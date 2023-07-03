@@ -19,7 +19,7 @@ with open("conforce_shared/__version__.py", "w") as fh:
 # copy plug-in files in a zip file in the release folder
 os.makedirs("release", exist_ok=True)
 with zipfile.ZipFile(f"release/conforce_plugin_{version}.zip", "w", compression=zipfile.ZIP_DEFLATED) as fh:
-    for file in ["conforce_abq_plugin.py", "README.md", "LICENSE.txt", "plugin_gui.png", "conforce_logo_icon.png"]:
+    for file in ["conforce_abq_plugin.py", "README.md", "LICENSE.txt", "plugin_gui.png", "conforce_logo.png"]:
         with fh.open(f"conforce/{file}", "w") as writer, open(file, "rb") as reader:
             print(file)
             writer.write(reader.read())

@@ -83,7 +83,10 @@ To create a new release, follow the steps:
    4. (Optional) Describe changes to the previous release
 5. Click *Publish release*
 6. Build a new documentation in readthedocs.
-7. Upload Python 3 package to PyPi
+7. ```shell
+   upload_to_pypi.bat
+   ```
+   Upload Python 3 package to PyPi
 
 ## Conventions and Guidelines
 
