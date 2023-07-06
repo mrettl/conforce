@@ -363,25 +363,24 @@ from our configurational forces.
 References
 ----------
 
-.. [1] Bergstrom, Jorgen S.
-    Mechanics of solid polymers: theory and computational modeling.
-    William Andrew, 2015.
+.. [1] J. S. (Author) Bergstrom,
+    “Mechanics of Solid Polymers: Theory and Computational Modeling”.
 
-.. [2] Mueller, R., and Maugin.
-    "On material forces and finite element discretizations."
-    Computational mechanics 29 (2002): 52-60.
+.. [2] R. Mueller and G. A. Maugin,
+    “On material forces and finite element discretizations,”
+    Computational Mechanics, vol. 29, no. 1, pp. 52–60, Jul. 2002, doi: 10.1007/s00466-002-0322-2.
 
-.. [3] Eshelby, John Douglas.
-    "The force on an elastic singularity."
-    Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences 244.877 (1951): 87-112.
+.. [3] J. D. Eshelby,
+    “The force on an elastic singularity,”
+    Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 244, no. 877, pp. 87–112, 1951.
 
-.. [4] Gurtin, Morton E.
-    "Motions."
-    Configurational Forces as Basic Concepts of Continuum Physics (2000): 182-183.
+.. [4] M. E. Gurtin,
+    Configurational forces as basic concepts of continuum physics.
+    in Applied mathematical sciences, no. 137. New York: Springer, 2000.
 
-.. [5] Kolednik, Otmar, Ronald Schöngrundner, and Franz Dieter Fischer.
-    "A new view on J-integrals in elastic–plastic materials."
-    International Journal of Fracture 187.1 (2014): 77-107.
+.. [5] O. Kolednik, R. Schöngrundner, and F. D. Fischer,
+    “A new view on J-integrals in elastic–plastic materials,”
+    Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: 10.1007/s10704-013-9920-6.
 
 """
 import doctest

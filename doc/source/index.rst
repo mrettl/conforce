@@ -72,9 +72,8 @@ Reference
 =========
 
 .. [1] R. Mueller and G. A. Maugin,
-    "On material forces and finite element discretizations"
-    Computational Mechanics, vol. 29, no. 1, pp. 52-60, Jul. 2002, doi: 10.1007/s00466-002-0322-2.
-
+    “On material forces and finite element discretizations,”
+    Computational Mechanics, vol. 29, no. 1, pp. 52–60, Jul. 2002, doi: 10.1007/s00466-002-0322-2.
 
 
 Indices and tables

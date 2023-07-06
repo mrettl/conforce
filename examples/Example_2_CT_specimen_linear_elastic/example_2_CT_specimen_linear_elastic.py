@@ -11,8 +11,6 @@ This allows a comparisson with theoertical prediction for CT specimens by Anders
     :width: 400
     :alt: scheme
 
-.. todo:: new scheme image
-
 Geometeric dimensions:
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -175,17 +173,18 @@ Abaqus and conforce show a good aggreement for all contours in the regions `A` a
 References
 ----------
 
-.. [1] Kolednik, Otmar, Ronald Schoengrundner, and Franz Dieter Fischer.
-    "A new view on J-integrals in elastic-plastic materials."
-    International Journal of Fracture 187.1 (2014): 77-107.
+.. [1] O. Kolednik, R. Schöngrundner, and F. D. Fischer,
+    “A new view on J-integrals in elastic–plastic materials,”
+    Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: 10.1007/s10704-013-9920-6.
 
-.. [2] Anderson, T. L., and T. Anderson.
-    "Fracture mechanics: fundamentals and applications. 2005."
-    CRC press, Taylor and Francis Group, ISBN 10 (2005): 0-8493.
+.. [2] T. L. Anderson,
+    Fracture mechanics: fundamentals and applications.
+    Boca Raton: CRC Press, 1991.
 
-.. [3] Parks, D. M.
-    "The virtual crack extension method for nonlinear material behavior."
-    Computer methods in applied mechanics and engineering 12.3 (1977): 353-364.
+.. [3] D. M. Parks, 
+    “The virtual crack extension method for nonlinear material behavior,”
+    Computer Methods in Applied Mechanics and Engineering, vol. 12, no. 3, pp. 353–364, Dec. 1977, doi: 10.1016/0045-7825(77)90023-8.
+
 
 Change to home directory
 

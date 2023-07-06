@@ -75,8 +75,8 @@ This results in the expected configurational force in x-direction at the interfa
 >>> cfx_at_interface_theory  # N
 11.6666666666667
 
-Apply Plug-in
--------------
+Applying the Abaqus Plug-in
+---------------------------
 
 In this section the configurational forces are computed using the Abaqus Plug-in.
 First, open the folder that contains the \*.inp file.
@@ -160,7 +160,7 @@ a log summary is printed.
 .. image:: example_1_images/13_log_summary.png
     :alt: log summary
 
-The requested field outputs can be selected and plotted.
+The requested field outputs of conforce can be selected and plotted as vector plot.
 
 .. image:: example_1_images/14_CF.png
     :alt: result visualization
@@ -198,9 +198,10 @@ The theoretical and computed values differ by a factor of
 References
 ----------
 
-.. [1] Kolling, S., and R. Mueller.
-    "On configurational forces in short-time dynamics and their computation with an explicit solver."
-    Computational Mechanics 35 (2005): 392-399.
+.. [1] S. Kolling and R. Mueller,
+    “On configurational forces in short-time dynamics and their computation with an explicit solver,”
+    Comput Mech, vol. 35, no. 5, pp. 392–399, Apr. 2005, doi: 10.1007/s00466-004-0627-4.
+
 """
 import doctest
 

@@ -16,8 +16,6 @@ Kolednik [1]_ suggested the following compact tension (CT) test.
     :width: 400
     :alt: scheme
 
-.. todo:: new scheme image
-
 
 Geometeric dimensions:
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -65,6 +63,10 @@ Literature values
 -----------------
 
 Kolednik [1]_ provides literature values for this problem.
+The non linear elastic J-integrals (j_nl_el\_\*)
+define the energy density as sum of elastic and plastic energy densities (e=SENER+PENER).
+The incremental plasticity J_integrals (j_inc_pl\_\*)
+define the energy density only as the elastic energy densities (e=SENER) and ignore the plastic contribution.
 
 >>> literature_data = {
 ...     "u": [0.10, 0.25, 0.50],  # mm
@@ -116,7 +118,7 @@ Abaqus J-Integral
 -----------------
 
 Abaqus computes the J-integral using the virtual crack extension method by Parks [3]_.
-This J-integral is compared to the literature values of Kolednik [1]_.
+This J-integral is compared to the literature values of Kolednik [1]_ that are marked by "x".
 
 >>> fig = compare_abaqus_j_with_literature(results, literature_data)
 >>> save_fig(fig, "example_3_images/03_j_integral.png")
@@ -144,17 +146,18 @@ Except for the first contour, a good aggrement between the `conforce` and the li
 References
 ----------
 
-.. [1] Kolednik, Otmar, Ronald Schoengrundner, and Franz Dieter Fischer.
-    "A new view on J-integrals in elastic-plastic materials."
-    International Journal of Fracture 187.1 (2014): 77-107.
+.. [1] O. Kolednik, R. Schöngrundner, and F. D. Fischer,
+    “A new view on J-integrals in elastic–plastic materials,”
+    Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: 10.1007/s10704-013-9920-6.
 
 .. [2] Schoengrundner.
     "Numerische Studien zur Ermittlung der risstreibenden Kraft in elastisch-plastischen Materialien bei unterschiedlichen Belastungsbedingungen"
     Ph.D. thesis, University of Leoben (2010).
 
-.. [3] Parks, D. M.
-    "The virtual crack extension method for nonlinear material behavior."
-    Computer methods in applied mechanics and engineering 12.3 (1977): 353-364.
+.. [3] D. M. Parks,
+    “The virtual crack extension method for nonlinear material behavior,”
+    Computer Methods in Applied Mechanics and Engineering, vol. 12, no. 3, pp. 353–364, Dec. 1977, doi: 10.1016/0045-7825(77)90023-8.
+
 
 Change to home directory
 
@@ -216,7 +219,7 @@ def plot_force_displacement(u, load):
     fig, ax = plt.subplots()  # type: plt.Figure, plt.Axes
     fig.set_size_inches(6., 6.)
     ax.plot(u, load, "k-")
-    ax.set_xlabel("u [mm]")
+    ax.set_xlabel("displacement [mm]")
     ax.set_ylabel("load [N]")
     ax.set_xlim(left=0)
     ax.set_ylim(bottom=0)
@@ -235,7 +238,7 @@ def compare_abaqus_j_with_literature(results, literature):
     for contour in [1, 3, 7, 25]:
         (line, ) = ax.plot(
             u,
-            np.interp(t, *np.array(j[f"J at J_NEAR_CRACK_TIP_Contour_{contour:02}"]).T),
+            np.interp(t, *np.array(j[f"J at J_NEAR_CRACK_TIP_Contour_{contour+1:02}"]).T),
             label=f"contour {contour}; Abaqus"
         )
         ax.plot(
@@ -258,7 +261,7 @@ def compare_abaqus_j_with_literature(results, literature):
     )
 
     ax.legend()
-    ax.set_xlabel("u [mm]")
+    ax.set_xlabel("displacement [mm]")
     ax.set_ylabel("J-integral [mJ/mm²]")
     ax.set_xlim(left=0)
     ax.set_ylim(bottom=0)
@@ -278,10 +281,25 @@ def compare_conforce_cfx_with_literature(results, literature):
             (ax2, results["CONF_FORCE_EL_PL_at_frame"], "nl_el", "SENER+PENER")
     ):
         ax.set_title(f"conforce with e={energy_expression} and literature with j_{lit_fix} ")
+
+        # crack tip
+        (line,) = ax.plot(
+            u,
+            -np.array(cf["J_NEAR_J_CRACK_TIP_Contour_01"])[:, 0],
+            label=f"crack tip; conforce"
+        )
+        ax.plot(
+            literature["u"],
+            literature[f"j_{lit_fix}_contour_tip"],
+            label=f"crack tip; Literature", ls="", marker="x",
+            color=line.get_color()
+        )
+
+        # contours
         for contour in [1, 3, 7, 25]:
             (line, ) = ax.plot(
                 u,
-                -np.array(cf[f"J_NEAR_J_CRACK_TIP_Contour_{contour:02}"])[:, 0],
+                -np.array(cf[f"J_NEAR_J_CRACK_TIP_Contour_{contour+1:02}"])[:, 0],
                 label=f"contour {contour}; conforce"
             )
             ax.plot(
@@ -291,6 +309,7 @@ def compare_conforce_cfx_with_literature(results, literature):
                 color=line.get_color()
             )
 
+        # far field
         (line, ) = ax.plot(
             u,
             -np.array(cf["J_FAR_J_FAR_FIELD_Contour_1"])[:, 0],
@@ -304,7 +323,7 @@ def compare_conforce_cfx_with_literature(results, literature):
         )
 
         ax.legend()
-        ax.set_xlabel("u [mm]")
+        ax.set_xlabel("displacement [mm]")
         ax.set_ylabel(r"$-\mathrm{CF}_{x}$ [mJ/mm²]")
         ax.set_xlim(left=0)
         ax.set_ylim(bottom=0)
