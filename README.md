@@ -3,8 +3,6 @@ Readme
 
 ![conforce](conforce_logo.png)
 
-[![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
-
 Conforce is a python package to compute configurational (material) forces.
 The computation is generated and compiled automatically from symbolic calculations into C-code.
 A C-binding allows to access the C-functions from Python.
