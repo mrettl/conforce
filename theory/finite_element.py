@@ -15,8 +15,8 @@ Define an element type
 ----------------------
 
 Element types are defined in the reference coordinate system and
-are prototypse for elements in the real space.
-In this example a 2d plain strain element with four nodes and reduced integration is considere.
+are pprototypes of elements in the real space.
+In this example, a 2D plane strain element with four nodes and reduced integration is considered.
 
 >>> typ = el_def.CPE4R
 
@@ -47,7 +47,7 @@ This element type has `n` nodes in `d` dimensions and `ips` integration points.
 Reference space `R`
 -------------------
 
-For a 2D element the reference space has 2 variables:
+For a 2D element, the reference space has 2 variables:
 
 >>> R = expr.eval_R(d)
 >>> r1, r2 = R
@@ -85,10 +85,10 @@ and the powers of the shape functions.
 >>> H[0]
 0.25*r0*r1 - 0.25*r0 - 0.25*r1 + 0.25
 
-Each shape function corresponds to one node.
-At this node the shape function is one, whereas at other nodes
+Each shape function corresponds to a single node.
+At this node the shape function is one, while at other nodes
 it is zero.
-E.g. the i-th shape function is one at the i-th node.
+For example, the i-th shape function is one at the i-th node.
 
 >>> i = 1
 >>> node_i = R_at_nodes[i]
@@ -148,7 +148,7 @@ E.g. the i-th quantity derived by the j-th reference space coordinate is
 Integration in the reference space using integration points
 -----------------------------------------------------------
 
-Since, the shape functions are multidimensional polynomials, they can be
+As the shape functions are multidimensional polynomials, they can be
 integrated using Gaussian quadrature.
 E.g. the function
 
@@ -180,7 +180,7 @@ E.g. the element nodes have now real space coordinates
 ... ])
 
 The coordiantes in the real space are interpolated
-from the real space coordinates of the element nodes.
+from the real space coordinates at the element nodes.
 
 >>> X_at_nodes.T @ H
 Matrix([
@@ -224,9 +224,7 @@ They can be interpolated using the shape functions
 
 >>> U = U_at_nodes.T * H
 
-However, at the moment you can only derive them with
-respect to the reference space.
-
+So far we can only derive them with respect to the reference space.
 To derive an interpolation like `U` with respect to the
 real space, the jacobian `dX_dR` is used to transfer `dH_dR` to
 
@@ -284,7 +282,7 @@ The strain energy density is
 The strain energy is the integral of the strain energy density
 over the element in the real space coordinates.
 In addition to the integral in the reference space,
-the determinat of the jacobian `dX_dR` is added.
+the determinant of the jacobian `dX_dR` is added.
 
 >>> integral = 0.
 >>> for R_at_int_point, int_weight in zip(R_at_int_points, int_weights):

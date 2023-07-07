@@ -5,10 +5,10 @@ Readme
 
 [![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
 
-Conforce is a python package to compute configurational (material) forces.
-The computation is generated and compiled automatically from symbolic calculations into C-code.
-A C-binding allows to access the C-functions from Python.
-This makes conforce fast enough to compute a whole finite element model with several thousand elements.
+Conforce is a Python package for the computation of configurational (material) forces.
+The computation is automatically generated and compiled from symbolic calculations into C code.
+A C binding allows access to the C functions from Python.
+This makes conforce fast enough to compute an entire finite element model with several thousand elements.
 
 Conforce features:
 
@@ -34,17 +34,13 @@ Supported Operating Systems:
 
 Conforce is available as:
 - Python 3 package
-- Abaqus Plug-in
+- Abaqus plug-in
 
 ## Python 3 Package
 
 The Python package requires Python 3 and contains:
 
-- methods to compute:
-  - configurational forces
-  - configurational stresses
-  - first Piola-Kirchhoff stresses
-  - deformation gradients
+- methods to compute configurational forces, stresses, ...
 
 ### Installation 
 
@@ -98,8 +94,8 @@ The extras `examples` and `doc` are optional.
 
 Configurational forces are computed using the `cf_c` module.
 The energy density `e`, the undeformed positions `X`,
-the displacement `U` and the symmetric Cauchy stress tensor `S`
-are passed to the `compute_CF` function alongside the element type and the computation method.
+the displacement `U`, and the symmetric Cauchy stress tensor `S`
+are passed to the `compute_CF` function along with the element type and the computation method.
 
 ````python
 from conforce import cf_c
@@ -137,17 +133,13 @@ array([[[ 0., -5.],
 ````
 
 
-## Abaqus Plug-in
+## Abaqus plug-in
 
-The Abaqus Plug-in contains:
+The Abaqus plug-in contains:
 
-- methods to compute:
-  - configurational forces
-  - configurational stresses
-  - first Piola-Kirchhoff stresses
-  - deformation gradients
+- methods to compute configurational forces, stresses, ...
 - Abaqus specific code to read and write to *.odb files
-- a GUI for the Abaqus Plug-in
+- a GUI for the Abaqus plug-in
 
 Supported Abaqus versions:
 - \>= Abaqus 2017
@@ -164,10 +156,10 @@ The zip file has the following structure:
     - `conforce_abq_plugin.py`
     - ...
 
-To install the Abaqus Plug-in, unzip the file in one of the following valid `plugin-folder`:
+To install the Abaqus plug-in, unzip the file in one of the following valid `plugin-folder`:
 
 - `plugin_central_dir`: This is an Abaqus environment parameter.
-  A Plug-in in this folder is accessible regardless of the home
+  A plug-in in this folder is accessible regardless of the home
   or current directory. For many installations this folder is located in
   `C:\\SIMULIA\\CAE\\plugins\\{year}`.
 - `home_dir\abaqus_plugins`: This is the folder in which Abaqus is started.
@@ -182,8 +174,8 @@ The folder tree should look like:
     - ...
 
 Start Abaqus and navigate in the toolbar to `Plug-ins -> Conf. Force`.
-The GUI of the Plug-in should open.
-If no toolbar entry called `Conf. Force` exists, check if the Plug-in is stored in the right folder 
+The GUI of the plug-in should open.
+If no toolbar entry called `Conf. Force` exists, check if the plug-in is stored in the right folder 
 for the Abaqus version you are using.
 
 
@@ -191,7 +183,7 @@ for the Abaqus version you are using.
 
 Open an *.odb file in Abaqus.
 Navigate in the toolbar to `Plug-ins -> Conf. Force`.
-The Plug-in gui opens:
+The plug-in gui opens:
 
 ![plugin gui](plugin_gui.png)
 
@@ -202,4 +194,4 @@ Click Apply to compute the requested field outputs.
 
 Use the [github issue tracker](https://github.com/mrettl/conforce/issues) to report
 bugs and troubles or to ask questions.
-If you like our tool, we would be happy if you leave a star on our Github repository.
+If you like our tool, please leave a star on our Github repository.

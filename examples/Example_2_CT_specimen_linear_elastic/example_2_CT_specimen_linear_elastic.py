@@ -5,7 +5,7 @@ Problem description
 Kolednik [1]_ suggests the following compact tension (CT) test.
 Contrary to Kolednik, in this example a linear elastic material behaviour is used
 instead of an elastic plastic behaviour.
-This allows a comparisson with theoertical prediction for CT specimens by Anderson [2]_.
+This allows a comparison with Anderson's theoretical prediction for CT specimens [2]_.
 
 .. image:: example_2_images/00_scheme.png
     :width: 400
@@ -33,7 +33,7 @@ Boundary condition:
 Simulation
 ----------
 
-The model is scripted and there is no need to manually open the `conforce`-plugin.
+The model is scripted and there is no need to open the `conforce`-plugin manually.
 First, change to the directory where the \*.inp file is located.
 
 >>> import os
@@ -100,9 +100,10 @@ Abaqus J-Integral
 Abaqus computes the J-Integral using the virtual crack extension method by Parks [3]_.
 Abaqus computes the J-Integral over several contours.
 The regions correspond to the following contour indices
+
 - region `A` corresponds to the contour index 21
 - region `B` corresponds to the contour index 57
-- region `FAR_FFIELD`
+- region `FAR_FFIELD` corresponds to the contour index 1 of the far field results
 
 According to Abaqus the J-Integral for region `A` is
 
@@ -132,7 +133,7 @@ Conforce can predict J-Integrals by summing up configurational forces inside a r
 The resulting configurational force is projected onto the crack extension direction.
 In this case the crack extension direction is simply the x-component.
 
-The configurational forces for the regions `A`, `B`, and `FAR_FIELD` show a good aggreement with Anderson and Abaqus.
+The configurational forces for the regions `A`, `B`, and `FAR_FIELD` show good aggreement with Anderson and Abaqus.
 
 .. note::
     The configurational forces have a negative sign.
@@ -150,7 +151,7 @@ The configurational forces for the regions `A`, `B`, and `FAR_FIELD` show a good
 -54.808
 
 Like conventional forces, the configurational forces fullfill the equilibrium of forces.
-The configuraional forces summed up for the whole model are zero.
+The configuraional forces summed up for the entire model are zero.
 
 >>> (cfx_whole_model, _) = results["CF"]["ALL_NODES"]
 >>> np.around(cfx_whole_model, 3)

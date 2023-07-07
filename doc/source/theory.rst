@@ -1,8 +1,8 @@
 Theory
 ======
 
-This section explains how configurational stresses and forces are derived.
-Furthermore, the deformation gradient and the first piola kirchhoff stress tensor is explained.
+This section explains how the configurational stresses and forces are derived.
+The deformation gradient and the first Piola-Kirchhoff stress tensor are also explained.
 Finite elements are used for the numerical implementation.
 
 .. autosummary::

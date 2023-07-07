@@ -54,7 +54,7 @@ with normal vector
 ...     [0.],
 ...     [1.]])
 
-and hence the corresponding tractionon the specimen sides is
+and hence the corresponding traction on the specimen sides is
 
 >>> Ty_undeformed = sy.Matrix([
 ...     [0.],
@@ -79,8 +79,8 @@ Matrix([
 [1000.0, 0],
 [     0, 0]])
 
-Compare this to the computation of the true Cauchy stress
-that corresponds to the deformed state with
+Compare this with the computation of the true Cauchy stress
+corresponding to the deformed state with
 
 >>> (length_deformed,), (width_deformed,) = np.around(np.array(
 ...     F @ sy.Matrix([
@@ -118,8 +118,8 @@ array([[1030.927835,    0.      ],
 
 higher than the first Piola-Kirchhoff stress.
 
-The first Piola-Kirchhoff stress can be also computed
-directly with the Cauchy stress and the deformation gradient.
+The first Piola-Kirchhoff stress can also be computed
+directly from the Cauchy stress and the deformation gradient.
 
 >>> expr.eval_P(F, S)
 Matrix([
@@ -158,7 +158,7 @@ Rotation
 
 This example demonstrates how a rigid body rotation affects the
 first Piola-Kirchhoff stress.
-A rigid body rotation of 45° degree leads to a deformation gradient of
+A rigid body rotation of 45° degree results in a deformation gradient of
 
 >>> angle = np.deg2rad(45)
 >>> dU_dX = sy.Matrix([
@@ -172,7 +172,7 @@ Matrix([
 [-0.7071..., 0.7071...]])
 
 A (true) Cauchy-stress appears in the specimen.
-The Cauchy-stress corresponds to the deformed and hence rotated state.
+The Cauchy-stress corresponds to the deformed and therefore rotated state.
 Consequently, the Cauchy-stress
 
 >>> S = sy.Matrix([

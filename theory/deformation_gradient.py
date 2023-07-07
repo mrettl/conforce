@@ -72,7 +72,7 @@ Considering a simple shear deformation,
 >>> F = expr.eval_F(2, sy.Matrix([[0.0, 0.1], [0.0, 0]]))
 
 the points of the undeformed unit square can be transformed to
-the deformed state by a vector matrix multiplication
+the deformed state by a vector matrix multiplication.
 
 >>> X_unit_square = np.array([
 ...     [0, 0],

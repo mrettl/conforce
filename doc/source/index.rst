@@ -5,31 +5,31 @@ Welcome to the conforce documentation!
     :width: 400
     :alt: conforce logo
 
-Conforce is available as Python 3 package and as Abaqus Plug-in.
-It computes configurational forces from the displacement-, stress-, and energy-density-fields
+Conforce is available as a Python 3 package and as an Abaqus plug-in.
+It computes configurational forces from the displacement, stress, and energy density fields
 for finite elements.
 The implementation is based on the paper "On material forces and finite element discretizations" by Mueller [1]_.
-Configurational forces correspond to the change of the energy density if some geometry measure changes.
-A common use case for configurational forces is fracture mechanics
-where they correspond the energy release if a crack grows.
+Configurational forces correspond to the change in energy density when some geometry measure is changed.
+A common application of configurational forces is in fracture mechanics,
+where they correspond to energy release as a crack grows.
 
 How to read the documentation
 =============================
 
 The :doc:`README` section
-describes how to install and use the Python 3 package and the Abaqus Plug-in.
+describes how to install and use the Python 3 package and the Abaqus plug-in.
 Conforce supports 3D and 2D plane strain elements in a static load case.
 Plane stress elements are supported with a simplification.
-The :doc:`supported_element_types` section provides a full list of supported element types.
-The :doc:`theory` section describes how configurational forces are computed in detail.
-:doc:`examples/example_1_two_phase_bar` provides a detail walk-through for the Abaqus Plug-in.
+The :doc:`supported_element_types` section provides a complete list of supported element types.
+The :doc:`theory` section describes in detail how configurational forces are computed.
+:doc:`examples/example_1_two_phase_bar` provides a detailed walkthrough for the Abaqus plug-in.
 :doc:`examples/example_2_ct_specimen_linear_elastic` and
 :doc:`examples/example_3_ct_specimen_elastic_plastic`
-use the Abaqus Plug-in within an automated script to compute the J-integral for a crack.
+use the Abaqus plug-in within an automated script to compute the J-integral for a crack.
 The library references
 (:doc:`reference`,
 :doc:`reference_abq`,
-:doc:`reference_3`) contain documentation for every function.
+:doc:`reference_3`) contain documentation for each function.
 The :doc:`CONTRIBUTING` section is intended for developers who want to add new features or fix bugs.
 
 

@@ -135,16 +135,17 @@ This element types can be used by methods defined in :py:mod:`conforce.cf_c`.
 Indirectly supported element types 
 ----------------------------------
 
-This (Abaqus) element types can be replaced by the directly supported element types on the right.
+These (Abaqus) element types can be replaced by the directly supported element types on the right.
 This may involve some simplifications and approximations.
-For example the out-of-plane strain of plane stress elements is neglected.
+For example, the out-of-plane strain of plane stress elements is neglected.
 
 .. seealso:: :py:mod:`conforce.element_type_mapping`
 
 """)
 
     for el_type, supported_el_type in element_type_mapping.map_abaqus_element_type_to_supported_element_type.items():
-        fh.write(f"- **{el_type}** -> **{supported_el_type}**\n")
+        if el_type != supported_el_type:
+            fh.write(f"- **{el_type}** -> **{supported_el_type}**\n")
 
 # -- Copy files for root directory ---------------------------------------------
 

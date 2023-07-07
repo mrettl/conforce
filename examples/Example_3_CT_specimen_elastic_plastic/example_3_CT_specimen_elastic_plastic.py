@@ -28,7 +28,7 @@ Geometeric dimensions:
 Material properties:
 ^^^^^^^^^^^^^^^^^^^^
 
-Schoengrundner [2]_ provides material data for an elastic plastic behaviour with isotropic hardening.
+Schoengrundner [2]_ provides material data for an elastic-plastic behaviour with isotropic hardening.
 Region `D` is modeled without plasticty to prevent large deformations.
 
 >>> nu = 0.3
@@ -63,9 +63,9 @@ Literature values
 -----------------
 
 Kolednik [1]_ provides literature values for this problem.
-The non linear elastic J-integrals (j_nl_el\_\*)
+The non-linear elastic J-integrals (j_nl_el\_\*)
 define the energy density as sum of elastic and plastic energy densities (e=SENER+PENER).
-The incremental plasticity J_integrals (j_inc_pl\_\*)
+The incremental plasticity J-integrals (j_inc_pl\_\*)
 define the energy density only as the elastic energy densities (e=SENER) and ignore the plastic contribution.
 
 >>> literature_data = {
@@ -88,8 +88,8 @@ define the energy density only as the elastic energy densities (e=SENER) and ign
 Simulation
 ----------
 
-The model is scripted and there is no need to manually open the `conforce`-plugin.
-Next, call the Abaqus script (:py:mod:`example_3_abaqus_script`).
+The model is scripted and there is no need to open the `conforce`-plugin manually.
+First, call the Abaqus script (:py:mod:`example_3_abaqus_script`).
 The script simulates the \*.inp file and writes a `results.json` file.
 To save time, the script is not exectued if the `results.json` file already exists.
 
@@ -127,14 +127,14 @@ This J-integral is compared to the literature values of Kolednik [1]_ that are m
     :width: 400
     :alt: comparison of J-Integral with literature
 
-Except for the first contour, the Abaqus J-integrals fit the literature values.
+The Abaqus J-integrals agree well with the literature values.
 
 Configurational forces
 ----------------------
 
-Furthermore, the x-components of the configurational forces are summed up in regions sourounded by the contours.
-This corresponds to the J-integral with negative signs.
-Except for the first contour, a good aggrement between the `conforce` and the literature values is observed.
+Furthermore, the x-components of the configurational forces are summed up in regions sorrounded by the contours.
+This corresponds to the J-integral with a negative sign.
+Except for the first contour, there is good agreement between the `conforce` and the literature values is observed.
 
 >>> fig = compare_conforce_cfx_with_literature(results, literature_data)
 >>> save_fig(fig, "example_3_images/04_negative_cfx.png")

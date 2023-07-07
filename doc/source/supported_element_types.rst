@@ -25,25 +25,19 @@ This element types can be used by methods defined in :py:mod:`conforce.cf_c`.
 Indirectly supported element types 
 ----------------------------------
 
-This (Abaqus) element types can be replaced by the directly supported element types on the right.
+These (Abaqus) element types can be replaced by the directly supported element types on the right.
 This may involve some simplifications and approximations.
-For example the out-of-plane strain of plane stress elements is neglected.
+For example, the out-of-plane strain of plane stress elements is neglected.
 
 .. seealso:: :py:mod:`conforce.element_type_mapping`
 
-- **CPE3** -> **CPE3**
 - **CPE3H** -> **CPE3**
-- **CPE4** -> **CPE4**
 - **CPE4H** -> **CPE4**
 - **CPE4I** -> **CPE4**
 - **CPE4IH** -> **CPE4**
-- **CPE4R** -> **CPE4R**
 - **CPE4RH** -> **CPE4R**
-- **CPE6** -> **CPE6**
 - **CPE6H** -> **CPE6**
-- **CPE8** -> **CPE8**
 - **CPE8H** -> **CPE8**
-- **CPE8R** -> **CPE8R**
 - **CPE8RH** -> **CPE8R**
 - **CPS3** -> **CPE3**
 - **CPS4** -> **CPE4**
@@ -52,21 +46,13 @@ For example the out-of-plane strain of plane stress elements is neglected.
 - **CPS6** -> **CPE6**
 - **CPS8** -> **CPE8**
 - **CPS8R** -> **CPE8R**
-- **C3D4** -> **C3D4**
 - **C3D4H** -> **C3D4**
-- **C3D6** -> **C3D6**
 - **C3D6H** -> **C3D6**
-- **C3D8** -> **C3D8**
 - **C3D8H** -> **C3D8**
 - **C3D8I** -> **C3D8**
 - **C3D8IH** -> **C3D8**
-- **C3D8R** -> **C3D8R**
 - **C3D8RH** -> **C3D8R**
-- **C3D10** -> **C3D10**
 - **C3D10H** -> **C3D10**
-- **C3D15** -> **C3D15**
 - **C3D15H** -> **C3D15**
-- **C3D20** -> **C3D20**
 - **C3D20H** -> **C3D20**
-- **C3D20R** -> **C3D20R**
 - **C3D20RH** -> **C3D20R**

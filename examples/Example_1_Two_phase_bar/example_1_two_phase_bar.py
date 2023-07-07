@@ -3,9 +3,9 @@ Example 1 - Two-phase bar
 =========================
 
 Considering a bar that consists of a stiffer and a softer material
-with yoiungs_modulus :math:`E_{1}`, and :math:`E_{2}`.
+with Youngs's moduli :math:`E_{1}`, and :math:`E_{2}`.
 The bar is fixed on the left side and a displacement :math:`u` is applied to the right side.
-The configurational forces on the interface should be computed using the Abaqus plugin.
+The configurational forces on the interface should be computed using the Abaqus plug-in.
 
 .. image:: example_1_images/00_scheme.png
     :width: 400
@@ -75,10 +75,10 @@ This results in the expected configurational force in x-direction at the interfa
 >>> cfx_at_interface_theory  # N
 11.6666666666667
 
-Applying the Abaqus Plug-in
+Applying the Abaqus plug-in
 ---------------------------
 
-In this section the configurational forces are computed using the Abaqus Plug-in.
+In this section the configurational forces are computed using the Abaqus plug-in.
 First, open the folder that contains the \*.inp file.
 This folder is the working directory.
 
@@ -100,7 +100,7 @@ Navigate to `File -> Import -> Model...`
 .. image:: example_1_images/04_open_model.png
     :alt: import model from inp
 
-Set the File Filter, such that \*.inp files are displayed and
+Set the "File Filter", such that \*.inp files are displayed and
 select `Two_phase_bar.inp`. Click OK
 
 .. image:: example_1_images/05_open_model.png
@@ -137,9 +137,9 @@ Navigate to `Plug-ins -> Conf. Force`
 .. image:: example_1_images/11_plugin.png
     :alt: plugin toolbar
 
-The Plug-In GUI opens.
+The plug-in GUI opens.
 
-- The odb drop-down lists all opened odb files.
+- The odb drop-down lists all open odb files.
 - Configurational stresses and forces can be computed using various methods.
   Select your desired method.
 - Configurational stresses and forces need a energy density.
@@ -171,7 +171,7 @@ Verify Results
 
 For the comparison with the theoretical values, the x-component of the
 configurational forces on the interface are summed up.
-This can be done by probing values in abaqus.
+This can be done by probing values in Abaqus.
 Navigate to `Tools -> Query -> Prove values`.
 
 .. image:: example_1_images/15_probe_values.png
