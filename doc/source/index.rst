@@ -5,20 +5,19 @@ Welcome to the conforce documentation!
     :width: 400
     :alt: conforce logo
 
-Conforce is available as a Python 3 package and as an Abaqus plug-in.
-It computes configurational forces from the displacement, stress, and energy density fields
-for finite elements.
+Conforce computes computes nodal configurational (or material) forces from the displacement, stress, and energy density fields
+for finite elements. It is implemented as a Python 3 package and as an Abaqus plug-in.
 The implementation is based on the paper "On material forces and finite element discretizations" by Mueller [1]_.
 Configurational forces correspond to the change in energy density when some geometry measure is changed.
-A common application of configurational forces is in fracture mechanics,
-where they correspond to energy release as a crack grows.
+Common application of configurational forces is in fracture mechanics,
+where they can be used to obtain the energy release rate of cracks.
 
 How to read the documentation
 =============================
 
 The :doc:`README` section
 describes how to install and use the Python 3 package and the Abaqus plug-in.
-Conforce supports 3D and 2D plane strain elements in a static load case.
+Conforce supports 3D elements and 2D plane strain elements for static loads.
 Plane stress elements are supported with a simplification.
 The :doc:`supported_element_types` section provides a complete list of supported element types.
 The :doc:`theory` section describes in detail how configurational forces are computed.
@@ -39,7 +38,7 @@ Table of Contents
 .. toctree::
     :caption: Getting started
     :maxdepth: 1
-	
+
     README.md
     supported_element_types
     theory
@@ -72,8 +71,8 @@ Reference
 =========
 
 .. [1] R. Mueller and G. A. Maugin,
-    “On material forces and finite element discretizations,”
-    Computational Mechanics, vol. 29, no. 1, pp. 52–60, Jul. 2002, doi: 10.1007/s00466-002-0322-2.
+    “On material forces and finite element discretizations",
+    Computational Mechanics, vol. 29, no. 1, pp. 52–60, Jul. 2002, doi: `10.1007/s00466-002-0322-2 <https://doi.org/10.1007/s00466-002-0322-2>`_.
 
 
 Indices and tables

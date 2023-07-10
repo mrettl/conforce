@@ -1,6 +1,12 @@
 Supported element types
 =======================
 
+    
+
+This section lists supported Abaqus element types.
+In order to use element types of other FE-programs than Abaqus,
+the foreign element type can be replaced by an Abaqus element type,
+if both element types have the same shape function, integration points and formulation (plane stress/plane strain/etc.).
 
 Directly supported element types
 --------------------------------

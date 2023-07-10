@@ -1,6 +1,6 @@
 r"""
 The first Piola-Kirchhoff stress `P` is defined on the undeformed state.
-This is contrary to the Cauchy stress `S` that considers the deformed state,
+This is contrary to the Cauchy stress `S` that considers the deformed state.
 
 >>> import numpy as np
 >>> import sympy as sy
@@ -143,7 +143,7 @@ and a Cauchy stress of
 ...     [280., 40.],
 ...     [40.0, 0.0]])
 
-the corresponding first Piola-Kirchhoff tensor is
+the corresponding first Piola-Kirchhoff stress is
 
 >>> expr.eval_P(F, S)
 Matrix([

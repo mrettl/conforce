@@ -18,23 +18,23 @@ Element types are defined in the reference coordinate system and
 are pprototypes of elements in the real space.
 In this example, a 2D plane strain element with four nodes and reduced integration is considered.
 
->>> typ = el_def.CPE4R
+>>> el_type = el_def.CPE4R
 
 An element type requires at least the reference positions of the nodes,
 
->>> R_at_nodes = el_def.R_at_nodes_of_element[typ]
+>>> R_at_nodes = el_def.R_at_nodes_of_element[el_type]
 
 the exponents of the polynomial powers of the shape functions,
 
->>> shape_exponents = el_def.exponents_of_shape_functions_of_element[typ]
+>>> shape_exponents = el_def.exponents_of_shape_functions_of_element[el_type]
 
 the reference position of the integration points,
 
->>> R_at_int_points = el_def.R_at_integration_points_of_element[typ]
+>>> R_at_int_points = el_def.R_at_integration_points_of_element[el_type]
 
 and the integration weights.
 
->>> int_weights = el_def.weights_of_integration_points_of_element[typ]
+>>> int_weights = el_def.weights_of_integration_points_of_element[el_type]
 
 This element type has `n` nodes in `d` dimensions and `ips` integration points.
 
@@ -56,7 +56,7 @@ Shape functions in reference space `H`
 --------------------------------------
 
 The shape functions are defined in the reference coordinate system.
-A shape function consists out of coefficients
+A shape function consists of coefficients
 
 >>> COEF = sy.MatrixSymbol("C", len(shape_exponents), 1).as_explicit()
 
@@ -169,7 +169,7 @@ than it would be necessary to integrate the shape function exactly.
 Real space `X`
 --------------
 
-For an application the element is transformed to the real space.
+To be used in a realistic FEM model, the element is transformed to the real space.
 E.g. the element nodes have now real space coordinates
 
 >>> X_at_nodes = np.array([
@@ -240,7 +240,7 @@ This is exactly the same as
 >>> dU_dX = expr.eval_dU_dX(U_at_nodes, dH_dX)
 
 
-The derivative is evaluated at the center of element
+The derivative is evaluated at the center of an element
 
 >>> dU_dX_at_00 = np.array(dU_dX.subs({r1: 0., r2: 0.}), dtype=float).round(7)
 >>> dU_dX_at_00

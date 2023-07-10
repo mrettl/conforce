@@ -1,4 +1,8 @@
 r"""
+
+Example 3 shows how `conforce` can evaluate configurational forces in an elastic-plastic
+model with a crack.
+Small strain plasticity is assumed.
 Import packages and change to the directory where the \*.inp file is located.
 
 >>> import os
@@ -29,7 +33,8 @@ Material properties:
 ^^^^^^^^^^^^^^^^^^^^
 
 Schoengrundner [2]_ provides material data for an elastic-plastic behaviour with isotropic hardening.
-Region `D` is modeled without plasticty to prevent large deformations.
+Region `D` is modeled without plasticty to prevent large deformations
+in the vicinity of constraint nodes.
 
 >>> nu = 0.3
 >>> E = 200_000 # MPa
@@ -54,15 +59,15 @@ Region `D` is modeled without plasticty to prevent large deformations.
     :width: 400
     :alt: stress strain curve
 
-Boundary condition:
-^^^^^^^^^^^^^^^^^^^
+Applied displacements:
+^^^^^^^^^^^^^^^^^^^^^^
 
 >>> u_max = 0.5  # mm
 
-Literature values
------------------
+Literature of crack-driving force
+---------------------------------
 
-Kolednik [1]_ provides literature values for this problem.
+Kolednik [1]_ investigates this problem.
 The non-linear elastic J-integrals (j_nl_el\_\*)
 define the energy density as sum of elastic and plastic energy densities (e=SENER+PENER).
 The incremental plasticity J-integrals (j_inc_pl\_\*)
@@ -88,7 +93,8 @@ define the energy density only as the elastic energy densities (e=SENER) and ign
 Simulation
 ----------
 
-The model is scripted and there is no need to open the `conforce`-plugin manually.
+The input file is located in the example folder.
+The model evaluation is scripted and there is no need to open the `conforce`-plugin manually.
 First, call the Abaqus script (:py:mod:`example_3_abaqus_script`).
 The script simulates the \*.inp file and writes a `results.json` file.
 To save time, the script is not exectued if the `results.json` file already exists.
@@ -105,7 +111,7 @@ This force is needed to reach the defined displacement `u`.
 >>> load = np.array(results["reaction_force"])[:, 1]
 >>> u = np.array(results["u"])[:, 1]
 
-With the obtained results the force displacement curve is plotted.
+With the obtained results the force-displacement curve is plotted.
 
 >>> fig = plot_force_displacement(u, load)
 >>> save_fig(fig, "example_3_images/02_force_displacement.png")
@@ -134,7 +140,7 @@ Configurational forces
 
 Furthermore, the x-components of the configurational forces are summed up in regions sorrounded by the contours.
 This corresponds to the J-integral with a negative sign.
-Except for the first contour, there is good agreement between the `conforce` and the literature values is observed.
+There is good agreement between the `conforce` and the literature values.
 
 >>> fig = compare_conforce_cfx_with_literature(results, literature_data)
 >>> save_fig(fig, "example_3_images/04_negative_cfx.png")
@@ -148,7 +154,7 @@ References
 
 .. [1] O. Kolednik, R. Schöngrundner, and F. D. Fischer,
     “A new view on J-integrals in elastic–plastic materials,”
-    Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: 10.1007/s10704-013-9920-6.
+    Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: `10.1007/s10704-013-9920-6 <https://doi.org/10.1007/s10704-013-9920-6>`_.
 
 .. [2] Schoengrundner.
     "Numerische Studien zur Ermittlung der risstreibenden Kraft in elastisch-plastischen Materialien bei unterschiedlichen Belastungsbedingungen"
@@ -156,10 +162,10 @@ References
 
 .. [3] D. M. Parks,
     “The virtual crack extension method for nonlinear material behavior,”
-    Computer Methods in Applied Mechanics and Engineering, vol. 12, no. 3, pp. 353–364, Dec. 1977, doi: 10.1016/0045-7825(77)90023-8.
+    Computer Methods in Applied Mechanics and Engineering, vol. 12, no. 3, pp. 353–364, Dec. 1977, doi: `10.1016/0045-7825(77)90023-8 <https://doi.org/10.1016/0045-7825(77)90023-8>`_.
 
 
-Change to home directory
+After the evaluation, the directory is changed to the home directory.
 
 >>> os.chdir(HOME_DIR)
 """

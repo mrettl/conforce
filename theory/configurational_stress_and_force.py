@@ -66,10 +66,10 @@ An alternative idea is to define a body force that acts on the
 Configurational body force `G`
 ------------------------------
 
-This is exactly, what the configurational body force `G` does.
+This is exactly what the configurational body force `G` does.
 As with the other two balance laws
 :eq:`eq_stat_force_balance_deformed` and :eq:`eq_stat_force_balance_undeformed`,
-the divergence of a stress tensor (we call it the configurational stress `CS`)
+the divergence of a stress tensor (we call it the configurational or Eshelby stress `CS` [3]_)
 corresponds to the negative configurational body force `G`.
 
 .. math::
@@ -262,11 +262,12 @@ of the configurational stress tensor [4]_
 
     cs_{dbf, ik} = e \cdot \delta_{ik} - \frac{u_{k}}{x_{j}} p_{ji}
 
-The dbf and mbf quantities can be transformed to each other.
+The dbf and mbf quantities can be transformed to each other using the
+second Piola-Kirchhoff stress :math:`SPKS`.
 
 .. math::
 
-    cs_{mbf, ik} = cs_{dbf, ik} - \textrm{second_Piola_Kirchhoff_stress}_{ik}
+    cs_{mbf, ik} = cs_{dbf, ik} - {SPKS}_{ik}
 
 .. math::
 
@@ -305,8 +306,8 @@ Kolednik proposes two modifications for the configurational stress:
 Configurational forces `CF`
 ---------------------------
 
-The configurational force `CF` corresponds to a specific geometric measure.
-In our implementation, `CF` is associated to element nodes.
+The configurational force `CF` corresponds to movement of a volume.
+In our implementation, `CF` is associated to element nodes and therefore their corresponding volume.
 The configurational force is therefore the volume integral
 
 .. math::
@@ -339,7 +340,7 @@ to the shape function
     = \int_{\textrm{body}} {cs}_{jk} \cdot \frac{d h_{i}}{d x_{k}} \; dV
     - \int_{\textrm{surface}} {cs}_{jk} \cdot n_{k} \cdot h_{i} \; dA
 
-However, we assume that the surface integral is zero.
+However, we assume that the surface integral is zero [2]_ [5]_.
 This is a valid approach for configurational forces
 with no component normal to the surface.
 In this case either the normal vector :math:`N` or :math:`cs` vanishes.
@@ -369,7 +370,7 @@ References
 
 .. [2] R. Mueller and G. A. Maugin,
     “On material forces and finite element discretizations,”
-    Computational Mechanics, vol. 29, no. 1, pp. 52–60, Jul. 2002, doi: 10.1007/s00466-002-0322-2.
+    Computational Mechanics, vol. 29, no. 1, pp. 52–60, Jul. 2002, doi: `10.1007/s00466-002-0322-2 <https://doi.org/10.1007/s00466-002-0322-2>`_.
 
 .. [3] J. D. Eshelby,
     “The force on an elastic singularity,”
@@ -381,7 +382,7 @@ References
 
 .. [5] O. Kolednik, R. Schöngrundner, and F. D. Fischer,
     “A new view on J-integrals in elastic–plastic materials,”
-    Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: 10.1007/s10704-013-9920-6.
+    Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: `10.1007/s10704-013-9920-6 <https://doi.org/10.1007/s10704-013-9920-6>`_.
 
 """
 import doctest

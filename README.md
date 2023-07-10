@@ -8,7 +8,8 @@ Readme
 Conforce is a Python package for the computation of configurational (material) forces.
 The computation is automatically generated and compiled from symbolic calculations into C code.
 A C binding allows access to the C functions from Python.
-This makes conforce fast enough to compute an entire finite element model with several thousand elements.
+This makes conforce fast enough to compute an entire finite element model 
+with several thousand elements within a few seconds.
 
 Conforce features:
 
@@ -123,7 +124,8 @@ cf_c.compute_CF(
 )
 ````
 
-This yields the configurational forces at the element nodes:
+This yields the configurational forces at the element nodes for a single CPE4R element
+and the deformation based formulation ("dbf"):
 
 ````
 array([[[ 0., -5.],

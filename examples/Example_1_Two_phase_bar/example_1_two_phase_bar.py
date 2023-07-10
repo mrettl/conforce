@@ -2,7 +2,7 @@ r"""
 Example 1 - Two-phase bar
 =========================
 
-Considering a bar that consists of a stiffer and a softer material
+A bar that consists of a stiffer and a softer material
 with Youngs's moduli :math:`E_{1}`, and :math:`E_{2}`.
 The bar is fixed on the left side and a displacement :math:`u` is applied to the right side.
 The configurational forces on the interface should be computed using the Abaqus plug-in.
@@ -75,59 +75,12 @@ This results in the expected configurational force in x-direction at the interfa
 >>> cfx_at_interface_theory  # N
 11.6666666666667
 
-Applying the Abaqus plug-in
----------------------------
+Using the Abaqus plug-in
+------------------------
 
-In this section the configurational forces are computed using the Abaqus plug-in.
-First, open the folder that contains the \*.inp file.
-This folder is the working directory.
-
-.. image:: example_1_images/01_folder.png
-    :alt: working directory
-
-Open a shell in the working directory.
-
-.. image:: example_1_images/02_start_cmd_in_folder.png
-    :alt: start cmd in working directory
-
-Type `abaqus cae` into the shell to start Abaqus in the working directory.
-
-.. image:: example_1_images/03_cmd_in_folder.png
-    :alt: start abaqus cae in working directory
-
-Navigate to `File -> Import -> Model...`
-
-.. image:: example_1_images/04_open_model.png
-    :alt: import model from inp
-
-Set the "File Filter", such that \*.inp files are displayed and
-select `Two_phase_bar.inp`. Click OK
-
-.. image:: example_1_images/05_open_model.png
-    :alt: select inp
-
-Abaqus shows the model.
-The Load module displays the boundary conditions and loads.
-
-.. image:: example_1_images/06_model_load.png
-    :alt: show imported model
-
-Create a new Job.
-
-.. image:: example_1_images/07_create_job.png
-    :alt: new job
-
-Use the default settings and click OK.
-
-.. image:: example_1_images/08_job.png
-    :alt: job settings
-
-Submit the job and wait for completion.
-
-.. image:: example_1_images/09_submit.png
-    :alt: submit button
-
-Open the \*.odb. Assure that the file is **not** opened Read-only.
+This section describes how to compute the configurational forces using the Abaqus plug-in.
+First, simulate the \*.inp file using the Abaqus solver to obtain the \*.odb.
+Open the \*.odb in Abaqus CAE. Make sure that the file is **not** opened Read-only.
 
 .. image:: example_1_images/10_open_odb.png
     :alt: open odb
@@ -147,7 +100,7 @@ The plug-in GUI opens.
   Or use `SENER+PENER` to build the sum of elastic and plastic energy density.
 - Select quantities in the field output section that are computed and saved into the odb.
 - The name of the configurational stress and force can be modified
-  to compute them with different methods.
+  to compute them with varying energy desnsities.
 
 Click Apply to start the computation.
 
@@ -200,7 +153,7 @@ References
 
 .. [1] S. Kolling and R. Mueller,
     “On configurational forces in short-time dynamics and their computation with an explicit solver,”
-    Comput Mech, vol. 35, no. 5, pp. 392–399, Apr. 2005, doi: 10.1007/s00466-004-0627-4.
+    Comput Mech, vol. 35, no. 5, pp. 392–399, Apr. 2005, doi: `10.1007/s00466-004-0627-4 <https://doi.org/10.1007/s00466-004-0627-4>`_.
 
 """
 import doctest

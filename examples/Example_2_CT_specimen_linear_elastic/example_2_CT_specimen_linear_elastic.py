@@ -2,14 +2,21 @@ r"""
 Problem description
 -------------------
 
-Kolednik [1]_ suggests the following compact tension (CT) test.
+Kolednik [1]_ suggests the following model setup for a compact tension (CT) test.
 Contrary to Kolednik, in this example a linear elastic material behaviour is used
 instead of an elastic plastic behaviour.
 This allows a comparison with Anderson's theoretical prediction for CT specimens [2]_.
+The regions A and B have a structured mesh with a mesh size of .15 mm, and 0.167 mm.
+Region C and D have an approximate mesh size of 1 mm.
+Region D is defined for Example 3 where elastic-plastic material behaviour is investigated.
 
-.. image:: example_2_images/00_scheme.png
+.. _example_2_scheme_image:
+
+.. figure:: example_2_images/00_scheme.png
     :width: 400
     :alt: scheme
+
+    Model of a compact tension specimen
 
 Geometeric dimensions:
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -25,15 +32,16 @@ Material properties:
 >>> nu = 0.3
 >>> E = 200_000 # MPa
 
-Boundary condition:
-^^^^^^^^^^^^^^^^^^^
+Applied displacement:
+^^^^^^^^^^^^^^^^^^^^^
 
 >>> u = 0.5  # mm
 
 Simulation
 ----------
 
-The model is scripted and there is no need to open the `conforce`-plugin manually.
+A \*.inp file of the model is provided in the example folder.
+The model evaluation is scripted and there is no need to open the `conforce`-plugin manually.
 First, change to the directory where the \*.inp file is located.
 
 >>> import os
@@ -78,7 +86,7 @@ Anderson [2]_ defines an analytical solution for this problem.
 >>> geometry_factor
 10.821389667870234
 
-The fracture thoughness is:
+The stres intensity factor k is:
 
 >>> k = (
 ...     load  # N
@@ -88,7 +96,7 @@ The fracture thoughness is:
 >>> np.around(k, 3)  # MPa mm**0.5
 3447.601
 
-For a plane strain state, the J-Integral is computed by:
+For a plane strain state, the J-Integral is computed from k as:
 
 >>> J_theory = k**2 * (1 - nu**2) / E
 >>> np.around(J_theory, 3)  # mJ/mm**2
@@ -99,11 +107,11 @@ Abaqus J-Integral
 
 Abaqus computes the J-Integral using the virtual crack extension method by Parks [3]_.
 Abaqus computes the J-Integral over several contours.
-The regions correspond to the following contour indices
+The regions are defined in the :ref:`image <example_2_scheme_image>`
+and correspond to the following contour indices
 
 - region `A` corresponds to the contour index 21
 - region `B` corresponds to the contour index 57
-- region `FAR_FFIELD` corresponds to the contour index 1 of the far field results
 
 According to Abaqus the J-Integral for region `A` is
 
@@ -124,14 +132,15 @@ and for region `FAR_FIELD`
 54.765
 
 This is in good aggreement with the prediction made by Anderson.
+Furthermore, the path-independency of the J-integral is fulfilled well.
 
 
 Configurational forces
 ----------------------
 
-Conforce can predict J-Integrals by summing up configurational forces inside a region.
+`Conforce` can predict J-Integrals by summing up configurational forces inside a region.
 The resulting configurational force is projected onto the crack extension direction.
-In this case the crack extension direction is simply the x-component.
+In this case the crack extension direction is simply the x-axis.
 
 The configurational forces for the regions `A`, `B`, and `FAR_FIELD` show good aggreement with Anderson and Abaqus.
 
@@ -176,7 +185,7 @@ References
 
 .. [1] O. Kolednik, R. Schöngrundner, and F. D. Fischer,
     “A new view on J-integrals in elastic–plastic materials,”
-    Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: 10.1007/s10704-013-9920-6.
+    Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: `10.1007/s10704-013-9920-6 <https://doi.org/10.1007/s10704-013-9920-6>`_.
 
 .. [2] T. L. Anderson,
     Fracture mechanics: fundamentals and applications.
@@ -184,7 +193,7 @@ References
 
 .. [3] D. M. Parks, 
     “The virtual crack extension method for nonlinear material behavior,”
-    Computer Methods in Applied Mechanics and Engineering, vol. 12, no. 3, pp. 353–364, Dec. 1977, doi: 10.1016/0045-7825(77)90023-8.
+    Computer Methods in Applied Mechanics and Engineering, vol. 12, no. 3, pp. 353–364, Dec. 1977, doi: `10.1016/0045-7825(77)90023-8 <https://doi.org/10.1016/0045-7825(77)90023-8>`_.
 
 
 Change to home directory

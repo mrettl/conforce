@@ -25,7 +25,9 @@ Matrix([
 [1, 0],
 [0, 1]])
 
-The determinant of the deformation gradient states the volume change and is
+In order to integrate over a volume, the volume change is required.
+The change in volume is computed using the determinant of the deformation gradient,
+which is
 
 >>> sy.det(F_undeformed)
 1
@@ -73,6 +75,7 @@ Considering a simple shear deformation,
 
 the points of the undeformed unit square can be transformed to
 the deformed state by a vector matrix multiplication.
+The "@"-symbol stands for a matrix multiplication.
 
 >>> X_unit_square = np.array([
 ...     [0, 0],

@@ -117,7 +117,13 @@ with open(f"{DOC_SOURCE_DIR}/supported_element_types.rst", "w") as fh:
              "=======================\n"
              "\n")
 
-    fh.write("""
+    fh.write("""    
+
+This section lists supported Abaqus element types.
+In order to use element types of other FE-programs than Abaqus,
+the foreign element type can be replaced by an Abaqus element type,
+if both element types have the same shape function, integration points and formulation (plane stress/plane strain/etc.).
+
 Directly supported element types
 --------------------------------
 
