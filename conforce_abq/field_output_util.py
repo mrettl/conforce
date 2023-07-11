@@ -201,7 +201,7 @@ class FieldOutputReader(object):
         :return: dict
         """
         if self._element_labels_to_node_labels_for_type is None:
-            odb_elements = self._odb_inst.elements
+            odb_elements = self.odb_inst.elements
 
             el_to_n_label_for_type = dict()
             self._element_labels_to_node_labels_for_type = el_to_n_label_for_type
@@ -237,7 +237,7 @@ class FieldOutputReader(object):
         """
         if self._node_labels_to_coordinates is None:
 
-            odb_nodes = self._odb_inst.nodes
+            odb_nodes = self.odb_inst.nodes
             self._node_labels_to_coordinates = {
                 odb_node.label: odb_node.coordinates
                 for odb_node in odb_nodes
@@ -1007,6 +1007,8 @@ def add_field_outputs(
         name_CS="CONF_STRESS",
         request_CF=True,
         name_CF="CONF_FORCE",
+        odb_instances=None,
+        odb_set=None,
         el_type_mapping=None,
         logger=None
 ):
@@ -1073,6 +1075,10 @@ def add_field_outputs(
     :param name_CF: name of the field output that contains the configurational forces.
         This field outputs is only generated if "CF" is in `fields`.
     :type name_CF: str
+    :param odb_instances: Compute quantities only for these instances
+    :type odb_instances: Sequence of OdbInstance
+    :param odb_set: Compute quantities only for nodes and element defined in this set.
+    :type odb_set: OdbSet
     :param el_type_mapping: Maps element types to supported element types.
     :type el_type_mapping: Dict[str, str]
     :param logger: Print logging messages, default uses :py:attr:`LOGGER`
@@ -1095,7 +1101,10 @@ def add_field_outputs(
 
     fo_reader = FieldOutputReader()
 
-    for odb_inst in odb.rootAssembly.instances.values():
+    if odb_instances is None:
+        odb_instances = odb.rootAssembly.instances.values()
+
+    for odb_inst in odb_instances:
         fo_reader.set_odb_inst(odb_inst)
 
         if len(fo_reader.element_labels_to_node_labels_for_type) == 0:
@@ -1152,6 +1161,21 @@ def add_field_outputs(
                         "Stresses in global coordinate system",
                         logger=logger
                     )
+
+                # compute values only for the given odb set
+                if odb_set is not None:
+                    if odb_set.nodes is not None:
+                        fo_U = fo_U.getSubset(region=odb_set)
+
+                    elif odb_set.elements is not None:
+                        fo_e = fo_e.getSubset(region=odb_set)
+                        fo_S = fo_S.getSubset(region=odb_set)
+
+                    else:
+                        logger.warning(
+                            "odb_set %s does not contain nodes or elements and is ignored.",
+                            odb_set.name
+                        )
 
                 # read odb output
                 fo_reader.set_fo_U(fo_U)
