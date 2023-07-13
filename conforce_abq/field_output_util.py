@@ -201,7 +201,7 @@ class FieldOutputReader(object):
         :return: dict
         """
         if self._element_labels_to_node_labels_for_type is None:
-            odb_elements = self._odb_inst.elements
+            odb_elements = self.odb_inst.elements
 
             el_to_n_label_for_type = dict()
             self._element_labels_to_node_labels_for_type = el_to_n_label_for_type
@@ -237,7 +237,7 @@ class FieldOutputReader(object):
         """
         if self._node_labels_to_coordinates is None:
 
-            odb_nodes = self._odb_inst.nodes
+            odb_nodes = self.odb_inst.nodes
             self._node_labels_to_coordinates = {
                 odb_node.label: odb_node.coordinates
                 for odb_node in odb_nodes
@@ -523,6 +523,8 @@ class FieldOutputReader(object):
         :param bulk_data_blocks: sequence of bulk data objects
         :return: `el_labels_unique`, `reshaped_data`
         """
+        assert len(bulk_data_blocks) > 0
+
         el_labels = np.concatenate([block.elementLabels for block in bulk_data_blocks])
         int_points = np.concatenate([block.integrationPoints for block in bulk_data_blocks])
         data = np.concatenate([block.data for block in bulk_data_blocks])
@@ -655,9 +657,6 @@ class FFieldOutputWriter(_FieldOutputWriter):
                         f_data[:, :, i, j].reshape((-1, 1))
                     )
                 )
-
-    def flush(self, odb_inst):
-        pass
 
 
 class PFieldOutputWriter(_FieldOutputWriter):
@@ -806,6 +805,9 @@ class CFFieldOutputWriter(_FieldOutputWriter):
                 CF_at_node += CF_el_node_data
 
     def flush(self, odb_inst):
+        if len(self._CF_at_nodes) == 0:
+            return
+
         # add data to field output
         self._fo.addData(
             position=abqConst.NODAL,
@@ -1007,6 +1009,8 @@ def add_field_outputs(
         name_CS="CONF_STRESS",
         request_CF=True,
         name_CF="CONF_FORCE",
+        odb_instances=None,
+        odb_set=None,
         el_type_mapping=None,
         logger=None
 ):
@@ -1073,6 +1077,10 @@ def add_field_outputs(
     :param name_CF: name of the field output that contains the configurational forces.
         This field outputs is only generated if "CF" is in `fields`.
     :type name_CF: str
+    :param odb_instances: Compute quantities only for these instances. Default uses all instances.
+    :type odb_instances: Sequence of OdbInstance
+    :param odb_set: Compute quantities only for nodes and element defined in this set.
+    :type odb_set: OdbSet
     :param el_type_mapping: Maps element types to supported element types.
     :type el_type_mapping: Dict[str, str]
     :param logger: Print logging messages, default uses :py:attr:`LOGGER`
@@ -1095,15 +1103,73 @@ def add_field_outputs(
 
     fo_reader = FieldOutputReader()
 
-    for odb_inst in odb.rootAssembly.instances.values():
+    fo_writers = list()
+    """
+    list of field output writers for each step, frame and requested output i:
+    fo_writers[step_id][frame_id][i]
+    """
+
+    # create field output writers in each step
+    for step in odb.steps.values():
+        fo_writers_for_step = list()
+        fo_writers.append(fo_writers_for_step)
+
+        # create field output writers in each frame
+        for frame in step.frames:
+            fo_writers_for_frame = list()
+            fo_writers_for_step.append(fo_writers_for_frame)
+
+            msg = (
+                    "step=" + str(step.name)
+                    + "; frame=" + str(frame.frameId)
+            )
+
+            # get field outputs and rotate them to the global coordinate system
+            fo = frame.fieldOutputs
+
+            # write computed fields to odb
+            d = fo["U"].bulkDataBlocks[0].data.shape[1]
+            fo_keys = set(fo.keys())
+
+            if request_F and (name_F + "_11") not in fo_keys:
+                logger.info("create field output %s_ij (%s)", name_F, msg)
+                fo_writers_for_frame.append(FFieldOutputWriter(frame, d, name_F))
+            elif request_F:
+                logger.warning("skip field output %s_ij (%s)", name_F, msg)
+
+            if request_P and (name_P + "_11") not in fo_keys:
+                logger.info("create field output %s_ij (%s)", name_P, msg)
+                fo_writers_for_frame.append(PFieldOutputWriter(frame, d, name_P))
+            elif request_P:
+                logger.warning("skip field output %s_ij (%s)", name_P, msg)
+
+            if request_CS and (name_CS + "_11") not in fo_keys:
+                logger.info("create field output %s_ij (%s)", name_CS, msg)
+                fo_writers_for_frame.append(CSFieldOutputWriter(frame, d, name=name_CS, method=method))
+            elif request_CS:
+                logger.warning("skip field output %s_ij (%s)", name_CS, msg)
+
+            if request_CF and name_CF not in fo_keys:
+                logger.info("create field output %s (%s)", name_CF, msg)
+                fo_writers_for_frame.append(CFFieldOutputWriter(frame, d, name=name_CF, method=method))
+            elif request_CF:
+                logger.warning("skip field output %s (%s)", name_CF, msg)
+
+    # iterate over all instances
+    if odb_instances is None:
+        odb_instances = odb.rootAssembly.instances.values()
+
+    for odb_inst in odb_instances:
         fo_reader.set_odb_inst(odb_inst)
 
         if len(fo_reader.element_labels_to_node_labels_for_type) == 0:
             logger.info("skip instance %s (contains no elements)", odb_inst.name)
             continue
 
-        for step in odb.steps.values():
-            for frame in step.frames:
+        # iterate over all steps
+        for step, fo_writers_for_step in zip(odb.steps.values(), fo_writers):
+            # iterate over all frames and its corresponding field output writers
+            for frame, fo_writers_for_frame in zip(step.frames, fo_writers_for_step):
                 msg = (
                         "instance=" + str(odb_inst.name)
                         + "; step=" + str(step.name)
@@ -1153,39 +1219,25 @@ def add_field_outputs(
                         logger=logger
                     )
 
+                # compute values only for the given odb set
+                if odb_set is not None:
+                    if odb_set.nodes is not None:
+                        fo_U = fo_U.getSubset(region=odb_set)
+
+                    elif odb_set.elements is not None:
+                        fo_e = fo_e.getSubset(region=odb_set)
+                        fo_S = fo_S.getSubset(region=odb_set)
+
+                    else:
+                        logger.warning(
+                            "odb_set %s does not contain nodes or elements and is ignored.",
+                            odb_set.name
+                        )
+
                 # read odb output
                 fo_reader.set_fo_U(fo_U)
                 fo_reader.set_fo_e(fo_e)
                 fo_reader.set_fo_S(fo_S)
-
-                # write computed fields to odb
-                d = fo_U.bulkDataBlocks[0].data.shape[1]
-                fo_writers = list()
-                fo_keys = set(fo.keys())
-
-                if request_F and (name_F + "_11") not in fo_keys:
-                    logger.info("create field output %s_ij (%s)", name_F, msg)
-                    fo_writers.append(FFieldOutputWriter(frame, d, name_F))
-                elif request_F:
-                    logger.warning("skip field output %s_ij (%s)", name_F, msg)
-
-                if request_P and (name_P + "_11") not in fo_keys:
-                    logger.info("create field output %s_ij (%s)", name_P, msg)
-                    fo_writers.append(PFieldOutputWriter(frame, d, name_P))
-                elif request_P:
-                    logger.warning("skip field output %s_ij (%s)", name_P, msg)
-
-                if request_CS and (name_CS + "_11") not in fo_keys:
-                    logger.info("create field output %s_ij (%s)", name_CS, msg)
-                    fo_writers.append(CSFieldOutputWriter(frame, d, name=name_CS, method=method))
-                elif request_CS:
-                    logger.warning("skip field output %s_ij (%s)", name_CS, msg)
-
-                if request_CF and name_CF not in fo_keys:
-                    logger.info("create field output %s (%s)", name_CF, msg)
-                    fo_writers.append(CFFieldOutputWriter(frame, d, name=name_CF, method=method))
-                elif request_CF:
-                    logger.warning("skip field output %s (%s)", name_CF, msg)
 
                 # add data for all element types
                 for element_type in get_present_element_types_in(fo["S"].bulkDataBlocks):
@@ -1206,12 +1258,23 @@ def add_field_outputs(
                             element_type)
                         continue
 
+                    # check if data are available
+                    if (
+                            len(fo_reader.fo_e.bulkDataBlocks) == 0
+                            or len(fo_reader.fo_S.bulkDataBlocks) == 0
+                            or len(fo_reader.fo_U.bulkDataBlocks) == 0
+                    ):
+                        logger.info(
+                            "skip computation due to insufficient data (%s; element type=%s)",
+                            msg, element_type)
+                        continue
+
                     # add data
-                    for fo_writer in fo_writers:
+                    for fo_writer in fo_writers_for_frame:
                         fo_writer.add(fo_reader, supported_el_type)
 
                 # consolidate data of all element types
-                for fo_writer in fo_writers:
+                for fo_writer in fo_writers_for_frame:
                     fo_writer.flush(odb_inst)
 
     odb.save()
