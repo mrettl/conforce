@@ -5,7 +5,7 @@ Readme
 
 [![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
 
-Conforce is a Python package for the computation of configurational (material) forces.
+Conforce is a Python package and Abaqus plug-in for the computation of configurational (material) forces.
 The computation is automatically generated and compiled from symbolic calculations into C code.
 A C binding allows access to the C functions from Python.
 This makes conforce fast enough to compute an entire finite element model 
@@ -42,6 +42,7 @@ Conforce is available as:
 The Python package requires Python 3 and contains:
 
 - methods to compute configurational forces, stresses, ...
+- methods for the symbolic computation and code generation
 
 ### Installation 
 
@@ -125,7 +126,7 @@ cf_c.compute_CF(
 ````
 
 This yields the configurational forces at the element nodes for a single CPE4R element
-and the deformation based formulation ("dbf"):
+and the displacement based formulation ("dbf"):
 
 ````
 array([[[ 0., -5.],

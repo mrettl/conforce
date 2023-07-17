@@ -72,9 +72,10 @@ Matrix([
 [   r1],
 [r0*r1]])
 
-The shape function is a matrix multiplication of the coefficients and the powers
+The shape function is a matrix multiplication of the coefficients and the powers.
+The "@"-operator performs a matrix multiplication.
 
->>> h0 = (COEF.T * POWER)[0]
+>>> h0 = (COEF.T @ POWER)[0]
 >>> h0
 r0*r1*C[3, 0] + r0*C[1, 0] + r1*C[2, 0] + C[0, 0]
 
@@ -114,7 +115,7 @@ E.g. the coordinates are provided at the element nodes.
 
 The interpolation is done by a matrix multiplication with the shape functions.
 
->>> interpolation = quantity_at_nodes.T * H
+>>> interpolation = quantity_at_nodes.T @ H
 >>> interpolation
 Matrix([
 [1.0*r0],
@@ -136,7 +137,7 @@ The derivative of the quantities with respect to
 the reference space coordinates is again a
 matrix multiplication.
 
->>> dQ_dR = quantity_at_nodes.T * dH_dR
+>>> dQ_dR = quantity_at_nodes.T @ dH_dR
 
 E.g. the i-th quantity derived by the j-th reference space coordinate is
 
@@ -149,7 +150,7 @@ Integration in the reference space using integration points
 -----------------------------------------------------------
 
 As the shape functions are multidimensional polynomials, they can be
-integrated using Gaussian quadrature.
+integrated using the Gaussian quadrature.
 E.g. the function
 
 >>> f = r1*r2 + 1
@@ -222,7 +223,7 @@ array([[ 0.3, -0.2],
 
 They can be interpolated using the shape functions
 
->>> U = U_at_nodes.T * H
+>>> U = U_at_nodes.T @ H
 
 So far we can only derive them with respect to the reference space.
 To derive an interpolation like `U` with respect to the
@@ -233,7 +234,7 @@ real space, the jacobian `dX_dR` is used to transfer `dH_dR` to
 Now the displacements can be derived with respect to the
 real space.
 
->>> dU_dX = U_at_nodes.T * dH_dX
+>>> dU_dX = U_at_nodes.T @ dH_dX
 
 This is exactly the same as
 
