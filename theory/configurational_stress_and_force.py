@@ -112,9 +112,12 @@ or the ellipse moved by :math:`-dl`.
 In this case :math:`dx = -dl` holds true and the configurational force acting on the ellipse
 can be interpreted as the negative derivative of the energy density with respect to a change in geometry.
 
-.. image:: theory_images/similarity.png
+.. _theory_images_similarity:
+
+.. figure:: theory_images/similarity.png
     :width: 600
-    :alt: similarity
+
+    Geometry- and eye-movement
 
 Unlike (a), in (b) there is a boundary condition in the region near the ellipse.
 The boundary condition pins a piece of the material to this fixed position.
@@ -362,7 +365,8 @@ We compute the configurational force purely from the volume integral
 .. math::
     :label: q_cf_4
 
-    \int_{\textrm{body}} g_{j} \cdot h_{i} \; dV
+    \textrm{cf_at_node}_{ij}
+    = \int_{\textrm{body}} g_{j} \cdot h_{i} \; dV
     = \int_{\textrm{body}} {cs}_{jk} \cdot \frac{d h_{i}}{d x_{k}} \; dV
 
 If you also want to evaluate configurational forces on the surface,
@@ -370,6 +374,82 @@ we provide methods to compute the configurational stresses.
 Just use them to evaluate the surface integral and subtract it
 from our configurational forces.
 
+
+Configurational forces in fracture mechanics
+--------------------------------------------
+
+A common application of configurational forces is in fracture mechanics (FM).
+FM predicts whether an existing crack will grow or not.
+For this purpose, the fracture energy of a material is compared
+to the energy release rate of an infinitesimal crack increment.
+
+.. math::
+    :label: q_cf_lefm_1
+
+    \textrm{fracture_energy} \leq
+    -\frac{d \textrm{ALLSE} }{d \textrm{crack_face} }
+    = -\frac{1}{w} \cdot \frac{d \textrm{ALLSE} }{d l}
+
+The crack increment reduces the strain energy :math:`\textrm{ALLSE}` by :math:`d \textrm{ALLSE}`
+and creates a new crack face of :math:`d\, \textrm{crack_face}`.
+For 2d geometries, the increment of the crack length :math:`d l`
+is multiplied by the specimen width :math:`w` to obtain the crack face.
+If the fracture energy of the material is smaller than the energy release rate
+(right side of equation :eq:`q_cf_lefm_1`), the crack will grow.
+Configurational forces provide an efficient way to evaluate the energy release rate.
+
+The strain energy for a hyper-elastic material is the integral of the Helmholtz-energy over the volume
+:math:`\textrm{ALLSE} = \int e \; dV`.
+Consequently, the energy release rate is the integral of the Helmholtz-energy derived by the crack increment.
+
+.. math::
+
+    \frac{d \textrm{ALLSE} }{dl}
+    =  \int_{\textrm{body}} \frac{d \, e}{dl} \; dV
+
+.. note::
+
+    The integration is done over a :math:`body`.
+    This :math:`body` does not need to contain the whole specimen volume.
+    It is sufficient to trim the :math:`body` to a region where the stresses are influenced
+    by the stress singularity of the crack tip.
+
+As explained in the figure :ref:`Geometry- and eye-movement <theory_images_similarity>`,
+the derivative by :math:`dl` can be replaced by :math:`-dx` under certain conditions.
+Furthermore, the derivative :math:`-dx` is associated  with the direction of the crack growth.
+For this reason, the gradient of the Helmholtz energy is projected to the :math:`\textrm{CRACK_VECTOR}` direction.
+
+.. math::
+
+    \frac{d \textrm{ALLSE} }{dl}
+    =  \textrm{CRACK_VECTOR} \cdot \int_{\textrm{body}} -\frac{\partial \, e}{\partial X } \; dV
+
+In the absence of body forces :math:`B_{\textrm{undeformed}}`, the partial derivative of the Helmholtz-energy
+can be replaced by the configurational body force :math:`G`.
+
+.. math::
+
+    \frac{d \textrm{ALLSE} }{dl}
+    =  \textrm{CRACK_VECTOR} \cdot \int_{\textrm{body}} -G \; dV
+
+The (nodal) configurational forces :math:`\textrm{cf_at_node}_{ij}`
+are already integrated over the volume and weighted by shape functions :math:`H`.
+Note, that the sum of the shape functions at each position inside the material is one
+:math:`\sum_{i} h_{i}(X) = 1`.
+This allows to replace the above integral
+by the sum over the nodal configurational forces :math:`\textrm{cf_at_node}_{ij}`.
+
+.. math::
+
+    \frac{d \textrm{ALLSE} }{dl}
+    =  \textrm{CRACK_VECTOR} \cdot \sum_{i} \textrm{cf_at_node}_{ij}
+
+Finally, the fracture energy can be compared to the energy release rate computed
+out of the configurational nodal forces, the crack vector, and the width of the specimen.
+
+.. math::
+    \textrm{fracture_energy} \leq
+    -\frac{1}{w} \cdot \textrm{CRACK_VECTOR} \cdot \sum_{i} \textrm{cf_at_node}_{ij}
 
 References
 ----------
