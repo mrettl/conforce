@@ -17,7 +17,7 @@ The deformation gradient is the derivative of the deformed coordinates with resp
 Undeformed
 ----------
 
-The deformation gradient of the undeformed state in 2D is
+The deformation gradient of the undeformed state in 2D is the identity matrix.
 
 >>> F_undeformed = expr.eval_F(2, sy.ZeroMatrix(2, 2))
 >>> F_undeformed
@@ -52,8 +52,8 @@ and its determinat
 1.2
 
 states that the volume increases by a factor of 1.2.
-Note, that only the tensile strain :math:`\varepsilon_{xx}=0.2` results in a volume change.
-The simple shear :math:`\gamma_{xy}=0.1` does not influence the volume.
+Note, that the tensile strain :math:`\varepsilon_{xx}=0.2` results in a volume change.
+The simple shear :math:`\gamma_{xy}=0.1` does not contribute to the volume change.
 
 Pure shear
 ----------
@@ -72,6 +72,10 @@ undeformed to the deformation state.
 Considering a simple shear deformation,
 
 >>> F = expr.eval_F(2, sy.Matrix([[0.0, 0.1], [0.0, 0]]))
+>>> F
+Matrix([
+[1, 0.1],
+[0,   1]])
 
 the points of the undeformed unit square can be transformed to
 the deformed state by a vector matrix multiplication.

@@ -1,6 +1,12 @@
 r"""
-The first Piola-Kirchhoff stress `P` is defined on the undeformed state.
-This is contrary to the Cauchy stress `S` that considers the deformed state.
+The first Piola-Kirchhoff stress :math:`P` is defined on the undeformed state.
+This is contrary to the Cauchy stress :math:`S` that considers the deformed state.
+The first Piola-Kirchhoff :math:`P` can be computed from the Cauchy stress :math:`S`
+and the deformation gradient :math:`F`:
+
+.. math::
+    P = \textrm{det}(F) \cdot S \cdot \textrm{inv}(F^{T})
+
 
 >>> import numpy as np
 >>> import sympy as sy
@@ -11,7 +17,7 @@ Tensile Test
 
 This example demonstrates the influence of the lateral strain
 of a tensile specimen on the (true) Cauchy stress
-and the Piola-Kirchhoff stress `P`.
+and the Piola-Kirchhoff stress :math:`P`.
 
 Assuming a tensile load with the reaction force
 
@@ -32,6 +38,10 @@ The deformation gradient is
 >>> F = expr.eval_F(2, sy.Matrix([
 ...     [0.1, 0.0],
 ...     [0.0, -0.03]]))
+>>> F
+Matrix([
+[1.1,    0],
+[  0, 0.97]])
 
 The traction (force per area with depth=1)
 
@@ -136,6 +146,10 @@ with a deformation gradient
 >>> F = expr.eval_F(2, sy.Matrix([
 ...     [0.2, 0.1],
 ...     [0.0, 0.0]]))
+>>> F
+Matrix([
+[1.2, 0.1],
+[  0,   1]])
 
 and a Cauchy stress of
 
@@ -158,29 +172,28 @@ Rotation
 
 This example demonstrates how a rigid body rotation affects the
 first Piola-Kirchhoff stress.
-A rigid body rotation of 45° degree results in a deformation gradient of
+For a 45° degree rotation the derivative of the displacements with respect to the undeformed coordinates is
 
 >>> angle = np.deg2rad(45)
 >>> dU_dX = sy.Matrix([
 ...     [sy.cos(angle) - 1, sy.sin(angle)],
 ...     [-sy.sin(angle), sy.cos(angle) - 1],
 ... ])
+
+This results in a deformation gradient of
+
 >>> F = expr.eval_F(2, dU_dX)
 >>> F  # doctest: +ELLIPSIS
 Matrix([
 [ 0.7071..., 0.7071...],
 [-0.7071..., 0.7071...]])
 
-A (true) Cauchy-stress appears in the specimen.
-The Cauchy-stress corresponds to the deformed and therefore rotated state.
-Consequently, the Cauchy-stress
+A (true) Cauchy-stress pointing normal to the deformed face is applied.
 
 >>> S = sy.Matrix([
 ...     [1., 0.],
 ...     [0., 0.],
 ... ])
-
-points normal to the rotated state.
 
 However, the first Piola-Kirchhoff stress tensor is defined in the
 undeformed state.
