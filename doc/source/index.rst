@@ -8,8 +8,8 @@ Welcome to the conforce documentation!
 Conforce computes nodal configurational (or material) forces from the displacement, stress, and energy density fields
 for finite elements. It is implemented as a Python 3 package and as an Abaqus plug-in.
 The implementation is based on the paper "On material forces and finite element discretizations" by Mueller [1]_.
-Configurational forces correspond to the change in energy density when some geometry measure is changed.
-Common application of configurational forces is in fracture mechanics,
+Configurational forces correspond to the change in the energy density when some geometry measure is changed.
+A common application of configurational forces is in fracture mechanics,
 where they can be used to obtain the energy release rate of cracks.
 
 How to read the documentation
