@@ -59,9 +59,9 @@ pip install conforce
 The (unstable) development version of conforce can be installed 
 from our remote repository.
 
-1. Download and unzip [conforce repository](https://github.com/mrettl/conforce).
+1. Download and unzip the [conforce repository](https://github.com/mrettl/conforce).
 2. Open a shell in the unzipped folder where the *setup.py* file is located.
-3. conforce is installed by
+3. Install conforce by typing the following commands into the shell
    ````shell
    pip install "."
    ````
@@ -159,16 +159,16 @@ The zip file has the following structure:
     - `conforce_abq_plugin.py`
     - ...
 
-To install the Abaqus plug-in, unzip the file in one of the following valid `plugin-folder`:
+There are several possibilities in which folder the plug-in files can be stored.
+Decide for one of the following valid `plugin-folder`s:
 
-- `plugin_central_dir`: This is an Abaqus environment parameter.
-  A plug-in in this folder is accessible regardless of the home
-  or current directory. For many installations this folder is located in
-  `C:\\SIMULIA\\CAE\\plugins\\{year}`.
-- `home_dir\abaqus_plugins`: This is the folder in which Abaqus is started.
-- `current_dir\abaqus_plugins`: The current work directory can be changed inside Abaqus.
-  Navigate to `File -> Set Work Directory ...` to define this folder.
+- `plugin_central_dir`: This folder is defined in the environment file `abaqus_v6.env`.
+  For many installations this folder is located in `C:\\SIMULIA\\CAE\\plugins\\{year}`.
+  Plug-ins stored in this folder are accessible for all users.
+- `current_dir\abaqus_plugins`: This is the folder in which Abaqus is started.
+  Plug-ins are only accessible if Abaqus is stared again in the same folder.
 
+Next, unzip the downloaded files and put them in the `plugin-folder` you selected:
 The folder tree should look like:
 
 - `plugin-folder`
@@ -180,7 +180,6 @@ Start Abaqus and navigate in the toolbar to `Plug-ins -> Conf. Force`.
 The GUI of the plug-in should open.
 If no toolbar entry called `Conf. Force` exists, check if the plug-in is stored in the right folder 
 for the Abaqus version you are using.
-
 
 ### Usage
 

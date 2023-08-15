@@ -23,11 +23,17 @@ LOGGER = conforce_abq.LOGGER.getChild(__name__)
 
 
 class FieldOutputReader(object):
-    def __init__(self):
+    def __init__(self, logger=None):
         """
         Reads field outputs and prepares
         data for the latter computation
         """
+
+        if logger is None:
+            logger = LOGGER
+
+        self._logger = logger
+
         # odb inst
         self._odb_inst = None
         self._element_labels_to_node_labels_for_type = None
@@ -203,6 +209,11 @@ class FieldOutputReader(object):
         if self._element_labels_to_node_labels_for_type is None:
             odb_elements = self.odb_inst.elements
 
+            self._logger.debug(
+                "Find connectivity for %d elements of instance %s.",
+                len(odb_elements), self.odb_inst.name
+            )
+
             el_to_n_label_for_type = dict()
             self._element_labels_to_node_labels_for_type = el_to_n_label_for_type
             for odb_element in odb_elements:
@@ -213,8 +224,7 @@ class FieldOutputReader(object):
                 if el_type not in el_to_n_label_for_type:
                     el_to_n_label_for_type[el_type] = dict()
 
-                el_to_n_label_for_type[el_type][label] = (
-                    connectivity)
+                el_to_n_label_for_type[el_type][label] = connectivity
 
         return self._element_labels_to_node_labels_for_type
 
@@ -238,6 +248,12 @@ class FieldOutputReader(object):
         if self._node_labels_to_coordinates is None:
 
             odb_nodes = self.odb_inst.nodes
+
+            self._logger.debug(
+                "Read coordinates of %d nodes.",
+                len(odb_nodes)
+            )
+
             self._node_labels_to_coordinates = {
                 odb_node.label: odb_node.coordinates
                 for odb_node in odb_nodes
@@ -246,6 +262,7 @@ class FieldOutputReader(object):
         return self._node_labels_to_coordinates
 
     def _update_X_values(self):
+        self._logger.debug("Read coordinates")
         self._X_el_labels_for_type, self._X_at_nodes_for_type = self.map_nodes_to_element_nodal(
             self.node_label_to_coordinates_mapping
         )
@@ -301,6 +318,7 @@ class FieldOutputReader(object):
         return self.X_at_nodes_for_type[self.element_type]
 
     def _update_U_values(self):
+        self._logger.debug("Read displacements")
         self._U_el_labels_for_type, self._U_at_nodes_for_type = self.map_nodes_to_element_nodal(
             self.create_node_label_to_bulk_data_mapping(self._fo_U.bulkDataBlocks)
         )
@@ -356,6 +374,7 @@ class FieldOutputReader(object):
         return self.U_at_nodes_for_type[self.element_type]
 
     def _update_e_values(self):
+        self._logger.debug("Read energy densities")
         self._e_el_labels, self._e_at_int_points = self.extract_integration_points_values(
             self.fo_e.bulkDataBlocks
         )
@@ -389,6 +408,7 @@ class FieldOutputReader(object):
         return self._e_at_int_points
 
     def _update_S_values(self):
+        self._logger.debug("Read stresses")
         self._S_el_labels, self._S_at_int_points = self.extract_integration_points_values(
             self.fo_S.bulkDataBlocks
         )
@@ -995,6 +1015,59 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
     return new_field_output
 
 
+def select_steps_and_frames(odb, step_frame_selector):
+    """
+    Create a dictionary that maps selected step names to a list of selected frame indices.
+
+    **Examples:**
+
+    Select the frame indices 0, 1, and 2 from Step-1
+
+    >>> select_steps_and_frames(odb, {"Step-1": [0, 1, 2]})
+
+    Select the last frame index of each step.
+
+    >>> select_steps_and_frames(odb, {None: [-1]})
+
+    Select all frame indices of Step-1
+
+    >>> select_steps_and_frames(odb, {"Step-1": slice(None)})
+
+    :param odb: Select steps and frames of this odb
+    :type odb: Abaqus ODB
+    :param step_frame_selector: Dictionary with step names as keys and a slice or list of frame indices as values.
+        The key `None` selects all steps. The value `slice(None)` selects all frames.
+    :type step_frame_selector: dict
+    :return: Selected steps and frames as dictionary that maps step names to a list of frame indices
+    :rtype: dict
+    """
+
+    if step_frame_selector is None:
+        # select all steps and all frames
+        step_frame_selector = {None: None}
+
+    selected_steps_and_frames = dict()
+    """dictionary of selected step names (keys) and frame indices (values)"""
+
+    odb_steps = odb.steps
+    for step_name, frame_selector in step_frame_selector.items():
+        if step_name is None:
+            selected_steps = odb_steps.values()
+        else:
+            selected_steps = [odb_steps[step_name]]
+
+        for selected_step in selected_steps:
+            frame_count = len(selected_step.frames)
+            frame_ids = np.arange(frame_count)
+
+            selected_frame_ids = frame_ids[frame_selector]
+
+            frame_set = selected_steps_and_frames.setdefault(selected_step.name, set())
+            frame_set.update(selected_frame_ids)
+
+    return selected_steps_and_frames
+
+
 def add_field_outputs(
         odb, 
         method="mbf",
@@ -1011,6 +1084,7 @@ def add_field_outputs(
         name_CF="CONF_FORCE",
         odb_instances=None,
         odb_set=None,
+        step_frame_selector=None,
         el_type_mapping=None,
         logger=None
 ):
@@ -1081,6 +1155,9 @@ def add_field_outputs(
     :type odb_instances: Sequence of OdbInstance
     :param odb_set: Compute quantities only for nodes and element defined in this set.
     :type odb_set: OdbSet
+    :param step_frame_selector: Compute quantities only for the selected frames. Default uses all frames.
+        See :py:func:`select_steps_and_frames`.
+    :type step_frame_selector: Dict[Optional[str], Union[List[int], slice]]
     :param el_type_mapping: Maps element types to supported element types.
     :type el_type_mapping: Dict[str, str]
     :param logger: Print logging messages, default uses :py:attr:`LOGGER`
@@ -1101,7 +1178,7 @@ def add_field_outputs(
         logger.error("Odb is read-only. Reopen the odb and assure the Read-only checkbox is not checked.")
         return None
 
-    fo_reader = FieldOutputReader()
+    fo_reader = FieldOutputReader(logger)
 
     fo_writers = list()
     """
@@ -1109,13 +1186,24 @@ def add_field_outputs(
     fo_writers[step_id][frame_id][i]
     """
 
+    all_steps = odb.steps
+    """Dictionary of all steps in this odb"""
+
+    steps_and_frames = select_steps_and_frames(odb, step_frame_selector)
+    """Selected steps (keys) and frame indices (values)"""
+
     # create field output writers in each step
-    for step in odb.steps.values():
+    for step_name, frame_indices in steps_and_frames.items():
+        step = all_steps[step_name]
+        step_frames = step.frames
+
         fo_writers_for_step = list()
         fo_writers.append(fo_writers_for_step)
 
         # create field output writers in each frame
-        for frame in step.frames:
+        for frame_index in frame_indices:
+            frame = step_frames[frame_index]
+
             fo_writers_for_frame = list()
             fo_writers_for_step.append(fo_writers_for_frame)
 
@@ -1167,9 +1255,13 @@ def add_field_outputs(
             continue
 
         # iterate over all steps
-        for step, fo_writers_for_step in zip(odb.steps.values(), fo_writers):
+        for (step_name, frame_indices), fo_writers_for_step in zip(steps_and_frames.items(), fo_writers):
+            step = all_steps[step_name]
+            step_frames = step.frames
+
             # iterate over all frames and its corresponding field output writers
-            for frame, fo_writers_for_frame in zip(step.frames, fo_writers_for_step):
+            for frame_index, fo_writers_for_frame in zip(frame_indices, fo_writers_for_step):
+                frame = step_frames[frame_index]
                 msg = (
                         "instance=" + str(odb_inst.name)
                         + "; step=" + str(step.name)
