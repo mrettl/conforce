@@ -54,6 +54,13 @@ def simulate(inp_file_path):
         "integration_points": {
             key: fo[key].getSubset(position=abqConst.INTEGRATION_POINT).bulkDataBlocks[0].data.tolist()
             for key in ["COORD", "S", "E", "SENER", "IVOL"]
+        },
+        "faces": {
+            str(face.faces[0][0]): [
+                int(node.label)
+                for node in face.nodes[0]
+            ]
+            for face in odb.rootAssembly.surfaces.values()
         }
     }
 

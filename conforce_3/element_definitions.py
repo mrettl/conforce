@@ -5,6 +5,7 @@ This module defines elements by the dictionaries:
  - :py:data:`exponents_of_shape_functions_of_element`
  - :py:data:`R_at_integration_points_of_element`
  - :py:data:`weights_of_integration_points_of_element`
+ - :py:data:`face_count_of_element`
 
 The integration points and weights are computed using Abaqus.
 The other dictionaries are defined manually.
@@ -21,22 +22,25 @@ To acces the nodes, exponents, etc. for a specific element,
 the element type can be looked up in the dictionaries.
 For example,
 
->>> typ = CPE4R
+>>> element_type = CPE4R
 
 is a *four*-noded *2* D element with *one* integration point.
 
->>> ref_nodes = R_at_nodes_of_element[typ]
+>>> ref_nodes = R_at_nodes_of_element[element_type]
 >>> ref_nodes.shape
 (4, 2)
->>> shape_exponents = exponents_of_shape_functions_of_element[typ]
+>>> shape_exponents = exponents_of_shape_functions_of_element[element_type]
 >>> shape_exponents.shape
 (4, 2)
->>> int_points = R_at_integration_points_of_element[typ]
+>>> int_points = R_at_integration_points_of_element[element_type]
 >>> int_points.shape
 (1, 2)
->>> int_weights = weights_of_integration_points_of_element[typ]
+>>> int_weights = weights_of_integration_points_of_element[element_type]
 >>> int_weights.shape
 (1,)
+>>> face_count = face_count_of_element[element_type]
+>>> face_count
+4
 
 
 """
@@ -62,6 +66,8 @@ R_at_integration_points_of_element = dict()
 weights_of_integration_points_of_element = dict()
 """Weights corresponding to the integration points"""
 
+face_count_of_element = dict()
+"""number of faces an element has. For 2D element: number of edges"""
 
 # Element types derived from a 20-node quadratic brick:
 
@@ -81,41 +87,49 @@ exponents_of_shape_functions_of_element[C3D20] = np.array([
     [2, 0, 1], [0, 2, 1], [2, 1, 1], [1, 2, 1],
     [0, 0, 2], [1, 0, 2], [0, 1, 2], [1, 1, 2]
 ])
+face_count_of_element[C3D20] = 6
 
 C3D20R = "C3D20R"
 """3D 20-node quadratic brick, reduced integration"""
 R_at_nodes_of_element[C3D20R] = R_at_nodes_of_element[C3D20]
 exponents_of_shape_functions_of_element[C3D20R] = exponents_of_shape_functions_of_element[C3D20]
+face_count_of_element[C3D20R] = face_count_of_element[C3D20]
 
 CPE8 = "CPE8"
 """2D 8-node bilinear quadrilateral"""
 R_at_nodes_of_element[CPE8] = R_at_nodes_of_element[C3D20][[0, 1, 2, 3, 8, 9, 10, 11], :2]
 exponents_of_shape_functions_of_element[CPE8] = exponents_of_shape_functions_of_element[C3D20][[0, 1, 2, 3, 8, 9, 10, 11], :2]
+face_count_of_element[CPE8] = 4
 
 CPE8R = "CPE8R"
 """2D 8-node bilinear quadrilateral, reduced integration"""
 R_at_nodes_of_element[CPE8R] = R_at_nodes_of_element[CPE8]
 exponents_of_shape_functions_of_element[CPE8R] = exponents_of_shape_functions_of_element[CPE8]
+face_count_of_element[CPE8R] = face_count_of_element[CPE8]
 
 C3D8 = "C3D8"
 """3D 8-node quadratic brick"""
 R_at_nodes_of_element[C3D8] = R_at_nodes_of_element[C3D20][:8, :]
 exponents_of_shape_functions_of_element[C3D8] = exponents_of_shape_functions_of_element[C3D20][:8, :]
+face_count_of_element[C3D8] = face_count_of_element[C3D20]
 
 C3D8R = "C3D8R"
 """3D 8-node quadratic brick, reduced integration"""
 R_at_nodes_of_element[C3D8R] = R_at_nodes_of_element[C3D8]
 exponents_of_shape_functions_of_element[C3D8R] = exponents_of_shape_functions_of_element[C3D8]
+face_count_of_element[C3D8R] = face_count_of_element[C3D8]
 
 CPE4 = "CPE4"
 """2D 4-node bilinear quadrilateral"""
 R_at_nodes_of_element[CPE4] = R_at_nodes_of_element[C3D8][:4, :2]
 exponents_of_shape_functions_of_element[CPE4] = exponents_of_shape_functions_of_element[C3D8][:4, :2]
+face_count_of_element[CPE4] = face_count_of_element[CPE8]
 
 CPE4R = "CPE4R"
 """2D 4-node bilinear quadrilateral, reduced integration"""
 R_at_nodes_of_element[CPE4R] = R_at_nodes_of_element[CPE4]
 exponents_of_shape_functions_of_element[CPE4R] = exponents_of_shape_functions_of_element[CPE4]
+face_count_of_element[CPE4R] = face_count_of_element[CPE4]
 
 
 # Element types derived from a 10-node quadratic tetrahedron:
@@ -130,11 +144,13 @@ exponents_of_shape_functions_of_element[C3D10] = np.array([
     [0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1],
     [2, 0, 0], [1, 1, 0], [0, 2, 0], [0, 0, 2], [1, 0, 1], [0, 1, 1],
 ])
+face_count_of_element[C3D10] = 4
 
 C3D4 = "C3D4"
 """3D 4-node linear tetrahedron"""
 R_at_nodes_of_element[C3D4] = R_at_nodes_of_element[C3D10][:4, :]
 exponents_of_shape_functions_of_element[C3D4] = exponents_of_shape_functions_of_element[C3D10][:4, :]
+face_count_of_element[C3D4] = face_count_of_element[C3D10]
 
 
 # Element types derived from a 15-node quadratic triangular prism
@@ -155,21 +171,25 @@ exponents_of_shape_functions_of_element[C3D15] = np.array([
     [2, 0, 1], [1, 1, 1], [0, 2, 1],
     [0, 0, 2], [1, 0, 2], [0, 1, 2],
 ])
+face_count_of_element[C3D15] = 5
 
 CPE6 = "CPE6"
 """2D 6-node quadratic triangle"""
 R_at_nodes_of_element[CPE6] = R_at_nodes_of_element[C3D15][[0, 1, 2, 6, 7, 8], :2]
 exponents_of_shape_functions_of_element[CPE6] = exponents_of_shape_functions_of_element[C3D15][[0, 1, 2, 6, 7, 8], :2]
+face_count_of_element[CPE6] = 3
 
 C3D6 = "C3D6"
 """3D 6-node quadratic triangular prism"""
 R_at_nodes_of_element[C3D6] = R_at_nodes_of_element[C3D15][:6, :]
 exponents_of_shape_functions_of_element[C3D6] = exponents_of_shape_functions_of_element[C3D15][:6, :]
+face_count_of_element[C3D6] = face_count_of_element[C3D15]
 
 CPE3 = "CPE3"
 """2D 3-node linear triangle"""
 R_at_nodes_of_element[CPE3] = R_at_nodes_of_element[C3D6][:3, :2]
 exponents_of_shape_functions_of_element[CPE3] = exponents_of_shape_functions_of_element[C3D6][:3, :2]
+face_count_of_element[CPE3] = face_count_of_element[CPE6]
 
 
 # compute integration points and weights
@@ -228,7 +248,8 @@ def _write_integration_data_file(integration_data_file_path):
             U_at_nodes=1e-100 * np.ones_like(R_at_nodes),
             element_type=element_type,
             load_name="dummy_load",
-            folder="res/element_definitions"
+            folder="res/element_definitions",
+            face_count=face_count_of_element[element_type]
         )
         for element_type, R_at_nodes in R_at_nodes_of_element.items()
     }
@@ -253,7 +274,7 @@ def _write_integration_data_file(integration_data_file_path):
         json.dump(
             dict(
                 README="COMPUTER GENERATED FILE. DO NOT MODIFY! "
-                       f"This file is used by {os.path.basename(__file__)} to manager integration points and weights "
+                       f"This file is used by {os.path.basename(__file__)} to manage integration points and weights "
                        f"of various element types.",
                 X_at_integration_points_for_element=integration_points,
                 weights_of_integration_points_of_element=integration_weights

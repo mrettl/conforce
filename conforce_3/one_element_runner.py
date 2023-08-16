@@ -9,7 +9,11 @@ import json
 import numpy as np
 
 
-def generate_abaqus_input(element_type, X_at_nodes, U_at_nodes, E: float = 1000., nu: float = 0.3):
+def generate_abaqus_input(
+        element_type, X_at_nodes, U_at_nodes,
+        E: float = 1000., nu: float = 0.3,
+        face_count: int = 0
+):
     r"""
     Generate a model containing one element of the given element type
     with the given nodal coordinates and nodal displacements.
@@ -20,6 +24,7 @@ def generate_abaqus_input(element_type, X_at_nodes, U_at_nodes, E: float = 1000.
     :param U_at_nodes: array of shape (n, d) containing nodal displacements
     :param E: Young's modulus
     :param nu: Poisson's ratio
+    :param face_count: number of faces an element has. For each face a surface set is generated.
     :return: str, valid abaqus input format
     """
 
@@ -66,6 +71,13 @@ def generate_abaqus_input(element_type, X_at_nodes, U_at_nodes, E: float = 1000.
         f'{node_id},'
         for set_name, node_id in zip(node_set_names, node_ids.flat)
 ])}
+*Elset, elset=ELEMENT_SET, instance=PART-1-1
+1,
+**{new_line.join([""] + [
+    f'*Surface, type=ELEMENT, name=SURFACE-{face_id+1}{new_line}'
+    f'ELEMENT_SET, S{face_id+1}'
+    for face_id in range(face_count)      
+])}
 *End Assembly
 **
 ** MATERIAL
@@ -110,7 +122,7 @@ COORD, S, E, SENER, ESEDEN, EVOL, IVOL
 
 
 def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: str, folder: str,
-                         E: float = 1000., nu: float = 0.3) -> dict:
+                         E: float = 1000., nu: float = 0.3, face_count: int = 0) -> dict:
     """
     Generate and simulate a one element model.
     The input is generated using the method :py:func`generate_abaqus_input`.
@@ -162,6 +174,7 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
     :param folder: str, simulation folder
     :param E: Young's modulus
     :param nu: Poisson's ratio
+    :param face_count: number of faces an element has. For each face a surface set is generated.
     :return: dict, containing the data of the result file
     """
     job_name = f"{element_type}_{load_name}"
@@ -178,7 +191,8 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
                 X_at_nodes=X_at_nodes,
                 U_at_nodes=U_at_nodes,
                 E=E,
-                nu=nu
+                nu=nu,
+                face_count=face_count
             ))
 
         subprocess.call([
@@ -191,7 +205,7 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
             in ["com", "dat", "inp", "log", "msg", "odb", "prt", "sim", "sta"]
         }:
             if os.path.exists(file):
-                os.remove(file)
+                pass # os.remove(file)
 
     with open(result_file_path, "r", encoding="utf-8") as fh:
         return json.load(fh)
