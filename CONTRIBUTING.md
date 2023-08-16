@@ -95,7 +95,7 @@ The following is a set of guidelines and conventions.
 ### Packages
     
 - The package
-  - `conforce_3` contains modules that require Python 3 and do not run in Abaqus Python
+  - `conforce_gen` contains modules that require Python 3 and do not run in Abaqus Python
   - `conforce_abq` contains modules that require Abaqus Python and do not run in Python 3
   - `conforce` contains modules that run in both, Abaqus Python and Python 3
 

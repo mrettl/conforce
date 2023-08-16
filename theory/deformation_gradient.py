@@ -12,7 +12,7 @@ The deformation gradient is the derivative of the deformed coordinates with resp
 
 >>> import numpy as np
 >>> import sympy as sy
->>> import conforce_3.expressions as expr
+>>> import conforce_gen.expressions as expr
 
 Undeformed
 ----------

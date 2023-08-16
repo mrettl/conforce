@@ -8,8 +8,8 @@ Isoparametric finite elements use the same shape functions for:
 
 >>> import numpy as np
 >>> import sympy as sy
->>> import conforce_3.element_definitions as el_def
->>> import conforce_3.expressions as expr
+>>> import conforce_gen.element_definitions as el_def
+>>> import conforce_gen.expressions as expr
 
 Define an element type
 ----------------------

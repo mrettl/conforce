@@ -1,7 +1,7 @@
 """
 This Abaqus script simulates an input file and writes results to a json file.
 
-Call this script using :py:func:`conforce_3.one_element_runner.simulate_one_element`.
+Call this script using :py:func:`conforce_gen.one_element_runner.simulate_one_element`.
 Or call this script directly using a shell with:
 
     ``abaqus cae noGUI="{path to this script file}" -- {path to the abaqus input file}``

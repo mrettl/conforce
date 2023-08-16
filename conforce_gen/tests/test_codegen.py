@@ -1,10 +1,10 @@
 import unittest
 import shutil
 
-from conforce_3 import element_definitions as el_def
-from conforce_3.codegen import *
+from conforce_gen import element_definitions as el_def
+from conforce_gen.codegen import *
 
-folder = "conforce_3/tests/generated"
+folder = "conforce_gen/tests/generated"
 
 
 class TestCodegen(unittest.TestCase):
@@ -40,7 +40,7 @@ class TestCodegen(unittest.TestCase):
                 compiler=compiler
             )
 
-        from conforce_3.tests.generated import test_codegen
+        from conforce_gen.tests.generated import test_codegen
 
         X_at_nodes = el_def.R_at_nodes_of_element[element_type]
         U_at_nodes = 2 * X_at_nodes
