@@ -5,7 +5,9 @@ import numpy as np
 from conforce_gen.expressions import *
 from conforce_gen.element_definitions import (
     R_at_nodes_of_element,
-    exponents_of_shape_functions_of_element
+    exponents_of_shape_functions_of_element,
+    weights_of_integration_points_of_element,
+    R_at_integration_points_of_element
 )
 from conforce_gen.symbolic_util import create_replacement_rules, apply_replacement_rules
 
@@ -254,13 +256,48 @@ class TestExpressions(unittest.TestCase):
         ws = -1/(2*area)*int_w2dv
 
         # curve parametrization
-        R_at_face = sy.Matrix(
+        R_of_vw = sy.Matrix(
             vec_0
             + vec_v * v
             + vec_w * w
         )
+
+        X = X_at_nodes.T @ H  # type: sy.MatrixExpr
+        X_of_vw = X.xreplace({
+            R[0]: R_of_vw[0],
+            R[1]: R_of_vw[1],
+            R[2]: R_of_vw[2]
+        })  # type: sy.MatrixExpr
+
+        dX_dv = X_of_vw.diff(v)
+        dX_dw = X_of_vw.diff(w)
+        dX_dvw = sy.Matrix(np.column_stack([dX_dv, dX_dw]))
+        det = sy.sqrt(sy.det(dX_dvw.T @ dX_dvw))
+
+        # normal vector
+        N = dX_dv.cross(dX_dw)
+        N = N / N.norm()
+
+        #
+        CS = sy.Matrix([
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
+        ])
+        (CS @ N * H[0] * det).xreplace({
+            R[0]: R_of_vw[0],
+            R[1]: R_of_vw[1],
+            R[2]: R_of_vw[2]
+        }).xreplace({
+            v: vs,
+            w: ws
+        }) * area
+
         print("ok")
         self.assertTrue(False)
+
+
+
 
 
 if __name__ == '__main__':
