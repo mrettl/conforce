@@ -1,13 +1,13 @@
-conforce_3
-==========
+conforce_gen
+============
 
-.. automodule:: conforce_3
+.. automodule:: conforce_gen
 
 .. autosummary::
 	:toctree: generated
 
-	conforce_3.codegen
-	conforce_3.element_definitions
-	conforce_3.expressions
-	conforce_3.one_element_runner
-	conforce_3.symbolic_util
+	conforce_gen.codegen
+	conforce_gen.element_definitions
+	conforce_gen.expressions
+	conforce_gen.one_element_runner
+	conforce_gen.symbolic_util

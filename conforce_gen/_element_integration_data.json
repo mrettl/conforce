@@ -1,5 +1,5 @@
 {
-    "README": "COMPUTER GENERATED FILE. DO NOT MODIFY THIS FILE. This file is used by element_definitions.py to manager integration points and weights of various element types.",
+    "README": "COMPUTER GENERATED FILE. DO NOT MODIFY! This file is used by element_definitions.py to manage integration points and weights of various element types.",
     "X_at_integration_points_for_element": {
         "C3D20": [
             [

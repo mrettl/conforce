@@ -1,7 +1,7 @@
 """
 This Abaqus script simulates an input file and writes results to a json file.
 
-Call this script using :py:func:`conforce_3.one_element_runner.simulate_one_element`.
+Call this script using :py:func:`conforce_gen.one_element_runner.simulate_one_element`.
 Or call this script directly using a shell with:
 
     ``abaqus cae noGUI="{path to this script file}" -- {path to the abaqus input file}``
@@ -54,6 +54,13 @@ def simulate(inp_file_path):
         "integration_points": {
             key: fo[key].getSubset(position=abqConst.INTEGRATION_POINT).bulkDataBlocks[0].data.tolist()
             for key in ["COORD", "S", "E", "SENER", "IVOL"]
+        },
+        "faces": {
+            str(face.faces[0][0]): [
+                int(node.label)
+                for node in face.nodes[0]
+            ]
+            for face in odb.rootAssembly.surfaces.values()
         }
     }
 

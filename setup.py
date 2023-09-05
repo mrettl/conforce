@@ -35,10 +35,10 @@ setup(
         'Tracker': 'https://github.com/mrettl/conforce/issues',
     },
     license_files=["LICENSE.txt"],
-    packages=['conforce_3', 'conforce'],
+    packages=['conforce_gen', 'conforce'],
     package_dir={'.': ''},
     package_data={
-        'conforce_3': ['*.json', '*.c'],
+        'conforce_gen': ['*.json', '*.c'],
         'conforce': ['*.dll', '*.so']
     },
     python_requires=">=3.7",

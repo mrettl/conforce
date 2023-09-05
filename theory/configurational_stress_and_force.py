@@ -1,6 +1,10 @@
 r"""
 Configurational forces are the derivative of the Helmholtz energy with respect to a change in the geometry.
 
+:download:`Updated theory to configurational forces <../configurational_forces_theory.pdf>`
+
+**work in progress:**
+
 Helmholtz free energy density :math:`e`
 ---------------------------------------
 
@@ -10,17 +14,8 @@ The Helmholtz free energy density :math:`e` is defined as
     e = \psi - \textrm{temperature} \cdot \textrm{entropy}
 
 where :math:`\psi` is the internal energy density.
-For a hyper-elastic material, the Helmholtz free energy density is the strain energy density.
-The partial derivative of :math:`e` with respect to the deformation gradient :math:`F=(f_{ij})`
-at a fixed position :math:`X=(x_{i})` is the first Piola-Kirchhoff stress tensor. [1]_
-
-.. math::
-    :label: eq_partial_e_partial_F
-
-    p_{ij} = \frac{\partial e}{\partial f_{ij}}
-
-Furthermore, the Helmholtz free energy density for a hyper-elastic material is
-a function of
+For a hyper-elastic material, the Helmholtz free energy density is the strain energy density
+and is a function of
 
 .. math::
     :label: eq_e_func
@@ -30,6 +25,13 @@ a function of
 the two independent quantities :math:`X` and :math:`F`.
 :math:`X` is a location in the undeformed state and
 :math:`F` is the deformation gradient. [2]_
+The partial derivative of :math:`e` with respect to the (elastic) deformation gradient :math:`F=(f_{ij})`
+at a fixed position :math:`X=(x_{i})` is the first Piola-Kirchhoff stress tensor. [1]_
+
+.. math::
+    :label: eq_partial_e_partial_F
+
+    p_{ij} = \frac{\partial e}{\partial f_{ij}}
 
 
 Static force equilibrium
@@ -49,7 +51,7 @@ where :math:`\sigma` is the true Cauchy stress tensor and
 is a body force acting on the deformed shape.
 
 The balance of forces can also be written in terms of the undeformed state.
-Then the first Piola-Kirchhoff stress :math:`P=(p_{ij})` is used and the equilibrium is
+Then, the first Piola-Kirchhoff stress :math:`P=(p_{ij})` is used and the equilibrium is
 
 .. math::
     :label: eq_stat_force_balance_undeformed
@@ -67,7 +69,7 @@ An alternative idea is to define a body force that acts on the
 Configurational body force `G`
 ------------------------------
 
-This is exactly what the configurational body force :math:`G=(g_{i})` does.
+This is exactly the idea of configurational body forces :math:`G=(g_{i})`.
 As with the other two balance laws
 :eq:`eq_stat_force_balance_deformed` and :eq:`eq_stat_force_balance_undeformed`,
 the divergence of a stress tensor (we call it the configurational or Eshelby stress :math:`CS=({cs}_{ij})` [3]_)
@@ -93,7 +95,7 @@ The static configurational body force is defined as
     He splits the configurational force into an internal contribution :math:`-\frac{\partial e}{\partial x_{i}}`
     and an external contribution :math:`-f_{ji} \cdot b_{\textrm{undeformed}, j}`.
 
-If not body force :math:`B_{\textrm{undeformed}}` like a pressure or gravity is present,
+If no body force :math:`B_{\textrm{undeformed}}` like a pressure or gravity is present,
 the configurational body force is :math:`-\frac{\partial e}{\partial x_{i}}`,
 the partial derivative of the Helmholtz energy density :math:`e`
 with respect to the position :math:`X`
@@ -104,13 +106,13 @@ but not with respect to a change in **geometry**.
 However, with a little trick, :math:`dx` can be interpreted as :math:`-dl`
 where :math:`dl` stands for geometry change of e.g. the position of the crack tip or the position of an inclusion.
 
-The image below demonstrates in which cases the derivatives can be replaced :math:`dx = -dl`.
-The eye observes a region near a geometric feature (ellipse).
+The image below demonstrates in which cases the derivatives can be replaced by :math:`dx = -dl`.
+The eye observes a region near a geometric feature like the ellipse shown in the figure.
 The left side shows the original state and the right side shows that something has moved.
 In (a) it is not possible to tell whether the eye has moved by :math:`dx`
 or the ellipse moved by :math:`-dl`.
 In this case :math:`dx = -dl` holds true and the configurational force acting on the ellipse
-can be interpreted as the negative derivative of the energy density with respect to a change in geometry.
+can be interpreted as the negative derivative of the energy density with respect to a change in **geometry**.
 
 .. _theory_images_similarity:
 
@@ -124,7 +126,7 @@ The boundary condition pins a piece of the material to this fixed position.
 In this case we can see whether the ellipse or the eye is moving.
 If the eye moves, the boundary condition moves with the ellipse,
 if the ellipse moves, the boundary conditions remain in the same place.
-In this case :math:`dx` **cannot** be interpreted as a change in geometry :math:`-dl`.
+In this case :math:`dx` **cannot** be interpreted as :math:`-dl`, a change in geometry.
 
 Even though the configurational body force :math:`G` corresponds to a geometry change,
 the derivative :math:`\frac{\partial e}{\partial x_{i}}` cannot be computed in a straightforward way.
@@ -185,7 +187,7 @@ by the first Piola-Kirchhoff stress tensor :math:`P` using equation :eq:`eq_part
         - f^{T}_{kj} \frac{d p_{ji}}{d x_{i}}
 
 
-Insert the above identity :eq:`eq_p_df_dx` into :eq:`eq_de_dx_2`.
+Inserting the above identity :eq:`eq_p_df_dx` into :eq:`eq_de_dx_2` results in
 
 .. math::
     :label: eq_de_dx_3
@@ -253,7 +255,7 @@ Consequently, the configurational stress has to be
 
     cs_{ik} = e \cdot \delta_{ik} - f^{T}_{kj} \cdot p_{ij}
 
-Finally, the configurational body force :math:`G` is computed
+Finally, the configurational body force :math:`G` is computed as
 
 .. math::
     :label: eq_de_dx_7
@@ -273,7 +275,7 @@ of the configurational stress tensor [4]_
     cs_{dbf, ik} = e \cdot \delta_{ik} - \frac{u_{k}}{x_{j}} p_{ji}
 
 According to Gurtin [4]_, the dbf and mbf quantities can be transformed to each other using the
-first Piola-Kirchhoff stress :math:`P` and the body force :math:`G_{\textrm{undeformed}}`.
+first Piola-Kirchhoff stress :math:`P` and the body force :math:`B_{\textrm{undeformed}}`.
 
 .. math::
 
@@ -283,7 +285,6 @@ first Piola-Kirchhoff stress :math:`P` and the body force :math:`G_{\textrm{unde
 
     g_{mbf, i} = g_{dbf, i} - b_{\textrm{undeformed}, i}
 
-Within a material, the configurational body forces remain the same.
 The configurational stresses differ by the second Piola-Kirchhoff stress tensor.
 In the absence of body forces, the configurational body forces are identical.
 
@@ -322,7 +323,8 @@ Configurational forces `CF`
 ---------------------------
 
 The configurational force :math:`CF` corresponds to movement of a volume.
-In our implementation, :math:`CF` is associated to element nodes and therefore their corresponding volume.
+In our implementation, :math:`CF` is associated to element nodes and
+therefore their corresponding volume.
 The (nodal) configurational force is therefore the volume integral
 
 .. math::
@@ -331,7 +333,7 @@ The (nodal) configurational force is therefore the volume integral
     \textrm{cf_at_node}_{ij}
     = \int_{\textrm{body}} g_{j} \cdot h_{i} \; dV
 
-over the configurational body force weighted by the shape function of the :math:`i`-th node.
+over the configurational body force weighted by the shape function :math:`h_{i}` of the :math:`i`-th node.
 Since :math:`G` is unknown, the configurational force balance from equation :eq:`eq_cf_body_forces_balance`
 is used to evaluate the integral.
 The configurational force balance is true at each position.
@@ -357,6 +359,7 @@ to the shape function.
     = \int_{\textrm{body}} {cs}_{jk} \cdot \frac{d h_{i}}{d x_{k}} \; dV
     - \int_{\textrm{surface}} {cs}_{jk} \cdot n_{k} \cdot h_{i} \; dA
 
+The normal vector :math:`N=(n_{k})` points to the outside of the enclosed body.
 However, we assume that the surface integral is zero [2]_ [5]_.
 This is a valid approach if the shape functions are zero at the surface.
 This is the case for all nodes that are not directly on the surface.
@@ -383,40 +386,42 @@ FM predicts whether an existing crack will grow or not.
 For this purpose, the fracture energy of a material is compared
 to the energy release rate of an infinitesimal crack increment.
 
+
 .. math::
     :label: q_cf_lefm_1
 
     \textrm{fracture_energy} \leq
-    -\frac{d \textrm{ALLSE} }{d \textrm{crack_face} }
+    -\frac{d \textrm{ALLSE} }{d \textrm{crack_area} }
     = -\frac{1}{w} \cdot \frac{d \textrm{ALLSE} }{d l}
 
+Since the deformation is fixed, there is no additional work of external forces.
 The crack increment reduces the strain energy :math:`\textrm{ALLSE}` by :math:`d \textrm{ALLSE}`
-and creates a new crack face of :math:`d\, \textrm{crack_face}`.
-For 2d geometries, the increment of the crack length :math:`d l`
-is multiplied by the specimen width :math:`w` to obtain the crack face.
+and creates a new crack area of :math:`d\, \textrm{crack_area}`.
+For 2d geometries, the crack length :math:`l`
+is multiplied by the specimen width :math:`w` to obtain the crack area.
 If the fracture energy of the material is smaller than the energy release rate
 (right side of equation :eq:`q_cf_lefm_1`), the crack will grow.
 Configurational forces provide an efficient way to evaluate the energy release rate.
 
-The strain energy for a hyper-elastic material is the integral of the Helmholtz-energy over the volume
+The strain energy for a hyper-elastic material is the volume integral
 :math:`\textrm{ALLSE} = \int e \; dV`.
-Consequently, the energy release rate is the integral of the Helmholtz-energy derived by the crack increment.
+Consequently, the energy release rate is the integral derived by the crack increment.
 
 .. math::
 
-    \frac{d \textrm{ALLSE} }{dl}
-    =  \int_{\textrm{body}} \frac{d \, e}{dl} \; dV
+    - \frac{1}{w} \cdot \frac{d \textrm{ALLSE} }{dl}
+    =  - \frac{1}{w} \cdot \int_{\textrm{body}} \frac{d \, e}{dl} \; dV
 
 .. note::
 
-    The integration is done over a :math:`body`.
+    The integration is performed over a :math:`body`.
     This :math:`body` does not need to contain the whole specimen volume.
     It is sufficient to trim the :math:`body` to a region where the stresses are influenced
     by the stress singularity of the crack tip.
 
-As explained in the figure :ref:`Geometry- and eye-movement <theory_images_similarity>`,
+As depicted by figure :ref:`Geometry- and eye-movement <theory_images_similarity>`,
 the derivative by :math:`dl` can be replaced by :math:`-dx` under certain conditions.
-Furthermore, the derivative :math:`-dx` is associated  with the direction of the crack growth.
+Furthermore, the derivative by :math:`-dx` is associated  with the direction of the crack growth.
 For this reason, the gradient of the Helmholtz energy is projected to the :math:`\textrm{CRACK_VECTOR}` direction.
 
 .. math::
@@ -451,6 +456,14 @@ out of the configurational nodal forces, the crack vector, and the width of the 
     \textrm{fracture_energy} \leq
     -\frac{1}{w} \cdot \textrm{CRACK_VECTOR} \cdot \sum_{i} \textrm{cf_at_node}_{ij}
 
+The energy release rate can also be computed using the J-integral of Rice [6]_.
+However, for the J-integral the crack vector has to be known in advance,
+whereas the resulting configurational forces around a crack tip point in the direction
+of the maximum energy dissipation.
+Consequently,
+
+
+
 References
 ----------
 
@@ -474,6 +487,11 @@ References
 .. [5] O. Kolednik, R. Schöngrundner, and F. D. Fischer,
     “A new view on J-integrals in elastic–plastic materials,”
     Int J Fract, vol. 187, no. 1, pp. 77–107, May 2014, doi: `10.1007/s10704-013-9920-6 <https://doi.org/10.1007/s10704-013-9920-6>`_.
+
+.. [6] J. R. Rice,
+    “A Path Independent Integral and the Approximate Analysis of Strain Concentration by Notches and Cracks,”
+    Journal of Applied Mechanics, vol. 35, no. 2, pp. 379–386, Jun. 1968, doi: `10.1115/1.3601206 <https://doi.org/10.1115/1.3601206>`_.
+
 
 """
 import doctest

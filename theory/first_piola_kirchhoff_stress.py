@@ -10,7 +10,7 @@ and the deformation gradient :math:`F`:
 
 >>> import numpy as np
 >>> import sympy as sy
->>> import conforce_3.expressions as expr
+>>> import conforce_gen.expressions as expr
 
 Tensile Test
 ------------
