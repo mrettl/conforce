@@ -1,6 +1,10 @@
 r"""
 Configurational forces are the derivative of the Helmholtz energy with respect to a change in the geometry.
 
+:download:`Updated theory to configurational forces <../configurational_forces_theory.pdf>`
+
+**work in progress:**
+
 Helmholtz free energy density :math:`e`
 ---------------------------------------
 

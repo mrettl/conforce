@@ -1,5 +1,5 @@
 conforce_gen
-==========
+============
 
 .. automodule:: conforce_gen
 
