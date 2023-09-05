@@ -1044,7 +1044,7 @@ def select_steps_and_frames(odb, step_frame_selector):
 
     if step_frame_selector is None:
         # select all steps and all frames
-        step_frame_selector = {None: None}
+        step_frame_selector = {None: slice(None)}
 
     selected_steps_and_frames = dict()
     """dictionary of selected step names (keys) and frame indices (values)"""
@@ -1060,7 +1060,7 @@ def select_steps_and_frames(odb, step_frame_selector):
             frame_count = len(selected_step.frames)
             frame_ids = np.arange(frame_count)
 
-            selected_frame_ids = frame_ids[frame_selector]
+            selected_frame_ids = frame_ids[frame_selector].tolist()
 
             frame_set = selected_steps_and_frames.setdefault(selected_step.name, set())
             frame_set.update(selected_frame_ids)
