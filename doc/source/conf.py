@@ -23,6 +23,7 @@ print(DOC_SOURCE_DIR)
 print(DOC_DIR)
 print(HOME_DIR)
 
+sys.path.append(os.path.abspath(DOC_SOURCE_DIR))
 sys.path.append(os.path.abspath(DOC_SOURCE_DIR + "/dummy_packages"))
 sys.path.insert(0, HOME_DIR + "/examples/Example_1_Two_phase_bar")
 sys.path.insert(0, HOME_DIR + "/examples/Example_2_CT_specimen_linear_elastic")
@@ -160,7 +161,6 @@ for src, dest in [
     (f"{HOME_DIR}/plugin_gui.png", f"{DOC_SOURCE_DIR}/plugin_gui.png"),
     (f"{HOME_DIR}/CONTRIBUTING.md", f"{DOC_SOURCE_DIR}/CONTRIBUTING.md"),
     (f"{HOME_DIR}/LICENSE.txt", f"{DOC_SOURCE_DIR}/LICENSE.txt"),
-    (f"{HOME_DIR}/theory/theory_images", f"{DOC_SOURCE_DIR}/generated/theory_images"),
     (f"{HOME_DIR}/examples/Example_1_Two_phase_bar/example_1_images", f"{DOC_SOURCE_DIR}/examples/example_1_images"),
     (f"{HOME_DIR}/examples/Example_2_CT_specimen_linear_elastic/example_2_images", f"{DOC_SOURCE_DIR}/examples/example_2_images"),
     (f"{HOME_DIR}/examples/Example_3_CT_specimen_elastic_plastic/example_3_images", f"{DOC_SOURCE_DIR}/examples/example_3_images"),

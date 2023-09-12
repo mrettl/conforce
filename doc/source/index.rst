@@ -20,7 +20,7 @@ describes how to install and use the Python 3 package and the Abaqus plug-in.
 Conforce supports 3D elements and 2D plane strain elements for static loads.
 Plane stress elements are supported with a simplification.
 The :doc:`supported_element_types` section provides a complete list of supported element types.
-The :doc:`theory` section describes in detail how configurational forces are computed.
+The theory section describes in detail how configurational forces are computed.
 :doc:`examples/example_1_two_phase_bar` provides a detailed walkthrough for the Abaqus plug-in.
 :doc:`examples/example_2_ct_specimen_linear_elastic` and
 :doc:`examples/example_3_ct_specimen_elastic_plastic`
@@ -28,7 +28,7 @@ use the Abaqus plug-in within an automated script to compute the J-integral for 
 The library references
 (:doc:`reference`,
 :doc:`reference_abq`,
-:doc:`reference_3`) contain documentation for each function.
+:doc:`reference_gen`) contain documentation for each function.
 The :doc:`CONTRIBUTING` section is intended for developers who want to add new features or fix bugs.
 
 
@@ -41,7 +41,16 @@ Table of Contents
 
     README.md
     supported_element_types
-    theory
+
+.. toctree::
+    :caption: Theory
+    :maxdepth: 1
+
+    theory/Configurational_forces.rst
+    theory/Deformation_gradient.rst
+    theory/Finite_elements.rst
+    theory/First_Piola_Kirchhoff_stress.rst
+    theory/Abbreviations.rst
 
 .. toctree::
     :caption: Examples
@@ -56,7 +65,7 @@ Table of Contents
     :maxdepth: 1
 
     reference
-    reference_3
+    reference_gen
     reference_abq
 
 .. toctree::
