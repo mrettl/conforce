@@ -1,0 +1,4 @@
+Abbreviations
+=============
+
+.. automodule:: theory.abbreviations
