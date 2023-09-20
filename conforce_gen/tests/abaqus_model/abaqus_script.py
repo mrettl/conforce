@@ -1,10 +1,13 @@
 import sys
 import os
+import json
+
+import numpy as np
 
 import abaqus as abq
 
 # append path to the folder where conforce_abq is located and import conforce_abq afterward
-sys.path.append(os.path.abspath("../.."))
+sys.path.append(os.path.abspath("../../.."))
 
 from conforce_abq import field_output_util as fou
 
@@ -16,7 +19,7 @@ def compute_CF(odb):
         request_F=False,
         request_P=False,
         request_CS=False,
-        name_CF="CF_a"
+        name_CF="CF_ALL"
     )
 
     # CF for odb_inst
@@ -26,7 +29,7 @@ def compute_CF(odb):
         request_F=False,
         request_P=False,
         request_CS=False,
-        name_CF="CF_b",
+        name_CF="CF_INSTANCE",
         odb_instances=[odb_inst]
     )
 
@@ -37,7 +40,7 @@ def compute_CF(odb):
         request_F=False,
         request_P=False,
         request_CS=False,
-        name_CF="CF_c",
+        name_CF="CF_ELSET",
         odb_set=odb_element_set
     )
 
@@ -48,7 +51,7 @@ def compute_CF(odb):
         request_F=False,
         request_P=False,
         request_CS=False,
-        name_CF="CF_d",
+        name_CF="CF_NSET",
         odb_set=odb_node_set
     )
 
@@ -56,7 +59,7 @@ def compute_CF(odb):
 
 
 def simulate():
-    inp_file_path = "Job-1.inp"
+    inp_file_path = "TestModel.inp"
 
     # create a job from the input file, start the simulation and wait until the simulation completed
     job_name = os.path.basename(inp_file_path).split(".")[0]
@@ -73,5 +76,27 @@ def simulate():
     return odb
 
 
+def export_results(odb):
+    results = {
+        CF_keys: np.sum(
+            np.concatenate([
+                block.data
+                for block
+                in odb.steps['Step-1'].frames[1].fieldOutputs[CF_keys].bulkDataBlocks
+            ]),
+            axis=0
+        ).tolist()
+        for CF_keys in [
+            "CF_ALL",
+            "CF_INSTANCE",
+            "CF_ELSET",
+            "CF_NSET"
+        ]
+    }
+
+    with open("results.json", "w") as f:
+        json.dump(results, f)
+
+
 if __name__ == '__main__':
-    compute_CF(simulate())
+    export_results(compute_CF(simulate()))
