@@ -23,14 +23,14 @@ def write_code_for_all_element_types():
     Generate and compile C- and Python-code for all element types defined in :py:mod:`conforce_gen.element_definitions`.
     Places the generated code to :py:mod:`conforce.cf_c`.
     """
-    types = element_definitions.R_at_nodes_of_element.keys()
+    all_element_types = element_definitions.R_at_nodes_of_element.keys()
 
     # generate and compile c and python code
     with CPyCodeCompiler(
             name="cf_c", folder="conforce",
-            compile_at_exit=False, write_header_at_enter=True
+            compile_at_exit=True, write_header_at_enter=True
     ) as compiler:
-        for element_type in types:
+        for element_type in all_element_types:
             for is_dbf in [True, False]:
                 print(f"element_type={element_type}, is_dbf={is_dbf}")
                 write_code_for_element_type(
