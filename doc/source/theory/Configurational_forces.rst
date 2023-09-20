@@ -16,6 +16,12 @@ for a hyper-elastic material are defined as [1]_:
     - \left( \frac{\partial \Psi}{\partial X_{i}} \right)_{\textbf{F}}
     - \left( F^{\top} \right)_{ij} \cdot B_{j}
 
+.. note::
+
+    The large displacement framework is used in this formulation of configurational forces.
+    This has to be considered in Abaqus simulations
+    by setting the flag **NLGEOM=ON** in order to compute the Cauchy stresses correctly.
+
 The partial derivative of the Helmholtz energy density
 :math:`\Psi` with respect to the undeformed coordinates
 :math:`(\vec{X})_{i} = X_{i}` is evaluated under a constant deformation gradient
