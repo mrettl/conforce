@@ -28,6 +28,8 @@ sys.path.append(os.path.abspath(DOC_SOURCE_DIR + "/dummy_packages"))
 sys.path.insert(0, HOME_DIR + "/examples/Example_1_Two_phase_bar")
 sys.path.insert(0, HOME_DIR + "/examples/Example_2_CT_specimen_linear_elastic")
 sys.path.insert(0, HOME_DIR + "/examples/Example_3_CT_specimen_elastic_plastic")
+sys.path.insert(0, HOME_DIR + "/examples/Example_4_K_field")
+
 sys.path.insert(0, HOME_DIR)
 
 import conforce
@@ -164,6 +166,7 @@ for src, dest in [
     (f"{HOME_DIR}/examples/Example_1_Two_phase_bar/example_1_images", f"{DOC_SOURCE_DIR}/examples/example_1_images"),
     (f"{HOME_DIR}/examples/Example_2_CT_specimen_linear_elastic/example_2_images", f"{DOC_SOURCE_DIR}/examples/example_2_images"),
     (f"{HOME_DIR}/examples/Example_3_CT_specimen_elastic_plastic/example_3_images", f"{DOC_SOURCE_DIR}/examples/example_3_images"),
+    (f"{HOME_DIR}/examples/Example_4_K_field/example_4_images", f"{DOC_SOURCE_DIR}/examples/example_4_images"),
 ]:
     source = os.path.abspath(os.path.join(__file__, src))
     destination = os.path.abspath(os.path.join(__file__, dest))
