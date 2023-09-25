@@ -21,8 +21,8 @@ Kolednik [1]_ suggested the following compact tension (CT) test.
     :alt: scheme
 
 
-Geometeric dimensions:
-^^^^^^^^^^^^^^^^^^^^^^
+Geometric dimensions:
+^^^^^^^^^^^^^^^^^^^^^
 
 >>> w = 50  # mm
 >>> a = 27  # mm
@@ -97,11 +97,10 @@ The input file is located in the example folder.
 The model evaluation is scripted and there is no need to open the `conforce`-plugin manually.
 First, call the Abaqus script (:py:mod:`example_3_abaqus_script`).
 The script simulates the \*.inp file and writes a `results.json` file.
-To save time, the script is not exectued if the `results.json` file already exists.
 
 >>> import subprocess
->>> if not os.path.exists("results.json"):
-...     _ = subprocess.call("abaqus cae noGUI=example_3_abaqus_script.py", shell=True)
+>>> subprocess.call("abaqus cae noGUI=example_3_abaqus_script.py", shell=True)
+0
 
 After the simulation, the result file is loaded to fetch the reaction force `load`.
 This force is needed to reach the defined displacement `u`.
