@@ -19,6 +19,7 @@ def compute_CF(odb):
         request_F=False,
         request_P=False,
         request_CS=False,
+        request_CF=True,
         name_CF="CF_ALL"
     )
 
@@ -29,6 +30,7 @@ def compute_CF(odb):
         request_F=False,
         request_P=False,
         request_CS=False,
+        request_CF=True,
         name_CF="CF_INSTANCE",
         odb_instances=[odb_inst]
     )
@@ -40,6 +42,7 @@ def compute_CF(odb):
         request_F=False,
         request_P=False,
         request_CS=False,
+        request_CF=True,
         name_CF="CF_ELSET",
         odb_set=odb_element_set
     )
@@ -51,6 +54,7 @@ def compute_CF(odb):
         request_F=False,
         request_P=False,
         request_CS=False,
+        request_CF=True,
         name_CF="CF_NSET",
         odb_set=odb_node_set
     )
