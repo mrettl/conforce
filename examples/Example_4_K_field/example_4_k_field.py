@@ -3,10 +3,10 @@ Problem description
 -------------------
 
 :ref:`Figure 1 <example_4_scheme_image>` depicts the model considered in this example.
-The circular model contains a crack going to the model center.
+The circular model contains a crack with its tip in the model center.
 The green dashed boundary is deformed according to a defined displacement field function.
-The region :math:`\mathcal{A}` is used to compute the resulting configuraitonal force.
-The blue arrow shows the configurational force.
+The region :math:`\mathcal{A}` is used to compute the resulting configurational force.
+The blue arrow depicts the configurational force at the crack tip.
 
 .. _example_4_scheme_image:
 
@@ -16,6 +16,7 @@ The blue arrow shows the configurational force.
 
     Figure 1: Model of a crack model whose boundaries (green dashed line) are deformed according to
     the theoretical displacement field around a crack.
+    The configurational forces are evaluated in the red region.
     The depicted deformation is scaled by a factor of 100.
 
 
@@ -35,7 +36,7 @@ The model is automatically build and simulated by the Abaqus script.
 0
 
 The Abaqus script writes results to a json file.
-The command below, loads the results.
+The command below loads the results.
 
 >>> with open("results.json", "r", encoding="UTF-8") as fh:
 ...     results = json.load(fh)
@@ -47,7 +48,7 @@ Model parameters
 Linear plane strain elements are used.
 Furthermore, the flag NLGEOM is turned on.
 
-Geometric dimensions
+Geometric parameters
 ^^^^^^^^^^^^^^^^^^^^
 
 The radius of the model is:
@@ -63,7 +64,7 @@ is a square with side lengths of:
 >>> length_region_A_mm
 2.0
 
-The thickness is:
+The thickness of the model is:
 
 >>> t_mm = 1
 
@@ -87,7 +88,7 @@ Applied displacement
 
 Anderson [1]_ describes displacement fields :math:`u(r, \varphi)`
 that correspond to certain stress intensity factors.
-In this model a mode-I stress intensity factor of
+In this model, a mode-I stress intensity factor of
 
 >>> KI_MPa_m_05 = results["KI_MPa_m_05"]
 >>> KI_MPa_m_05
@@ -105,7 +106,7 @@ Results
 Theoretical energy release rate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-According to Anderson, the energy release rate
+According to Anderson, the applied energy release rate
 
 >>> G_applied_mJ_mm2 = (
 ...     1_000  #  mm / m
@@ -127,7 +128,7 @@ Another approach to obtain the energy release rate
 is to compare the strain energies for two crack lengths.
 For this, we simulate the model twice:
 
-    - In the first simulation, the crack goes to the model center.
+    - In the first simulation, the tip lies in the model center.
       This results in a strain energy of :math:`\Pi_{0}`.
     - In the second simulation, the first two nodes that were open in the previous
       simulation are closed. This reduces the crack length by :math:`da`
