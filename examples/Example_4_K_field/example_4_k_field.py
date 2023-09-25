@@ -74,7 +74,7 @@ The Young's modulus is:
 
 >>> E_MPa = results["E_MPa"]
 >>> E_MPa
-91000
+210000
 
 The Poisson's ratio is:
 
@@ -91,7 +91,7 @@ In this model a mode-I stress intensity factor of
 
 >>> KI_MPa_m_05 = results["KI_MPa_m_05"]
 >>> KI_MPa_m_05
-10
+20
 
 is choosen.
 The displacements of the outer boundary (green dashed line) of the model
@@ -113,8 +113,8 @@ According to Anderson, the energy release rate
 ...     * (1 - nu**2)
 ...     / E_MPa
 ... )
->>> G_applied_mJ_mm2
-1.0
+>>> G_applied_mJ_mm2  # doctest: +ELLIPSIS
+1.733...
 
 can be computed for a plane strain state from the stress intensity factor,
 the Poisson's ratio, and the Young's modulus.
@@ -144,7 +144,7 @@ This results in a energy release rate of:
 
 >>> G_mJ_mm2 = results["G_mJ_mm2"]
 >>> G_mJ_mm2  # doctest: +ELLIPSIS
-1.000...
+1.735...
 
 
 Energy release rate from the Abaqus J-Integral
@@ -157,7 +157,7 @@ the J_integral is:
 
 >>> J_mJ_mm2 = results["J_mJ_mm2"][-1]
 >>> J_mJ_mm2  # doctest: +ELLIPSIS
-1.002...
+1.738...
 
 Energy release rate from conforce
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -181,19 +181,19 @@ The motion based formulation results in an energy release rate of:
 
 >>> G_mbf_mJ_mm2 = -np.dot(v, results["CF_mbf_mJ_mm2"][0])
 >>> G_mbf_mJ_mm2  # doctest: +ELLIPSIS
-1.002...
+1.738...
 
 The displacement based formulation results in an energy release rate of:
 
 >>> G_dbf_mJ_mm2 = -np.dot(v, results["CF_dbf_mJ_mm2"][0])
 >>> G_dbf_mJ_mm2  # doctest: +ELLIPSIS
-1.002...
+1.738...
 
 
 Conclusion
 ----------
 
-All approaches compute similar energy release rates of about 1 mJ/mm²
+All approaches compute similar energy release rates of about 1.7 mJ/mm²
 with a deviation of less than 0.3%.
 
 References

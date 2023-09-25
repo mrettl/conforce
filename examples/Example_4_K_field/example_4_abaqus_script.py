@@ -15,9 +15,9 @@ sys.path.append(os.path.abspath("../.."))
 from conforce_abq.main import apply
 
 # parameters
-E_MPa = 91000
+E_MPa = 210000
 nu = 0.3
-KI_MPa_m_05 = 10
+KI_MPa_m_05 = 20
 KII_MPa_m_05 = 0
 
 ascending_radii_mm, ascending_el_size_mm = np.array([
