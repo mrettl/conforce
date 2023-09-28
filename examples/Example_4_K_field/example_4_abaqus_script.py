@@ -67,7 +67,7 @@ def u_mm_KII(x, y):
 
     f = (
             KII_MPa_m_05 * 1000 ** 0.5
-            / G_MPa
+            / (2 * G_MPa)
             * (radius / (2 * np.pi)) ** 0.5
     )
 
