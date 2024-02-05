@@ -15,15 +15,16 @@ sys.path.append(os.path.abspath("../.."))
 from conforce_abq.main import apply
 
 # parameters
-E_MPa = 210000.
-nu = 0.3
+C10 = 86.
+D1 = 1.2e-3
 
 
 def main(
         name="bending_beam_model",
         lx=100., ly=50., lz=5.,
         cx=50., cy=40., r=5.,
-        r1=6., r2=8.
+        r1=6., r2=8.,
+        uy=10.
 ):
     """
     creates a model with a cylindrical hole that is fixed on the left side.
@@ -38,6 +39,7 @@ def main(
     :param r: radius of the cylindrical hole
     :param r1: radius (r1 > r) of region "1" around the cylindrical hole for the evaluation of computational forces
     :param r2: radius (r2 > r1) of region "2" around the cylindrical hole for the evaluation of computational forces
+    :param uy: applied displacement on the right side of the model
     :return: dictionary containing the strain energy (ALLSE) and the configurational forces of region "1" and "2" (CF_1 and CF_2)
     """
 
@@ -52,8 +54,9 @@ def main(
         r=r,
         r1=r1,
         r2=r2,
-        E_MPa=E_MPa,
-        nu=nu
+        uy=uy,
+        C10=C10,
+        D1=D1
     )
 
     # Clear model database
@@ -100,7 +103,12 @@ def main(
 
     # create material, section, section assignments
     material = model.Material(name="material")
-    material.Elastic(table=((E_MPa, nu),))
+    material.Hyperelastic(
+        type=abqConst.NEO_HOOKE,
+        materialType=abqConst.ISOTROPIC,
+        testData=abqConst.OFF,
+        volumetricResponse=abqConst.VOLUMETRIC_DATA,
+        table=((C10, D1), ))
 
     section = model.HomogeneousSolidSection(
         name="section",
@@ -205,7 +213,7 @@ def main(
 
     # create boundary conditions
     model.PinnedBC(name='pinned', createStepName='Initial', region=face_0_set, localCsys=None)
-    model.DisplacementBC(name='BC', createStepName=step.name, region=node_rp_set, u2=-1.0)
+    model.DisplacementBC(name='BC', createStepName=step.name, region=node_rp_set, u2=-uy)
 
     # save cae
     abq.mdb.saveAs(pathName=name + ".cae")

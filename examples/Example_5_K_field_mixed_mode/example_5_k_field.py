@@ -2,11 +2,12 @@ r"""
 Problem description
 -------------------
 
-:ref:`Figure 1 <example_5_scheme_image>` depicts the model considered in this example.
+:ref:`Figure 1 <example_5_scheme_image>` depicts the model considered in this example,
+which is basically Example 4 with an additional mode II loading.
 The circular model contains a crack with its tip in the model center.
-The green dashed boundary is deformed according to a defined displacement field function.
+The green dashed boundary is displaced according to a defined displacement field function.
 The blue arrows depict the configurational forces at the nodes.
-The configurational forces are sumed up for several contours to estimate the energy release rate.
+The configurational forces are summed up for several contours to estimate the energy release rate.
 For example, the 3rd contour contains all dark-brown nodes
 and the 15th contour contains all orange and dark-brown nodes.
 
@@ -17,7 +18,7 @@ and the 15th contour contains all orange and dark-brown nodes.
     :alt: scheme
 
     Figure 1: Model of a crack model whose boundaries (green dashed line) are deformed according to
-    the theoretical displacement field around a crack.
+    the theoretical displacement field around a crack (KI and KII).
     The configurational forces are evaluated in the red region.
     The depicted deformation is scaled by a factor of 100.
 
@@ -102,7 +103,7 @@ and a mode-II stress intensity factor of
 >>> KII_MPa_m_05
 10
 
-are choosen.
+are chosen.
 The displacements of the outer boundary (green dashed line) of the model
 are prescribed by the displacement field :math:`u(r=R, \varphi)`
 according to Anderson.
@@ -146,17 +147,17 @@ Influence of contour size
 According to Schmitz and Ricoeur [5]_, the J2 component might vary with the size of the contour region.
 For this reason, we compute the J-Integral and configurational forces for two regions.
 
-The smaller region (dark brown nodes in :ref:`Figure 1 <example_5_scheme_image>`) has a radius of
+The smaller region (dark brown nodes in :ref:`Figure 1 <example_5_scheme_image>`) has a side length of
 
 >>> r_mm_c3 = results["contours"][3]["R_mm"]
->>> r_mm_c3  # doctest: +ELLIPSIS
-0.153...
+>>> 2 * r_mm_c3  # doctest: +ELLIPSIS
+0.307...
 
-and the larger region (orange and dark brown nodes in :ref:`Figure 1 <example_5_scheme_image>`) has a radius of
+and the larger region (orange and dark brown nodes in :ref:`Figure 1 <example_5_scheme_image>`) has a side length of
 
 >>> r_mm_c15 = results["contours"][15]["R_mm"]
->>> r_mm_c15  # doctest: +ELLIPSIS
-0.763...
+>>> 2 * r_mm_c15  # doctest: +ELLIPSIS
+1.527...
 
 If the y-component of the configurational force vector and of the J-Integral show a deviation between the smaller and larger region,
 Schmitz and Ricoeur would provide a correction method.
@@ -190,8 +191,8 @@ Consequently, Schmitz and Ricoeur's correction method for J2 is not required in 
 Crack growth direction from ConForce
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We consider the configurational forces at the 15-th contour.
-According to the configurational force method, the crack propagates with an angle in degree of
+We consider the configurational forces at the 15th contour.
+According to the configurational force method, the crack propagates with an angle (in degrees) of
 
 >>> angle_CF_rad = np.arctan2(-CF_y_c15, -CF_x_c15)
 >>> np.rad2deg(angle_CF_rad)  # doctest: +ELLIPSIS
@@ -203,7 +204,7 @@ Maximum Tangential Stress criterion
 
 The Maximum Tangential Stress (MTS) criterion, proposed by Erdogan and Sih [6]_,
 is an alternative method to predict the direction of the crack growth under mixed mode I/II loading.
-For the given values of KI and KII, the MTS criterion predicts a crack growth angle in degree of
+For the given values of KI and KII, the MTS criterion predicts a crack growth angle (in degrees) of
 
 >>> angle_mts_rad = optimize.root_scalar(
 ...     lambda angle: KI_MPa_m_05*np.sin(angle) + KII_MPa_m_05*(3*np.cos(angle) - 1),

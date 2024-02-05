@@ -7,7 +7,7 @@ We are interested in the gradient of the strain energy with respect to the posit
 Configurational forces are used to estimate this energy gradient.
 The configurational forces are computed using ConForce.
 To validate this approach, the energy gradient is estimated numerically by a difference quotient,
-for which two additional FEM simulations with slightly displaced holes are performed.
+for which two additional FEM simulations with slightly displaced holes are run.
 
 .. _example_6_model_image:
 
@@ -35,7 +35,7 @@ The configurational forces are computed for all nodes inside two domains:
     :width: 400
     :alt: mesh
 
-    Figure 2: The FEM mesh consists of 20-node bricks with reduced integration (C3D20R).
+    Figure 2: The FEM mesh consists of 20-node brick elements with reduced integration (C3D20R).
 
 Simulation
 ----------
@@ -67,17 +67,20 @@ The command below loads the results.
 Material
 ^^^^^^^^
 
-A linear-elastic material with a Young's modulus of
+The compressible Neo-Hookean material model for hyperelastic materials is used.
+The first parameter
 
->>> results["E_MPa"]  # MPa
-210000.0
+>>> results["C10"]  # MPa
+86.0
 
-and a Poisson's ratio of
+defines the deviatoric behavior.
+The second parameter
 
->>> results["nu"]
-0.3
+>>> results["D1"]  # 1/MPa
+0.0012
 
-is used.
+controls the behavior under a hydrostatic load.
+
 
 Geometric dimensions
 ^^^^^^^^^^^^^^^^^^^^
@@ -111,6 +114,13 @@ The dimensions of the model shown in :ref:`Figure 1 <example_6_model_image>` are
 8.0
 
 
+Applied displacement
+^^^^^^^^^^^^^^^^^^^^
+
+>>> results["uy"]  # mm
+10.0
+
+
 Configurational forces
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -120,16 +130,16 @@ Domain :math:`\mathcal{A}` has configurational forces of
 >>> CF_A = results["CF_A"]
 >>> # in mJ/mm**2
 >>> CF_A[:-1]  # doctest: +ELLIPSIS
-[20.42..., -72.11...]
+[4.903..., -16.89...]
 
 Domain :math:`\mathcal{B}` is larger and configurational forces of
 
 >>> CF_B = results["CF_B"]
 >>> # in mJ/mm**2
 >>> CF_B[:-1]  # doctest: +ELLIPSIS
-[20.40..., -71.98...]
+[4.892..., -16.90...]
 
-matches the results of :math:`\mathcal{A}` with less than 0.2% deviation.
+matches the results of :math:`\mathcal{A}` with less than 0.3% deviation.
 We consider only the volume integral :eq:`eq_23` and neglect the surface influence on the configurational forces.
 
 
@@ -173,7 +183,7 @@ With the energies, we can use a forward difference quotient to numerically estim
 >>> Gy = (ALLSE_dy - ALLSE_0) / dy
 >>> # in mJ/mm**2
 >>> [Gx, Gy]  # doctest: +ELLIPSIS
-[20.40..., -73.07...]
+[4.887..., -17.1...]
 
 
 Conclusion

@@ -4,7 +4,7 @@ Problem description
 
 :ref:`Figure 1 <example_4_scheme_image>` depicts the model considered in this example.
 The circular model contains a crack with its tip in the model center.
-The green dashed boundary is deformed according to a defined displacement field function.
+The green dashed boundary is displaced according to a defined displacement field function.
 The region :math:`\mathcal{A}` is used to compute the resulting configurational force.
 The blue arrows depict the configurational force at the nodes.
 
@@ -14,8 +14,8 @@ The blue arrows depict the configurational force at the nodes.
     :width: 800
     :alt: scheme
 
-    Figure 1: FEM mesh of a crack model whose boundaries (green dashed line) are deformed according to
-    the theoretical displacement field around a crack.
+    Figure 1: FEM mesh of a crack model whose boundaries (green dashed line) are displaced according to
+    the theoretical displacement field for a pure mode-I loading.
     The configurational forces are evaluated in the red region.
     The depicted deformation is scaled by a factor of 100.
 
@@ -160,10 +160,10 @@ the J_integral is:
 >>> J_mJ_mm2  # doctest: +ELLIPSIS
 1.738...
 
-Energy release rate from conforce
+Energy release rate from ConForce
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Conforce computes the nodal configurational forces.
+ConForce computes the nodal configurational forces.
 The energy release rate
 
 .. math::
@@ -178,13 +178,13 @@ The crack growth direction points in x-direction:
 >>> v = np.array([1, 0])
 
 The configurational forces are computed by two formulation.
-The motion based formulation results in an energy release rate of:
+The motion based formulation (mbf) results in an energy release rate of:
 
 >>> G_mbf_mJ_mm2 = -np.dot(v, results["CF_mbf_mJ_mm2"][0])
 >>> G_mbf_mJ_mm2  # doctest: +ELLIPSIS
 1.738...
 
-The displacement based formulation results in an energy release rate of:
+The displacement based formulation (dbf) results in an energy release rate of:
 
 >>> G_dbf_mJ_mm2 = -np.dot(v, results["CF_dbf_mJ_mm2"][0])
 >>> G_dbf_mJ_mm2  # doctest: +ELLIPSIS
@@ -194,7 +194,7 @@ The displacement based formulation results in an energy release rate of:
 Conclusion
 ----------
 
-All approaches compute similar energy release rates of about 1.7 mJ/mm²
+All approaches compute similar energy release rates of about 1.74 mJ/mm²
 with a deviation of less than 0.3%.
 
 References
