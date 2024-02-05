@@ -41,7 +41,7 @@ Simulation
 ----------
 
 A \*.inp file of the model is provided in the example folder.
-The model evaluation is scripted and there is no need to open the `conforce`-plugin manually.
+The model evaluation is scripted and there is no need to open the `ConForce`-plugin manually.
 First, change to the directory where the \*.inp file is located.
 
 >>> import os
@@ -137,7 +137,7 @@ Furthermore, the path-independency of the J-integral is fulfilled well.
 Configurational forces
 ----------------------
 
-`Conforce` can predict J-Integrals by summing up configurational forces inside a region.
+`ConForce` can predict J-Integrals by summing up configurational forces inside a region.
 The resulting configurational force is projected onto the crack extension direction.
 In this case the crack extension direction is simply the x-axis.
 
@@ -168,8 +168,8 @@ The configuraional forces summed up for the entire model are zero.
 Comparison
 ----------
 
-The figure compares the J-Integral of Abaqus and Anderson with the negative configurational forces of conforce.
-Abaqus and conforce show a good aggreement for all contours in the regions `A` and `B`.
+The figure compares the J-Integral of Abaqus and Anderson with the negative configurational forces of ConForce.
+Abaqus and ConForce show a good aggreement for all contours in the regions `A` and `B`.
 
 >>> fig = compare_J_and_negative_cfx(results, J_theory)
 >>> save_fig(fig, "example_2_images/01_comparison_over_contours.png")
@@ -229,11 +229,11 @@ def compare_J_and_negative_cfx(results, J_theory):
     fig, ax = plt.subplots()  # type: plt.Figure, plt.Axes
     fig.set_size_inches(3.15, 3.15)
     ax.axvline(21, ls=":", c="k")
-    ax.text(21/2, 50, "region A", ha="center")
-    ax.text(21 + (57-21)/2, 50, "region B", ha="center")
+    ax.text(21/2, 50, r"region $\mathcal{A}$", ha="center")
+    ax.text(21 + (57-21)/2, 50, r"region $\mathcal{B}$", ha="center")
     ax.axhline(J_theory, ls="-", c="k", label="J-Integral (Anderson)")
     ax.plot(contour_ids, [J_map[contour_ids_to_set_names[idx]] for idx in contour_ids], label="J-Integral (Abaqus)")
-    ax.plot(contour_ids, [-cfx_map[cf_regions[idx]] for idx in contour_ids], label=r"$-\mathrm{CF}$ (conforce_gen)")
+    ax.plot(contour_ids, [-cfx_map[cf_regions[idx]] for idx in contour_ids], label=r"$-\mathrm{CF}$ (ConForce)")
     ax.set_xlabel("contour index")
     ax.set_ylabel(r"J-Integral and $-\mathrm{CF}$ [mJ/mm²]")
     ax.set_xlim(left=0, right=contour_ids[-1])

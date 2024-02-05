@@ -6,15 +6,15 @@ Problem description
 The circular model contains a crack with its tip in the model center.
 The green dashed boundary is deformed according to a defined displacement field function.
 The region :math:`\mathcal{A}` is used to compute the resulting configurational force.
-The blue arrow depicts the configurational force at the crack tip.
+The blue arrows depict the configurational force at the nodes.
 
 .. _example_4_scheme_image:
 
 .. figure:: example_4_images/K_field_model.png
-    :width: 400
+    :width: 800
     :alt: scheme
 
-    Figure 1: Model of a crack model whose boundaries (green dashed line) are deformed according to
+    Figure 1: FEM mesh of a crack model whose boundaries (green dashed line) are deformed according to
     the theoretical displacement field around a crack.
     The configurational forces are evaluated in the red region.
     The depicted deformation is scaled by a factor of 100.
@@ -45,7 +45,7 @@ The command below loads the results.
 Model parameters
 ----------------
 
-Linear plane strain elements are used.
+Linear rectangular (CPE4) and triangular (CPE3) plane strain elements are used.
 Furthermore, the flag NLGEOM is turned on.
 
 Geometric parameters
@@ -60,9 +60,9 @@ The radius of the model is:
 The region :math:`\mathcal{A}` depicted in :ref:`Figure 1 <example_4_scheme_image>`
 is a square with side lengths of:
 
->>> length_region_A_mm = min(results["R_mm"])
->>> length_region_A_mm
-2.0
+>>> length_region_A_mm = results["inner_region_length_mm"]
+>>> length_region_A_mm  # doctest: +ELLIPSIS
+1.4...
 
 The thickness of the model is:
 

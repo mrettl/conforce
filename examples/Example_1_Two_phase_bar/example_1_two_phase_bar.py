@@ -113,7 +113,7 @@ a log summary is printed.
 .. image:: example_1_images/13_log_summary.png
     :alt: log summary
 
-The requested field outputs of conforce can be selected and plotted as vector plot.
+The requested field outputs of ConForce can be selected and plotted as vector plot.
 
 .. image:: example_1_images/14_CF.png
     :alt: result visualization

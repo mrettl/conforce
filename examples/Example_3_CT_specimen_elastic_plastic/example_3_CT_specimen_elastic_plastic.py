@@ -1,6 +1,6 @@
 r"""
 
-Example 3 shows how `conforce` can evaluate configurational forces in an elastic-plastic
+Example 3 shows how `ConForce` can evaluate configurational forces in an elastic-plastic
 model with a crack.
 Small strain plasticity is assumed.
 Import packages and change to the directory where the \*.inp file is located.
@@ -94,7 +94,7 @@ Simulation
 ----------
 
 The input file is located in the example folder.
-The model evaluation is scripted and there is no need to open the `conforce`-plugin manually.
+The model evaluation is scripted and there is no need to open the `ConForce`-plugin manually.
 First, call the Abaqus script (:py:mod:`example_3_abaqus_script`).
 The script simulates the \*.inp file and writes a `results.json` file.
 
@@ -139,7 +139,7 @@ Configurational forces
 
 Furthermore, the x-components of the configurational forces are summed up in regions sorrounded by the contours.
 This corresponds to the J-integral with a negative sign.
-There is good agreement between the `conforce` and the literature values.
+There is good agreement between the `ConForce` and the literature values.
 
 >>> fig = compare_conforce_cfx_with_literature(results, literature_data)
 >>> save_fig(fig, "example_3_images/04_negative_cfx.png")
@@ -285,13 +285,13 @@ def compare_conforce_cfx_with_literature(results, literature):
             (ax1, results["CONF_FORCE_EL_at_frame"], "inc_pl", "SENER"),
             (ax2, results["CONF_FORCE_EL_PL_at_frame"], "nl_el", "SENER+PENER")
     ):
-        ax.set_title(f"conforce with e={energy_expression} and literature with j_{lit_fix} ")
+        ax.set_title(f"ConForce with e={energy_expression} and literature with j_{lit_fix} ")
 
         # crack tip
         (line,) = ax.plot(
             u,
             -np.array(cf["J_NEAR_J_CRACK_TIP_Contour_01"])[:, 0],
-            label=f"crack tip; conforce"
+            label=f"crack tip; ConForce"
         )
         ax.plot(
             literature["u"],
@@ -305,7 +305,7 @@ def compare_conforce_cfx_with_literature(results, literature):
             (line, ) = ax.plot(
                 u,
                 -np.array(cf[f"J_NEAR_J_CRACK_TIP_Contour_{contour+1:02}"])[:, 0],
-                label=f"contour {contour}; conforce"
+                label=f"contour {contour}; ConForce"
             )
             ax.plot(
                 literature["u"],
@@ -318,7 +318,7 @@ def compare_conforce_cfx_with_literature(results, literature):
         (line, ) = ax.plot(
             u,
             -np.array(cf["J_FAR_J_FAR_FIELD_Contour_1"])[:, 0],
-            label=f"far field; conforce"
+            label=f"far field; ConForce"
         )
         ax.plot(
             literature["u"],

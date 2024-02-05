@@ -5,13 +5,13 @@ Readme
 
 [![Documentation Status](https://readthedocs.org/projects/conforce/badge/?version=latest)](https://conforce.readthedocs.io/en/latest/?badge=latest)
 
-Conforce is a Python package and Abaqus plug-in for the computation of configurational (material) forces.
+ConForce is a Python package and Abaqus plug-in for the computation of configurational (material) forces.
 The computation is automatically generated and compiled from symbolic calculations into C code.
 A C binding allows access to the C functions from Python.
-This makes conforce fast enough to compute an entire finite element model 
+This makes ConForce fast enough to compute an entire finite element model 
 with several thousand elements within a few seconds.
 
-Conforce features:
+ConForce features:
 
 - the computation of the following quantities for common 2D and 3D elements:
   - static configurational forces
@@ -33,7 +33,7 @@ Supported Operating Systems:
 - other Linux distributions might work
 
 
-Conforce is available as:
+ConForce is available as:
 - Python 3 package
 - Abaqus plug-in
 
@@ -56,12 +56,12 @@ pip install conforce
 
 #### Remote Repository
 
-The (unstable) development version of conforce can be installed 
+The (unstable) development version of ConForce can be installed 
 from our remote repository.
 
-1. Download and unzip the [conforce repository](https://github.com/mrettl/conforce).
+1. Download and unzip the [ConForce repository](https://github.com/mrettl/conforce).
 2. Open a shell in the unzipped folder where the *setup.py* file is located.
-3. Install conforce by typing the following commands into the shell
+3. Install ConForce by typing the following commands into the shell
    ````shell
    pip install "."
    ````

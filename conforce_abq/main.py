@@ -105,7 +105,7 @@ def apply(
 
     # Summary
     print(" ")
-    print("conforce - log summary")
+    print("ConForce - log summary")
     print("----------------------")
 
     log.seek(0)

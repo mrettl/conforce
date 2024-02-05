@@ -87,7 +87,7 @@ class MyDialog(gui.AFXDataDialog):
             labelText="define energy density:",
             tgt=owner.kw_e_expression
         )
-        owner.kw_e_expression.setValue("SENER+PENER")
+        owner.kw_e_expression.setValue("SENER")
 
         # request outputs
         gb = gui.FXGroupBox(

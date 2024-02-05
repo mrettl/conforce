@@ -29,6 +29,8 @@ sys.path.insert(0, HOME_DIR + "/examples/Example_1_Two_phase_bar")
 sys.path.insert(0, HOME_DIR + "/examples/Example_2_CT_specimen_linear_elastic")
 sys.path.insert(0, HOME_DIR + "/examples/Example_3_CT_specimen_elastic_plastic")
 sys.path.insert(0, HOME_DIR + "/examples/Example_4_K_field")
+sys.path.insert(0, HOME_DIR + "/examples/Example_5_K_field_mixed_mode")
+sys.path.insert(0, HOME_DIR + "/examples/Example_6_3D_hole")
 
 sys.path.insert(0, HOME_DIR)
 
@@ -167,6 +169,8 @@ for src, dest in [
     (f"{HOME_DIR}/examples/Example_2_CT_specimen_linear_elastic/example_2_images", f"{DOC_SOURCE_DIR}/examples/example_2_images"),
     (f"{HOME_DIR}/examples/Example_3_CT_specimen_elastic_plastic/example_3_images", f"{DOC_SOURCE_DIR}/examples/example_3_images"),
     (f"{HOME_DIR}/examples/Example_4_K_field/example_4_images", f"{DOC_SOURCE_DIR}/examples/example_4_images"),
+    (f"{HOME_DIR}/examples/Example_5_K_field_mixed_mode/example_5_images", f"{DOC_SOURCE_DIR}/examples/example_5_images"),
+    (f"{HOME_DIR}/examples/Example_6_3D_hole/example_6_images", f"{DOC_SOURCE_DIR}/examples/example_6_images"),
 ]:
     source = os.path.abspath(os.path.join(__file__, src))
     destination = os.path.abspath(os.path.join(__file__, dest))

@@ -60,6 +60,8 @@ Table of Contents
     examples/example_2_ct_specimen_linear_elastic
     examples/example_3_ct_specimen_elastic_plastic
     examples/example_4_k_field
+    examples/example_5_k_field
+    examples/example_6_3d_hole
 
 .. toctree::
     :caption: Library references

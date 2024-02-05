@@ -18,7 +18,7 @@ from conforce_abq.main import apply
 E_MPa = 210000
 nu = 0.3
 KI_MPa_m_05 = 20
-KII_MPa_m_05 = 0
+KII_MPa_m_05 = 10
 
 ascending_radii_mm, ascending_el_size_mm = np.array([
     [2, 0.05],
@@ -205,7 +205,7 @@ def main():
     assembly.engineeringFeatures.assignSeam(
         regions=crack_edges
     )
-    crack_contour_integral = assembly.engineeringFeatures.ContourIntegral(
+    crack_contour_integral_1 = assembly.engineeringFeatures.ContourIntegral(
         name='Crack-1',
         crackFront=crack_tip,
         crackTip=crack_tip,
@@ -215,6 +215,17 @@ def main():
             (0., 0., 0.),
             (1., 0., 0.)
         ),)
+    )
+    crack_contour_integral_2 = assembly.engineeringFeatures.ContourIntegral(
+        name='Crack-2',
+        crackFront=crack_tip,
+        crackTip=crack_tip,
+        symmetric=abqConst.OFF,
+        extensionDirectionMethod=abqConst.Q_VECTORS,
+        qVectors=((
+                      (0., 0., 0.),
+                      (0., 1., 0.)
+                  ),)
     )
 
     # mesh
@@ -274,73 +285,54 @@ def main():
     )
     assembly.generateMesh(regions=(instance,))
 
-    # find nodes before crack tip
-    def _nodes_before_crack_tip():
-        nodes_at_crack = list(assembly.sets["crack"].nodes)
-        idx_node_before_crack_tip = np.argsort([node.coordinates[0] for node in nodes_at_crack])[-2]
-        node_before_crack_tip = nodes_at_crack[idx_node_before_crack_tip]
-        _da = -node_before_crack_tip.coordinates[0]
-
-        # nodes that should be closed
-        crack_closure_nodes = instance.nodes.getByBoundingSphere(
-            center=node_before_crack_tip.coordinates,
-            radius=1e-6
-        )
-        side_1 = assembly.Set(
-            name="nodes_before_crack_tip_1",
-            nodes=instance.nodes.sequenceFromLabels((crack_closure_nodes[0].label,))
-        )
-        side_2 = assembly.Set(
-            name="nodes_before_crack_tip_2",
-            nodes=instance.nodes.sequenceFromLabels((crack_closure_nodes[1].label,))
-        )
-
-        # reference point at arbitrary position
-        rp_feature = assembly.ReferencePoint(
-            point=(-ascending_radii_mm[-1], -ascending_radii_mm[-1], 0.0)
-        )
-        rp = assembly.referencePoints[rp_feature.id]
-        _crack_closure_displacement = assembly.Set(
-            name='crack_closure_displacement',
-            referencePoints=(rp,)
-        )
-
-        # constrain crack closure nodes
-        model.Equation(
-            name='Crack_closure',
-            terms=(
-                (1.0, 'nodes_before_crack_tip_1', 2),  # first side of crack face
-                (-1.0, 'nodes_before_crack_tip_2', 2),  # second side of crack face
-                (1.0, 'crack_closure_displacement', 2),  # slack variable
-            )
-        )
-
-        return _da, _crack_closure_displacement
-
-    da, crack_closure_displacement = _nodes_before_crack_tip()
-
     # create step
     step_1 = model.StaticStep(
         name='Step-1',
         previous='Initial',
         nlgeom=abqConst.ON
     )
-    step_2 = model.StaticStep(
-        name='Step-2',
-        previous=step_1.name,
-        nlgeom=abqConst.ON
-    )
 
     # request output
     model.fieldOutputRequests['F-Output-1'].setValues(variables=('S', 'E', 'U', 'ENER', 'COORD'))
+    num_contours_region_1 = int(np.floor((2 / np.sqrt(2)) / 0.05))
     model.HistoryOutputRequest(
         name='H-Output-2',
-        createStepName=step_2.name,
-        contourIntegral=crack_contour_integral.name,
+        createStepName=step_1.name,
+        contourIntegral=crack_contour_integral_1.name,
         sectionPoints=abqConst.DEFAULT,
         rebar=abqConst.EXCLUDE,
-        numberOfContours=int(np.floor((2 / np.sqrt(2)) / 0.05))
+        numberOfContours=num_contours_region_1
     )
+    model.HistoryOutputRequest(
+        name='H-Output-3',
+        createStepName=step_1.name,
+        contourIntegral=crack_contour_integral_2.name,
+        sectionPoints=abqConst.DEFAULT,
+        rebar=abqConst.EXCLUDE,
+        numberOfContours=num_contours_region_1
+    )
+
+    #
+    nodes = instance.nodes
+    contours = list()
+    for i in range(num_contours_region_1):
+        distance = ascending_el_size_mm[0]*(i + 0.5)
+        nodes_within = nodes.getByBoundingBox(
+            xMin=-distance,
+            yMin=-distance,
+            xMax=distance,
+            yMax=distance
+        )
+        contour_name = "CONTOUR_" + str(i)
+        contours.append(dict(
+            r=-nodes_within.getBoundingBox()["low"][0],
+            name=contour_name
+        ))
+
+        assembly.Set(
+            name=contour_name,
+            nodes=nodes_within
+        )
 
     # field
     ux_field = model.ExpressionField(name='UX', expression='ux_mm(X, Y)')
@@ -363,15 +355,6 @@ def main():
         region=outer_contour,
         createStepName=step_1.name,
     )
-    bc_crack_closure = model.DisplacementBC(
-        name='crack_closure',
-        createStepName=step_1.name,
-        region=crack_closure_displacement,
-        u1=0.0,
-        u2=0.0,
-        u3=0.0
-    )
-    bc_crack_closure.deactivate(step_2.name)
 
     #################################
     # SIMULATION AND POSTPROCESSING #
@@ -393,57 +376,62 @@ def main():
     odb = apply(
         odb,
         request_CF=True,
+        request_CS=True,
         CF_name="CONF_FORCE",
+        CS_name="CONF_STRESS",
         method="mbf",
-        e_expression="SENER"
-    )
-    odb = apply(
-        odb,
-        request_CF=True,
-        CF_name="CONF_FORCE_DBF",
-        method="dbf",
         e_expression="SENER"
     )
 
     # put all results in this dictionary
     results = dict()
+    fo_CF_a0 = odb.steps['Step-1'].frames[-1].fieldOutputs["CONF_FORCE"]
 
-    # extract CF field output
-    fo_CF_a0 = odb.steps['Step-2'].frames[-1].fieldOutputs["CONF_FORCE"]
-    results["CF_mbf_mJ_mm2"] = [
-        np.sum([
-            value.data
-            for value in fo_CF_a0.getSubset(region=odb.rootAssembly.nodeSets["REGION_"+str(1+i)]).values
-        ], axis=0).tolist()
-        for i in range(len(ascending_radii_mm))
-    ]
+    # regions
+    results["regions"] = regions = list()
+    for region_id in range(len(ascending_radii_mm)):
+        region = "REGION_"+str(1+region_id)
+        region_result = dict()
+        regions.append(region_result)
 
-    fo_CF_a0 = odb.steps['Step-2'].frames[-1].fieldOutputs["CONF_FORCE_DBF"]
-    results["CF_dbf_mJ_mm2"] = [
-        np.sum([
+        # extract CF field output
+        region_result["CF_mbf_mJ_mm2"] = np.sum([
             value.data
-            for value in fo_CF_a0.getSubset(region=odb.rootAssembly.nodeSets["REGION_"+str(1+i)]).values
+            for value in fo_CF_a0.getSubset(region=odb.rootAssembly.nodeSets[region]).values
         ], axis=0).tolist()
-        for i in range(len(ascending_radii_mm))
-    ]
+
+        # radius
+        if region_id == 0:
+            region_result["R_mm"] = inner_region_length_mm / 2
+        else:
+            region_result["R_mm"] = ascending_radii_mm[region_id]
+
+    # contours
+    results["contours"] = contours_results = list()
+    for contour in contours:
+        contours_results.append({
+            "R_mm": contour["r"],
+            "CF_mbf_mJ_mm2": np.sum([
+                value.data
+                for value in fo_CF_a0.getSubset(region=odb.rootAssembly.nodeSets[contour["name"]]).values
+            ], axis=0).tolist()
+        })
 
     # save J-Integral
-    J_integrals = odb.steps['Step-2'].historyRegions.values()[1].historyOutputs
-    results["J_mJ_mm2"] = [
-        J_integral.data[-1][1]
-        for J_integral in J_integrals.values()
+    ho = odb.steps['Step-1'].historyRegions.values()[1].historyOutputs
+    results["J1_mJ_mm2"] = [
+        J1_integral.data[-1][1]
+        for key, J1_integral in ho.items()
+        if "H-OUTPUT-2" in key
     ]
 
-    # compute energy release rate from crack closure
-    SE_000 = odb.steps['Step-1'].historyRegions['Assembly ASSEMBLY'].historyOutputs['ALLSE'].data[-1][1]
-    SE_001 = odb.steps['Step-2'].historyRegions['Assembly ASSEMBLY'].historyOutputs['ALLSE'].data[-1][1]
-    results["G_mJ_mm2"] = (SE_000 - SE_001) / da
+    results["J2_mJ_mm2"] = [
+        J2_integral.data[-1][1]
+        for key, J2_integral in ho.items()
+        if "H-OUTPUT-3" in key
+    ]
 
-    # save model parameters
-    results["da_mm"] = da
-    results["R_mm"] = ascending_radii_mm.tolist()
-
-    results["inner_region_length_mm"] = inner_region_length_mm
+    # model parameters
     results["el_size_mm"] = ascending_el_size_mm.tolist()
     results["E_MPa"] = E_MPa
     results["nu"] = nu
