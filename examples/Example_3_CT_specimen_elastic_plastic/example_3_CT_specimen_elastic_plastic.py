@@ -9,7 +9,7 @@ Import packages and change to the directory where the \*.inp file is located.
 >>> import json
 >>> import matplotlib.pyplot as plt
 >>> HOME_DIR = os.path.abspath(".")
->>> os.chdir(__file__ + "/..")
+>>> os.chdir(os.path.abspath(__file__ + "/.."))
 
 Problem description
 -------------------

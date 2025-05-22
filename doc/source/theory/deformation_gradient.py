@@ -20,7 +20,7 @@ Undeformed
 The deformation gradient of the undeformed state in 2D is the identity matrix.
 
 >>> F_undeformed = expr.eval_F(2, sy.ZeroMatrix(2, 2))
->>> F_undeformed
+>>> F_undeformed  # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
 Matrix([
 [1, 0],
 [0, 1]])
@@ -41,7 +41,7 @@ However, for a deformation of :math:`\varepsilon_{xx}=0.2; \gamma_{xy}=0.1`,
 the deformation gradient is
 
 >>> F_deformed = expr.eval_F(2, sy.Matrix([[0.2, 0.1], [0, 0]]))
->>> F_deformed
+>>> F_deformed  # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
 Matrix([
 [1.2, 0.1],
 [  0,   1]])
@@ -72,10 +72,10 @@ undeformed to the deformation state.
 Considering a simple shear deformation,
 
 >>> F = expr.eval_F(2, sy.Matrix([[0.0, 0.1], [0.0, 0]]))
->>> F
+>>> F  # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
 Matrix([
-[1, 0.1],
-[0,   1]])
+[1.0, 0.1],
+[  0,   1]])
 
 the points of the undeformed unit square can be transformed to
 the deformed state by a vector matrix multiplication.
@@ -93,7 +93,7 @@ Matrix([
 [  0, 0],
 [0.1, 1],
 [1.1, 1],
-[  1, 0]])
+[1.0, 0]])
 
 For the back transformation from the deformed to the undeformed state,
 the inverse of the deformation gradient is used.

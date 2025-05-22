@@ -299,14 +299,16 @@ class CPyCodeCompiler(object):
                     "gcc", "-shared", "-fPIC", "-std=c99",
                     "-o", f"_{self._name}.dll", f"_{self._name}.c"
                 ]
+                shell=True
             else:
                 command = [
                     "gcc", "-shared", "-fPIC", "-std=c99",
                     "-o", f"_{self._name}.so", f"_{self._name}.c"
                 ]
+                shell=True
 
             print(f"{self._folder}>{command}")
-            subprocess.call(command, shell=True)
+            subprocess.call(command, shell=shell)
         finally:
             os.chdir(working_directory)
 
@@ -332,7 +334,7 @@ class CPyCodeCompiler(object):
             This function must not be called more than once.
 
         """
-        c_header_file_name = os.path.join(__file__, os.pardir, "_codegen_c_header.c")
+        c_header_file_name = os.path.abspath(os.path.join(__file__, os.pardir, "_codegen_c_header.c"))
         with open(c_header_file_name, "r", encoding="utf-8") as fh:
             self._c_file_handle.write(
                 fh.read()
@@ -341,7 +343,7 @@ class CPyCodeCompiler(object):
                     "")
             )
 
-        python_header_file_name = os.path.join(__file__, os.pardir, "_codegen_python_header.py")
+        python_header_file_name = os.path.abspath(os.path.join(__file__, os.pardir, "_codegen_python_header.py"))
         with open(python_header_file_name, "r", encoding="utf-8") as fh:
             self._py_file_handle.write(
                 fh.read()

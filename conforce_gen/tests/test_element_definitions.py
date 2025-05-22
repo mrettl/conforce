@@ -88,10 +88,10 @@ class TestElementDefinitions(unittest.TestCase):
                     for weight_at_int_point, int_repl_rule
                     in zip(weights_of_int_points_current, int_repl_rules)
                 ])
-                self.assertAlmostEqual(
+                np.testing.assert_almost_equal(
                     vol_abaqus,
                     vol_current,
-                    places=6
+                    decimal=6
                 )
 
                 # check integration point position

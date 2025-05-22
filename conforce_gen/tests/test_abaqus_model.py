@@ -17,7 +17,7 @@ class TestModel(unittest.TestCase):
                     "abaqus",
                     "cae",
                     r"noGUI=abaqus_script.py"
-                ], shell=True),
+                ], shell=False),
                 0
             )
 

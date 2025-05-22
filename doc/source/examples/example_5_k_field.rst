@@ -7,4 +7,4 @@ Example 5 - Mixed mode K-field
 Abaqus script
 -------------
 
-.. literalinclude:: ../../../examples/Example_5_k_field_mixed_mode/example_5_abaqus_script.py
+.. literalinclude:: ../../../examples/Example_5_K_field_mixed_mode/example_5_abaqus_script.py

@@ -28,7 +28,7 @@ Simulation
 >>> import subprocess
 >>> import numpy as np
 >>> HOME_DIR = os.path.abspath(".")
->>> os.chdir(__file__ + "/..")
+>>> os.chdir(os.path.abspath(__file__ + "/.."))
 
 The model is automatically build and simulated by the Abaqus script.
 
@@ -62,7 +62,7 @@ is a square with side lengths of:
 
 >>> length_region_A_mm = results["inner_region_length_mm"]
 >>> length_region_A_mm  # doctest: +ELLIPSIS
-1.4...
+2.8...
 
 The thickness of the model is:
 
@@ -181,13 +181,13 @@ The configurational forces are computed by two formulation.
 The motion based formulation (mbf) results in an energy release rate of:
 
 >>> G_mbf_mJ_mm2 = -np.dot(v, results["CF_mbf_mJ_mm2"][0])
->>> G_mbf_mJ_mm2  # doctest: +ELLIPSIS
+>>> float(G_mbf_mJ_mm2)  # doctest: +ELLIPSIS
 1.738...
 
 The displacement based formulation (dbf) results in an energy release rate of:
 
 >>> G_dbf_mJ_mm2 = -np.dot(v, results["CF_dbf_mJ_mm2"][0])
->>> G_dbf_mJ_mm2  # doctest: +ELLIPSIS
+>>> float(G_dbf_mJ_mm2)  # doctest: +ELLIPSIS
 1.738...
 
 

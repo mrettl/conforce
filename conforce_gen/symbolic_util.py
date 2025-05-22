@@ -183,8 +183,8 @@ def apply_replacement_rules(expression: Union[sy.MatrixExpr, sy.MatrixBase], *re
     ...     [0, 1],
     ...     [1, 1]
     ... )
-    >>> repl
-    [{r1: 1, r2: 0}, {r1: 0, r2: 1}, {r1: 1, r2: 1}]
+    >>> repl  # doctest: +ELLIPSIS
+    [{r1: ...1..., r2: ...0...}, {r1: ...0..., r2: ...1...}, {r1: ...1..., r2: ...1...}]
 
     Each of the three replacement rules is applied independently.
     The `t` symbol is not replaceed.

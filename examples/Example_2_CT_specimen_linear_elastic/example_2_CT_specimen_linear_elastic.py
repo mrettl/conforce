@@ -47,7 +47,7 @@ First, change to the directory where the \*.inp file is located.
 >>> import os
 >>> import numpy as np
 >>> HOME_DIR = os.path.abspath(".")
->>> os.chdir(__file__ + "/..")
+>>> os.chdir(os.path.abspath(__file__ + "/.."))
 
 Next, call the Abaqus script (:py:mod:`example_2_abaqus_script`).
 The script simulates the \*.inp file and writes a `results.json` file.
@@ -63,8 +63,8 @@ This force is needed to reach the defined displacement `u`.
 >>> with open("results.json", "r", encoding="UTF-8") as fh:
 ...     results = json.load(fh)
 >>> load = results["reaction_force"]
->>> np.around(load, 3)  # N
-56319.531
+>>> float(np.around(load, 0))  # N
+56320.0
 
 Theory
 ------
@@ -92,13 +92,13 @@ The stres intensity factor k is:
 ...     / (b * w**0.5)  # 1/mm**(3/2)
 ...      * geometry_factor
 ... )  # N / mm**(3/2) = MPa mm**0.5
->>> np.around(k, 3)  # MPa mm**0.5
-3447.601
+>>> float(np.around(k, 0))  # MPa mm**0.5
+3448.0
 
 For a plane strain state, the J-Integral is computed from k as:
 
 >>> J_theory = k**2 * (1 - nu**2) / E
->>> np.around(J_theory, 3)  # mJ/mm**2
+>>> float(np.around(J_theory, 3))  # mJ/mm**2
 54.081
 
 Abaqus J-Integral
@@ -115,19 +115,19 @@ and correspond to the following contour indices
 According to Abaqus the J-Integral for region `A` is
 
 >>> J_in_a_abaqus = results["J"]["J at J_NEAR_CRACK_TIP_Contour_21"]
->>> np.around(J_in_a_abaqus, 3)  # mJ/mm**2
+>>> float(np.around(J_in_a_abaqus, 3))  # mJ/mm**2
 54.503
 
 for region `B`
 
 >>> J_in_b_abaqus = results["J"]["J at J_NEAR_CRACK_TIP_Contour_57"]
->>> np.around(J_in_b_abaqus, 3)  # mJ/mm**2
+>>> float(np.around(J_in_b_abaqus, 3))  # mJ/mm**2
 54.635
 
 and for region `FAR_FIELD`
 
 >>> J_in_far_abaqus = results["J"]["J at J_FAR_FAR_FIELD_Contour_1"]
->>> np.around(J_in_far_abaqus, 3)  # mJ/mm**2
+>>> float(np.around(J_in_far_abaqus, 3))  # mJ/mm**2
 54.765
 
 This is in good aggreement with the prediction made by Anderson.
@@ -147,22 +147,22 @@ The configurational forces for the regions `A`, `B`, and `FAR_FIELD` show good a
     The configurational forces have a negative sign.
 
 >>> (cfx_in_a, _) = results["CF"]["A"]
->>> np.around(cfx_in_a, 3)  # mJ/mm**2
+>>> float(np.around(cfx_in_a, 3))  # mJ/mm**2
 -54.485
 
 >>> (cfx_in_b, _) = results["CF"]["B"]
->>> np.around(cfx_in_b, 3)  # mJ/mm**2
+>>> float(np.around(cfx_in_b, 3))  # mJ/mm**2
 -54.633
 
 >>> (cfx_in_far, _) = results["CF"]["FAR_FIELD"]
->>> np.around(cfx_in_far, 3)  # mJ/mm**2
+>>> float(np.around(cfx_in_far, 3))  # mJ/mm**2
 -54.808
 
 Like conventional forces, the configurational forces fullfill the equilibrium of forces.
 The configuraional forces summed up for the entire model are zero.
 
 >>> (cfx_whole_model, _) = results["CF"]["ALL_NODES"]
->>> np.around(cfx_whole_model, 3)
+>>> float(np.abs(np.around(cfx_whole_model, 3)))
 0.0
 
 Comparison

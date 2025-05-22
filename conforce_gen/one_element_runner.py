@@ -156,7 +156,7 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
     ...     load_name="triangle_tension",
     ...     folder="res/tests/triangle_tension"
     ... )
-    >>> np.around(result["model"]["ALLSE"], 3)
+    >>> float(np.around(result["model"]["ALLSE"], 3))
     336.538
     >>> np.around(result["nodes"]["RF"], 3)
     array([[-288.462, -336.538],
@@ -164,7 +164,7 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
            [  -0.   ,  673.077]])
     >>> np.around(result["integration_points"]["SENER"], 3)
     array([[673.077]])
-    >>> np.around(result["element"]["EVOL"], 3)
+    >>> float(np.around(result["element"]["EVOL"], 3))
     0.5
 
     :param X_at_nodes: array of shape (n, d) containing nodal coordinates
@@ -196,8 +196,8 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
             ))
 
         subprocess.call([
-            "abaqus", "cae", r"noGUI=conforce_abq\one_element_script.py", "--", file
-        ], shell=True)
+            "abaqus", "cae", "noGUI=conforce_abq/one_element_script.py", "--", file
+        ], shell=False)
 
         for file in {"abaqus.rpy"} | {
             f"{folder}/{job_name}.{extension}"

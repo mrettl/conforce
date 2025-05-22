@@ -97,9 +97,9 @@ corresponding to the deformed state with
 ...         [length_undeformed],
 ...         [width_undeformed]
 ... ]), dtype=float), 6)
->>> length_deformed
+>>> float(length_deformed)
 110.0
->>> width_deformed
+>>> float(width_deformed)
 9.7
 
 For pure tension, the normal vectors of the surfaces
@@ -149,7 +149,7 @@ with a deformation gradient
 >>> F
 Matrix([
 [1.2, 0.1],
-[  0,   1]])
+[  0, 1.0]])
 
 and a Cauchy stress of
 
@@ -207,7 +207,7 @@ array([[0.707, 0.707],
 Nevertheless, the stress magnitude does not change since there
 is no change of the surface area.
 
->>> np.linalg.norm(np.array(P[0, :], dtype=float))
+>>> float(np.linalg.norm(np.array(P[0, :], dtype=float)))
 1.0
 
 """

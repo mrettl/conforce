@@ -160,7 +160,7 @@ is integrated over the element volume in the reference space, by
 >>> integral = 0
 >>> for R_at_int_point, int_weight in zip(R_at_int_points, int_weights):
 ...     integral += int_weight * float(f.xreplace(dict(zip([r1, r2], R_at_int_point))))
->>> integral
+>>> float(integral)
 4.0
 
 However, reduced elements like CPE4R have less integration points
@@ -277,7 +277,7 @@ array([[360.,   0.],
 The strain energy density is
 
 >>> e = 0.5 * np.tensordot(STRAIN, S)
->>> e
+>>> float(e)
 52.0
 
 The strain energy is the integral of the strain energy density
@@ -292,7 +292,7 @@ the determinant of the jacobian `dX_dR` is added.
 ...         * e
 ...         * float(dX_dR.det().xreplace(dict(zip([r1, r2], R_at_int_point))))
 ...     )
->>> integral
+>>> float(integral)
 234.0
 
 """

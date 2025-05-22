@@ -7,4 +7,4 @@ Example 4 - K-field
 Abaqus script
 -------------
 
-.. literalinclude:: ../../../examples/Example_4_k_field/example_4_abaqus_script.py
+.. literalinclude:: ../../../examples/Example_4_K_field/example_4_abaqus_script.py
