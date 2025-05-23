@@ -670,9 +670,9 @@ class FFieldOutputWriter(_FieldOutputWriter):
         for i in range(self._d):
             for j in range(self._d):
                 self._fo[i][j].addData(
-                    position=abqConst.INTEGRATION_POINT,
-                    instance=reader.odb_inst,
-                    labels=reader.el_labels,
+                    position=abqConst.INTEGRATION_POINT, 
+                    instance=reader.odb_inst, 
+                    labels=list(reader.el_labels), 
                     data=np.ascontiguousarray(
                         f_data[:, :, i, j].reshape((-1, 1))
                     )
@@ -717,7 +717,7 @@ class PFieldOutputWriter(_FieldOutputWriter):
                 self._fo[i][j].addData(
                     position=abqConst.INTEGRATION_POINT,
                     instance=reader.odb_inst,
-                    labels=reader.el_labels,
+                    labels=list(reader.el_labels),
                     data=np.ascontiguousarray(
                         p_data[:, :, i, j].reshape((-1, 1))
                     )
@@ -768,7 +768,7 @@ class CSFieldOutputWriter(_FieldOutputWriter):
                 self._fo[i][j].addData(
                     position=abqConst.INTEGRATION_POINT,
                     instance=reader.odb_inst,
-                    labels=reader.el_labels,
+                    labels=list(reader.el_labels),
                     data=np.ascontiguousarray(
                         cs_data[:, :, i, j].reshape((-1, 1))
                     )
@@ -829,11 +829,12 @@ class CFFieldOutputWriter(_FieldOutputWriter):
             return
 
         # add data to field output
+        labels, data = zip(*sorted(self._CF_at_nodes.items())) 
         self._fo.addData(
             position=abqConst.NODAL,
             instance=odb_inst,
-            labels=self._CF_at_nodes.keys(),
-            data=np.array(self._CF_at_nodes.values(), dtype=float)
+            labels=labels,
+            data=np.array(data, dtype=float)
         )
 
         # reset CF_at_nodes
@@ -1005,7 +1006,7 @@ def rotate_field_output_to_global_coordinate_system(frame, field_output, name, d
             new_field_output.addData(
                 position=block.position,
                 instance=block.instance,
-                labels=np.ascontiguousarray(labels),
+                labels=list(labels),
                 data=np.ascontiguousarray(data)
             )
 

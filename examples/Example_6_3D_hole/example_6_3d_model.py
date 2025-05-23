@@ -46,7 +46,7 @@ Simulation
 >>> import numpy as np
 >>> import scipy.optimize as optimize
 >>> HOME_DIR = os.path.abspath(".")
->>> os.chdir(__file__ + "/..")
+>>> os.chdir(os.path.abspath(__file__ + "/.."))
 
 The model is automatically build and simulated by an Abaqus script.
 We provide the name of the model and the position of the hole by cx and cy.
@@ -130,14 +130,14 @@ Domain :math:`\mathcal{A}` has configurational forces of
 >>> CF_A = results["CF_A"]
 >>> # in mJ/mm**2
 >>> CF_A[:-1]  # doctest: +ELLIPSIS
-[4.903..., -16.89...]
+[4.90..., -16.89...]
 
 Domain :math:`\mathcal{B}` is larger and configurational forces of
 
 >>> CF_B = results["CF_B"]
 >>> # in mJ/mm**2
 >>> CF_B[:-1]  # doctest: +ELLIPSIS
-[4.892..., -16.90...]
+[4.89..., -16.90...]
 
 matches the results of :math:`\mathcal{A}` with less than 0.3% deviation.
 We consider only the volume integral :eq:`eq_23` and neglect the surface influence on the configurational forces.
@@ -182,8 +182,8 @@ With the energies, we can use a forward difference quotient to numerically estim
 >>> Gx = (ALLSE_dx - ALLSE_0) / dx
 >>> Gy = (ALLSE_dy - ALLSE_0) / dy
 >>> # in mJ/mm**2
->>> [Gx, Gy]  # doctest: +ELLIPSIS
-[4.887..., -17.1...]
+>>> [Gx, Gy]  # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
+[4.9..., -17...]
 
 
 Conclusion

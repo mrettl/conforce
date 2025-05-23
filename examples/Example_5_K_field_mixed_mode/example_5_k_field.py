@@ -32,7 +32,7 @@ Simulation
 >>> import numpy as np
 >>> import scipy.optimize as optimize
 >>> HOME_DIR = os.path.abspath(".")
->>> os.chdir(__file__ + "/..")
+>>> os.chdir(os.path.abspath(__file__ + "/.."))
 
 The model is automatically build and simulated by the Abaqus script.
 
@@ -195,7 +195,7 @@ We consider the configurational forces at the 15th contour.
 According to the configurational force method, the crack propagates with an angle (in degrees) of
 
 >>> angle_CF_rad = np.arctan2(-CF_y_c15, -CF_x_c15)
->>> np.rad2deg(angle_CF_rad)  # doctest: +ELLIPSIS
+>>> float(np.rad2deg(angle_CF_rad))  # doctest: +ELLIPSIS
 -38.2...
 
 
@@ -210,7 +210,7 @@ For the given values of KI and KII, the MTS criterion predicts a crack growth an
 ...     lambda angle: KI_MPa_m_05*np.sin(angle) + KII_MPa_m_05*(3*np.cos(angle) - 1),
 ...     bracket=(-np.pi/2, np.pi/2)
 ... ).root
->>> np.rad2deg(angle_mts_rad)  # doctest: +ELLIPSIS
+>>> float(np.rad2deg(angle_mts_rad))  # doctest: +ELLIPSIS
 -40.2...
 
 
