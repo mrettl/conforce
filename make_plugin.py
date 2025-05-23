@@ -14,7 +14,7 @@ with open("conforce/__version__.py", "w") as fh:
     version = "-".join([new_version_id] + modifiers)
 
     fh.write(f"version = '{version}'\n")
-    fh.write(f"build_date = '{datetime.datetime.utcnow().strftime('%Y.%m.%d %H:%M:%S')}'\n")
+    fh.write(f"build_date = '{datetime.datetime.now(datetime.UTC).strftime('%Y.%m.%d %H:%M:%S')}'\n")
 
 # copy plug-in files in a zip file in the release folder
 os.makedirs("release", exist_ok=True)
