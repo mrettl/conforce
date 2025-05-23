@@ -197,7 +197,7 @@ def simulate_one_element(X_at_nodes, U_at_nodes, element_type: str, load_name: s
 
         subprocess.call([
             "abaqus", "cae", "noGUI=conforce_abq/one_element_script.py", "--", file
-        ], shell=False)
+        ], shell=True if os.name == 'nt' else False)
 
         for file in {"abaqus.rpy"} | {
             f"{folder}/{job_name}.{extension}"

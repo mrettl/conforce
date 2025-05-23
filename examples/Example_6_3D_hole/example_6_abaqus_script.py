@@ -92,6 +92,13 @@ def main(
         cells=part.cells[:],
         edges=part.edges.findAt(
             ((cx, cy+r1, 0), ),
+        ),
+        line=part.edges.findAt((0., 0., lz*0.2), ),
+        sense=abqConst.FORWARD
+    )
+    part.PartitionCellByExtrudeEdge(
+        cells=part.cells[:],
+        edges=part.edges.findAt(
             ((cx, cy+r2, 0), ),
         ),
         line=part.edges.findAt((0., 0., lz*0.2), ),

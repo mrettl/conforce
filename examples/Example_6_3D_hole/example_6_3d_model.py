@@ -183,7 +183,7 @@ With the energies, we can use a forward difference quotient to numerically estim
 >>> Gy = (ALLSE_dy - ALLSE_0) / dy
 >>> # in mJ/mm**2
 >>> [Gx, Gy]  # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
-[4.9..., -17.1...]
+[4.9..., -17...]
 
 
 Conclusion

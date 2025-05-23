@@ -14,6 +14,8 @@ abaqus.rpy*
 *.cae
 *.inp
 *.jnl
+*.ipm
+*.deps
 .vscode
 conforce_gen/tests/abaqus_model
 conforce_gen/tests/generated
