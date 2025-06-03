@@ -9,6 +9,8 @@ from __future__ import print_function
 import abaqusGui as gui
 import kernelAccess as ka
 
+import conforce
+
 
 class MyDialog(gui.AFXDataDialog):
     def __init__(self, owner):
@@ -20,7 +22,7 @@ class MyDialog(gui.AFXDataDialog):
         gui.AFXDataDialog.__init__(
             self,
             owner,
-            title="Configurational Force Computation",
+            title="Configurational Force Computation (v" + str(conforce.version) + ")",
             actionButtonIds=self.APPLY | self.CANCEL
         )
 
