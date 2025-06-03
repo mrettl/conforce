@@ -214,10 +214,14 @@ def eval_CF_at_nodes(
 class Computation(object):
     def __init__(
         self,
-        R_at_nodes_, exponents_,
-        R_at_int_points_, int_weights_,
-        X_at_nodes_, U_at_nodes_,
-        S_at_int_points_, e_at_int_points_,
+        R_at_nodes_,
+        exponents_,
+        R_at_int_points_,
+        int_weights_,
+        X_at_nodes_,
+        U_at_nodes_,
+        S_at_int_points_,
+        e_at_int_points_,
         is_dbf: bool = True
     ):
         """

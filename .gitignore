@@ -1,4 +1,4 @@
-release
+release/*
 res
 abaqus.rpy*
 *.rec

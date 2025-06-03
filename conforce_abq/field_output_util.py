@@ -320,7 +320,7 @@ class FieldOutputReader(object):
     def _update_U_values(self):
         self._logger.debug("Read displacements")
         self._U_el_labels_for_type, self._U_at_nodes_for_type = self.map_nodes_to_element_nodal(
-            self.create_node_label_to_bulk_data_mapping(self._fo_U.bulkDataBlocks)
+            self.create_node_label_to_bulk_data_mapping(self.fo_U.bulkDataBlocks)
         )
 
     @property
@@ -447,10 +447,10 @@ class FieldOutputReader(object):
             np.intersect1d(self.X_el_labels, self.U_el_labels),
             np.intersect1d(self.e_el_labels, self.S_el_labels)
         )
-        self._X_mask = np.in1d(self.X_el_labels, self._el_labels)
-        self._U_mask = np.in1d(self.U_el_labels, self._el_labels)
-        self._e_mask = np.in1d(self.e_el_labels, self._el_labels)
-        self._S_mask = np.in1d(self.S_el_labels, self._el_labels)
+        self._X_mask = np.isin(self.X_el_labels, self._el_labels)
+        self._U_mask = np.isin(self.U_el_labels, self._el_labels)
+        self._e_mask = np.isin(self.e_el_labels, self._el_labels)
+        self._S_mask = np.isin(self.S_el_labels, self._el_labels)
 
     @property
     def el_labels(self):
@@ -524,8 +524,15 @@ class FieldOutputReader(object):
         :param bulk_data_blocks: sequence of bulk data objects
         :return: dict
         """
-        data = np.concatenate([block.data for block in bulk_data_blocks])
-        node_labels = np.concatenate([block.nodeLabels for block in bulk_data_blocks])
+        data = list()
+        node_labels = list()
+
+        for block in bulk_data_blocks:
+            data.append(np.copy(block.data))
+            node_labels.append(np.copy(block.nodeLabels))
+
+        data = np.concatenate(data)
+        node_labels = np.concatenate(node_labels)
 
         return {
             label: data
@@ -617,6 +624,12 @@ class FieldOutputReader(object):
 
 
 class _FieldOutputWriter(object):
+    def __init__(self, logger=None):
+        if logger is None:
+            logger = LOGGER
+
+        self._logger = logger
+
     def add(self, reader, supported_element_type):
         """
         Add data for an element type to the FieldOutput
@@ -636,7 +649,7 @@ class _FieldOutputWriter(object):
 
 
 class FFieldOutputWriter(_FieldOutputWriter):
-    def __init__(self, frame, d, name):
+    def __init__(self, frame, d, name, logger=None):
         """
         Create new FieldOutputs for each
         component of the deformation gradient.
@@ -645,7 +658,7 @@ class FFieldOutputWriter(_FieldOutputWriter):
         :param d: int, number of dimensions
         :param name: str, name of new FieldOutputs
         """
-        _FieldOutputWriter.__init__(self)
+        _FieldOutputWriter.__init__(self, logger=logger)
         self.name = str(name)
         self._fo = [
             [
@@ -667,6 +680,7 @@ class FFieldOutputWriter(_FieldOutputWriter):
             element_type=supported_element_type,
         )
 
+        self._logger.debug("WRITE deformation gradient")
         for i in range(self._d):
             for j in range(self._d):
                 self._fo[i][j].addData(
@@ -680,7 +694,7 @@ class FFieldOutputWriter(_FieldOutputWriter):
 
 
 class PFieldOutputWriter(_FieldOutputWriter):
-    def __init__(self, frame, d, name):
+    def __init__(self, frame, d, name, logger=None):
         """
         Create new FieldOutputs for each
         component of the first Piola-Kirchhoff stress.
@@ -689,7 +703,7 @@ class PFieldOutputWriter(_FieldOutputWriter):
         :param d: int, number of dimensions
         :param name: str, name of new FieldOutputs
         """
-        _FieldOutputWriter.__init__(self)
+        _FieldOutputWriter.__init__(self, logger=logger)
         self.name = str(name)
         self._fo = [
             [
@@ -712,6 +726,7 @@ class PFieldOutputWriter(_FieldOutputWriter):
             element_type=supported_element_type,
         )
 
+        self._logger.debug("WRITE First Piola-Kirchhoff stress tensor")
         for i in range(self._d):
             for j in range(self._d):
                 self._fo[i][j].addData(
@@ -725,7 +740,7 @@ class PFieldOutputWriter(_FieldOutputWriter):
 
 
 class CSFieldOutputWriter(_FieldOutputWriter):
-    def __init__(self, frame, d, name, method):
+    def __init__(self, frame, d, name, method, logger=None):
         """
         Create new FieldOutputs for each
         component of the first Piola-Kirchhoff stress.
@@ -735,7 +750,7 @@ class CSFieldOutputWriter(_FieldOutputWriter):
         :param name: str, name of new FieldOutputs
         :param method: Method as described in :py:func:`conforce.cf_c.compute_CS`
         """
-        _FieldOutputWriter.__init__(self)
+        _FieldOutputWriter.__init__(self, logger=logger)
         self.name = str(name)
         self._fo = [
             [
@@ -763,6 +778,7 @@ class CSFieldOutputWriter(_FieldOutputWriter):
             method=self._method
         )
 
+        self._logger.debug("WRITE Configurational stresses")
         for i in range(self._d):
             for j in range(self._d):
                 self._fo[i][j].addData(
@@ -776,7 +792,7 @@ class CSFieldOutputWriter(_FieldOutputWriter):
 
 
 class CFFieldOutputWriter(_FieldOutputWriter):
-    def __init__(self, frame, d, name, method):
+    def __init__(self, frame, d, name, method, logger=None):
         """
         Create one FieldOutput for the configurational forces.
 
@@ -785,7 +801,7 @@ class CFFieldOutputWriter(_FieldOutputWriter):
         :param name: str, name of the new FieldOutput
         :param method: Method as described in :py:func:`conforce.cf_c.compute_CS`
         """
-        _FieldOutputWriter.__init__(self)
+        _FieldOutputWriter.__init__(self, logger=logger)
         self.name = str(name)
         self._fo = frame.FieldOutput(
             name=self.name,
@@ -811,7 +827,7 @@ class CFFieldOutputWriter(_FieldOutputWriter):
             method=self._method
         )
 
-        # create datastructure abaqus understands
+        # create data structure abaqus understands
         el_to_n_label = reader.element_labels_to_node_labels_for_type[reader.element_type]
         CF_at_nodes = self._CF_at_nodes
         for CF_el_data, el_label in zip(cf_data, reader.el_labels):
@@ -827,6 +843,8 @@ class CFFieldOutputWriter(_FieldOutputWriter):
     def flush(self, odb_inst):
         if len(self._CF_at_nodes) == 0:
             return
+
+        self._logger.debug("WRITE Configurational forces")
 
         # add data to field output
         labels, data = zip(*sorted(self._CF_at_nodes.items())) 
@@ -1211,6 +1229,7 @@ def add_field_outputs(
             msg = (
                     "step=" + str(step.name)
                     + "; frame=" + str(frame.frameId)
+                    + "; time=" + str(step.totalTime + frame.frameValue)
             )
 
             # get field outputs and rotate them to the global coordinate system
@@ -1222,27 +1241,27 @@ def add_field_outputs(
 
             if request_F and (name_F + "_11") not in fo_keys:
                 logger.info("create field output %s_ij (%s)", name_F, msg)
-                fo_writers_for_frame.append(FFieldOutputWriter(frame, d, name_F))
+                fo_writers_for_frame.append(FFieldOutputWriter(frame, d, name_F, logger=logger))
             elif request_F:
-                logger.warning("skip field output %s_ij (%s)", name_F, msg)
+                logger.warning("skip field output %s_ij (%s): exists already", name_F, msg)
 
             if request_P and (name_P + "_11") not in fo_keys:
                 logger.info("create field output %s_ij (%s)", name_P, msg)
-                fo_writers_for_frame.append(PFieldOutputWriter(frame, d, name_P))
+                fo_writers_for_frame.append(PFieldOutputWriter(frame, d, name_P, logger=logger))
             elif request_P:
-                logger.warning("skip field output %s_ij (%s)", name_P, msg)
+                logger.warning("skip field output %s_ij (%s): exists already", name_P, msg)
 
             if request_CS and (name_CS + "_11") not in fo_keys:
                 logger.info("create field output %s_ij (%s)", name_CS, msg)
-                fo_writers_for_frame.append(CSFieldOutputWriter(frame, d, name=name_CS, method=method))
+                fo_writers_for_frame.append(CSFieldOutputWriter(frame, d, name=name_CS, method=method, logger=logger))
             elif request_CS:
-                logger.warning("skip field output %s_ij (%s)", name_CS, msg)
+                logger.warning("skip field output %s_ij (%s): exists already", name_CS, msg)
 
             if request_CF and name_CF not in fo_keys:
                 logger.info("create field output %s (%s)", name_CF, msg)
-                fo_writers_for_frame.append(CFFieldOutputWriter(frame, d, name=name_CF, method=method))
+                fo_writers_for_frame.append(CFFieldOutputWriter(frame, d, name=name_CF, method=method, logger=logger))
             elif request_CF:
-                logger.warning("skip field output %s (%s)", name_CF, msg)
+                logger.warning("skip field output %s (%s): exists already", name_CF, msg)
 
     # iterate over all instances
     if odb_instances is None:
@@ -1267,7 +1286,9 @@ def add_field_outputs(
                         "instance=" + str(odb_inst.name)
                         + "; step=" + str(step.name)
                         + "; frame=" + str(frame.frameId)
+                        + "; time=" + str(step.totalTime + frame.frameValue)
                 )
+                logger.info(msg)
 
                 # get field outputs and rotate them to the global coordinate system
                 fo = frame.fieldOutputs
@@ -1358,7 +1379,8 @@ def add_field_outputs(
                             or len(fo_reader.fo_U.bulkDataBlocks) == 0
                     ):
                         logger.info(
-                            "skip computation due to insufficient data (%s; element type=%s)",
+                            "skip computation due to insufficient data (%s; element type=%s). "
+                            "Did you request all the field outputs SENER, S, U?",
                             msg, element_type)
                         continue
 
