@@ -828,7 +828,7 @@ class CFFieldOutputWriter(_FieldOutputWriter):
         )
 
         # create data structure abaqus understands
-        el_to_n_label = reader.element_labels_to_node_labels_for_type[reader.element_type]
+        el_to_n_label = reader.element_labels_to_node_labels
         CF_at_nodes = self._CF_at_nodes
         for CF_el_data, el_label in zip(cf_data, reader.el_labels):
             for CF_el_node_data, node_label in zip(CF_el_data, el_to_n_label[el_label]):
@@ -1145,10 +1145,10 @@ def add_field_outputs(
     :param e_expression: see :py:func:`eval_field_output_expression`
     :type e_expression: str
     :param name_U_global_csys: name of the newly generated field output containing displacements
-        in the global coordinate system
+        in the global coordinate system. Use "U" if the local coordinate system is the global coordinate system.
     :type name_U_global_csys: str
     :param name_S_global_csys: name of the newly generated field output containing stresses
-        in the global coordinate system
+        in the global coordinate system. Use "S" if the local coordinate system is the global coordinate system.
     :type name_S_global_csys: str
     :param request_F: True to create field outputs for the deformation gradients.
     :type request_F: bool
@@ -1172,7 +1172,7 @@ def add_field_outputs(
     :type name_CF: str
     :param odb_instances: Compute quantities only for these instances. Default uses all instances.
     :type odb_instances: Sequence of OdbInstance
-    :param odb_set: Compute quantities only for nodes and element defined in this set.
+    :param odb_set: Compute quantities only for nodes and elements defined in this set.
     :type odb_set: OdbSet
     :param step_frame_selector: Compute quantities only for the selected frames. Default uses all frames.
         See :py:func:`select_steps_and_frames`.
@@ -1236,30 +1236,30 @@ def add_field_outputs(
             fo = frame.fieldOutputs
 
             # write computed fields to odb
-            d = fo["U"].bulkDataBlocks[0].data.shape[1]
+            dimensions = fo["U"].bulkDataBlocks[0].data.shape[1]
             fo_keys = set(fo.keys())
 
             if request_F and (name_F + "_11") not in fo_keys:
                 logger.info("create field output %s_ij (%s)", name_F, msg)
-                fo_writers_for_frame.append(FFieldOutputWriter(frame, d, name_F, logger=logger))
+                fo_writers_for_frame.append(FFieldOutputWriter(frame, dimensions, name_F, logger=logger))
             elif request_F:
                 logger.warning("skip field output %s_ij (%s): exists already", name_F, msg)
 
             if request_P and (name_P + "_11") not in fo_keys:
                 logger.info("create field output %s_ij (%s)", name_P, msg)
-                fo_writers_for_frame.append(PFieldOutputWriter(frame, d, name_P, logger=logger))
+                fo_writers_for_frame.append(PFieldOutputWriter(frame, dimensions, name_P, logger=logger))
             elif request_P:
                 logger.warning("skip field output %s_ij (%s): exists already", name_P, msg)
 
             if request_CS and (name_CS + "_11") not in fo_keys:
                 logger.info("create field output %s_ij (%s)", name_CS, msg)
-                fo_writers_for_frame.append(CSFieldOutputWriter(frame, d, name=name_CS, method=method, logger=logger))
+                fo_writers_for_frame.append(CSFieldOutputWriter(frame, dimensions, name=name_CS, method=method, logger=logger))
             elif request_CS:
                 logger.warning("skip field output %s_ij (%s): exists already", name_CS, msg)
 
             if request_CF and name_CF not in fo_keys:
                 logger.info("create field output %s (%s)", name_CF, msg)
-                fo_writers_for_frame.append(CFFieldOutputWriter(frame, d, name=name_CF, method=method, logger=logger))
+                fo_writers_for_frame.append(CFFieldOutputWriter(frame, dimensions, name=name_CF, method=method, logger=logger))
             elif request_CF:
                 logger.warning("skip field output %s (%s): exists already", name_CF, msg)
 
